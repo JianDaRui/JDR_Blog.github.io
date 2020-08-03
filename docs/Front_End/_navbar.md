@@ -1,14 +1,14 @@
 <!--
- * @Author:JDR
- * @Date: 2020-08-03 11:12:29
- * @LastEditTime: 2020-08-03 19:25:18
- * @LastEditors: Please set LastEditors
- * @Description: 导航栏
- * @FilePath: \JDR_Blog\docs\_navbar.md
---> 
+ * @Author: your name
+ * @Date: 2020-08-03 19:18:37
+ * @LastEditTime: 2020-08-03 23:23:16
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \JDR_Blog\docs\Front_End\_navbar.md
+-->
 
-* Front End
-  * [ECMAscript](Front_End/ECMAscript/)
+<!-- * Front End -->
+  <!-- * [ECMAscript](Front_End/ECMAscript/) -->
   <!-- * [Typescript](Front_End/Typescript/)
   * [HTTP](Front_End/HTTP/)
   * [Vue](Front_End/Vue/)
