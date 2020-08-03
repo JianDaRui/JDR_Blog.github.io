@@ -1,7 +1,7 @@
 <!--
  * @Author: JDR
  * @Date: 2020-08-03 11:19:14
- * @LastEditTime: 2020-08-03 11:52:30
+ * @LastEditTime: 2020-08-03 15:40:58
  * @LastEditors: Please set LastEditors
  * @Description: 封面
  * @FilePath: \JDR_Blog\docs\_coverpage.md
@@ -14,4 +14,4 @@
 
 
 [GitHub](https://github.com/JianDaRui)
-[Get Started](#docsify)
+[Get Started](#app)

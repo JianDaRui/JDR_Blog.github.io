@@ -1,22 +1,23 @@
 <!--
  * @Author:JDR
  * @Date: 2020-08-03 11:12:29
- * @LastEditTime: 2020-08-03 11:44:36
+ * @LastEditTime: 2020-08-03 15:48:02
  * @LastEditors: Please set LastEditors
  * @Description: 导航栏
  * @FilePath: \JDR_Blog\docs\_navbar.md
 --> 
 
 * Front End
-  * [javaScript](zh-cn/)
-  * [BOM](zh-cn/)
-  * [DOM](zh-cn/)
-  * [HTTP](zh-cn/)
-  * [Vue](zh-cn/)
-  * [React](zh-cn/)
-  * [Node](zh-cn/)
-  * [可视化](zh-cn/)
-  * [项目](zh-cn/)
+  * [javaScript](Front_End/Javascript)
+  * [BOM](Front_End/BOM)
+  * [DOM](Front_End/DOM)
+  * [HTTP](Front_End/HTTP)
+  * [Vue](Front_End/Vue)
+  * [React](Front_End/React)
+  * [Node](Front_End/Node)
+  * [Git](Front_End/Git)
+  * [可视化](Front_End/Visualization)
+  * [项目](Front_End/Project)
 
 * 读书笔记
   * [配置项](zh-cn/)
