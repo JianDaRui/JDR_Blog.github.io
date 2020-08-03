@@ -1,46 +1,82 @@
 <!--
  * @Author: JDR
  * @Date: 2020-08-03 10:59:42
- * @LastEditTime: 2020-08-03 11:57:25
+ * @LastEditTime: 2020-08-03 12:46:57
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \JDR_Blog\docs\index.html
---> 
+-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
 </head>
+
 <body>
-  <!-- <nav>
-    <a href="#/">JavaScript</a>
-    <a href="#/">Http</a>
-    <a href="#/">BOM</a>
-    <a href="#/">DOM</a>
-    <a href="#/zh-cn/">Vue</a>
-    <a href="#/zh-cn/">React</a>
-    <a href="#/">可视化</a>
-  </nav> -->
   <div id="app">
     加载中...
   </div>
   <script>
     window.$docsify = {
       name: '剑大瑞', // 
+      // logo: '_media/icon.png',
       repo: 'JianDaRui', // 右上角GitHub
       loadSidebar: true, // 侧边栏
       loadNavbar: true, // 自定义导航
       coverpage: true, // 封面
-      subMaxLevel: 3, 
+      subMaxLevel: 3,
       maxLevel: 4, // 最大抓取目录
       auto2top: true, // 切换页面跳转到顶部
+      mergeNavbar: true,
+      // onlyCover: true,
+      search: 'auto',
+      search: [
+        '/',            // => /README.md
+        '/guide',       // => /guide.md
+        '/get-started', // => /get-started.md
+        '/zh-cn/',      // => /zh-cn/README.md
+      ],
+      search: {
+        maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+        paths: [], // or 'auto'
+        placeholder: 'Type to search',
+        placeholder: {
+          '/zh-cn/': '搜索',
+          '/': 'Type to search'
+        },
+        noData: 'No Results!',
+        noData: {
+          '/zh-cn/': '找不到结果',
+          '/': 'No Results'
+        },
+        depth: 5,
+      },
+      copyCode: {
+        buttonText : '点击赋值',
+        errorText  : '错误',
+        successText: '复制'
+      },
+      count:{
+        countable:true,
+        fontsize:'0.9em',
+        color:'rgb(90,90,90)',
+        language:'chinese'
+      }
+      
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
 </body>
+
 </html>
