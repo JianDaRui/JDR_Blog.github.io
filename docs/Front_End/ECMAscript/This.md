@@ -34,7 +34,7 @@ function myName() {
 // undefined
 ```
 
-![](D:\Study\JDR_Blog\Articles\01-FrontEnd\04-this\images\context.png)
+![](/images/this/context.png)
 
 当上面的代码需要执行时，就会创建相应的执行上下文。执行上下文的创建过程分为两个阶段。下面我们来分析这两个阶段。
 
@@ -109,7 +109,7 @@ function myInfo() {
 
 这里我们按执行上下文的创建过程简单制作一张图：
 
-![](D:\Study\JDR_Blog\Articles\01-FrontEnd\04-this\images\执行上下文的创建.png)
+![](/images/this/执行上下文的创建.png)
 
 
 
@@ -123,7 +123,7 @@ function myInfo() {
 
 执行山下文是分析结束了，这里面的概念比较多，放张思维导图，结构化下。
 
-![](D:\Study\JDR_Blog\Articles\01-FrontEnd\04-this\images\执行上下文.png)
+![](/images/this/执行上下文.png)
 
 
 
@@ -131,7 +131,7 @@ function myInfo() {
 
 ## 调用堆栈
 
-![](D:\Study\JDR_Blog\Articles\01-FrontEnd\04-this\images\JS引擎.jpg)
+![](/images/this/JS引擎.jpg)
 
 > JS 引擎主要由emory Heap(内存堆)，Call Stack(调用堆栈)组成。前者负责内存分配地址，后者负责执行代码。
 
@@ -139,7 +139,7 @@ function myInfo() {
 
 > 栈：一种限定仅在表尾进行插入和删除操作的线性表，遵循先进后出规则。
 
-![](D:\Study\JDR_Blog\Articles\01-FrontEnd\04-this\images\callStack.png)
+![](/images/this/callStack.png)
 
 当我们在Vue组件的created中进行debug时，可以清楚的看到调用栈中的情况，即Vue都做了什么：
 

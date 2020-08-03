@@ -1,7 +1,7 @@
 <!--
  * @Author: JDR
  * @Date: 2020-08-03 10:59:42
- * @LastEditTime: 2020-08-03 19:45:08
+ * @LastEditTime: 2020-08-03 23:13:44
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \JDR_Blog\docs\index.html
@@ -49,19 +49,21 @@
       notFoundPage: 'notFound.md',
       search: 'auto',
       search: [
-        '/',            // => /README.md
-        '/guide',       // => /guide.md
-        '/get-started', // => /get-started.md
-        '/zh-cn/',      // => /zh-cn/README.md
+        '/Front_End/',            // => /README.md
+        '/Front_End/ECMAscript/Closure.md',       // => /guide.md
+        '/Front_End/ECMAscript/TypeChange.md', // => /get-started.md
+        '/Front_End/ECMAscript/This.md', 
+        '/Front_End/ECMAscript/Object.md',     // => /zh-cn/README.md
+        '/Front_End/ECMAscript/Prototype.md',     // => /zh-cn/README.md
+        '/Front_End/ECMAscript/Object.md',     // => /zh-cn/README.md
       ],
       search: {
         maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-        paths: [], // or 'auto'
+        paths: 'auto', // or 'auto'
         placeholder: '搜索',
         placeholder: {
           '/': '搜索'
         },
-        noData: '没有拓展!',
         noData: {
           '/': '木有找见'
         },
@@ -81,15 +83,15 @@
       
     }
 
-    const gitalk = new Gitalk({
-    clientID: 'Github Application Client ID',
-    clientSecret: 'Github Application Client Secret',
-    repo: 'Github repo',
-    owner: 'Github repo owner',
-    admin: ['Github repo collaborators, only these guys can initialize github issues'],
-    // facebook-like distraction free mode
-    distractionFreeMode: false
-  })
+  //   const gitalk = new Gitalk({
+  //   clientID: 'Github Application Client ID',
+  //   clientSecret: 'Github Application Client Secret',
+  //   repo: 'Github repo',
+  //   owner: 'Github repo owner',
+  //   admin: ['Github repo collaborators, only these guys can initialize github issues'],
+  //   // facebook-like distraction free mode
+  //   distractionFreeMode: false
+  // })
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>

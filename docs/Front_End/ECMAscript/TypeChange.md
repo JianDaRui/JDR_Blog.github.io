@@ -274,7 +274,7 @@ null && {} // null
    18 ? "daRui" : 18
    ```
 
-![大哥，给个赞吧](D:\Study\JDR_Blog\articles\02-类型转换\images\kanxini.png)
+![大哥，给个赞吧](/images/type/kanxini.png)
 
 参考文献：
 
