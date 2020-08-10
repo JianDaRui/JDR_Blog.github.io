@@ -451,6 +451,46 @@ PS：面试的时候写polyFill，没毛病！
 
 #### new
 
+new 绑定其实也就是通过构造函数进行绑定。
+
+##### 使用new
+
+```javascript
+function GirlFriend(name, heigh, braSize, skin) {
+	this.name = name
+	this.heigh = heigh
+	this.braSize = braSize
+	this.skin = skin
+	this.sugarCall = function() {
+		console.log("老公， 我想你😘")
+	}
+}
+let myGirlFriend = new GirlFriend("FeiFei", 175, "E", "white")
+console.log(myGirlFriend.braSize)
+myGirlFriend.sugarCall() 
+```
+
+> new的对象，它甜不甜？
+
+##### 手写new
+
+- 获取构造函数
+- 创建一个对象，并将该对象的__proto__指向Constructor.prototype
+- 绑定this
+- 如果构造函数返回的是引用类型，直接返回该引用类型，否则返回 创建的 obj
+
+```js
+const myNew = function () {
+  let Constructor = Array.prototype.shift.call(arguments);
+  let obj = {};
+  obj.__proto__ = Constructor.prototype;
+  let res = Constructor.apply(obj, arguments);
+  return res instanceof Object ? res : obj;
+}
+```
+
+
+
 #### 箭头函数
 
 
