@@ -356,6 +356,8 @@ Function.prototype.myApply = function () {
 
 
 
+> 通过上面手写实现call、apply，其实可以看出，其方法内部还是默认绑定的原理，使我们的函数可以通过对象执行上下文访问到目标属性。
+
 #### bind
 
 ##### 使用bind
@@ -399,28 +401,39 @@ Function.prototype.myBind = function (context, ...args) {
 这里给各位铁汁们放段bind的polyfill代码欣赏下：
 
 ```js
-//  Yes, it does work with `new (funcA.bind(thisArg, args))`
+// 这个方法可以通过 new 调用 bind 返回的函数（构造函数）
 if (!Function.prototype.bind) (function(){
+    // 缓存slice方法
   var ArrayPrototypeSlice = Array.prototype.slice;
   Function.prototype.bind = function(otherThis) {
+    // 调用者必须是函数
     if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
       throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
     }
-
+	// 获取除一个参数之后的所有参数
     var baseArgs= ArrayPrototypeSlice.call(arguments, 1),
+        // 获取参数长度
         baseArgsLength = baseArgs.length,
+        // 缓存调用的函数
         fToBind = this,
         fNOP    = function() {},
+        
+        // 这里其实已经是实现bind的函数
         fBound  = function() {
-          baseArgs.length = baseArgsLength; // reset to default base arguments
+          // 重置为默认的参数
+          baseArgs.length = baseArgsLength; 
           baseArgs.push.apply(baseArgs, arguments);
+          // 这里第一个参数在判断 是不是 fBound 的实例，如果是则绑定当前实例，如果不是则绑定第一次传进来的this(执行上下文)
           return fToBind.apply(
                  fNOP.prototype.isPrototypeOf(this) ? this : otherThis, baseArgs
           );
         };
-
+      
+	// 下面是实现可以通过new调用的关键
+    // 通过改变构造函数的原型使其继承绑定函数的原型
+    // this.prototype 相当于 callMe.prototype
+    // 最后将fBound.prototype指向 fNOP() 的实例
+    // 保证了new fBound() 继承了 this.prototype
     if (this.prototype) {
       // Function.prototype doesn't have a prototype property
       fNOP.prototype = this.prototype; 
@@ -432,7 +445,7 @@ if (!Function.prototype.bind) (function(){
 })();
 ```
 
-
+PS：面试的时候写polyFill，没毛病！
 
 
 
