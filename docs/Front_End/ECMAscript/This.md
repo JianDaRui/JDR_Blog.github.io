@@ -1,4 +1,4 @@
-#  Javascript深入浅出之this
+<!-- #  Javascript深入浅出之this -->
 
 在JavaScript中this为开发者提供了函数调用非常简洁的表达方式，但是关于Javascript中的this指向问题，我们经常听到的回答就是**谁调用就指向谁**。但是在实际的面试中的面试题中你试试看能领的清**谁是谁**吗？
 
@@ -16,7 +16,7 @@
 
 ## 执行上下文
 
-Javascript虽然是一门解释型的脚本语言，但是Javascript的执行并不是执行一行翻译一行，而是按代码块来进行的。在Javascript中我们通常将其划分为：
+Javascript虽然是一门**解释型**的脚本语言，但是Javascript的执行并不是执行一行翻译一行，而是按代码块来进行的。在Javascript中我们通常将其划分为：
 
 - 全局执行上下文：全局唯一，当在浏览器中时，为window对象。
 - 函数执行上下文：只要函数被调用，就会创建函数执行上下文。
@@ -33,8 +33,11 @@ function myName() {
 // '开始执行函数了'
 // undefined
 ```
+<div style="text-align: center">
 
 ![](/images/this/context.png)
+</div>
+
 
 当上面的代码需要执行时，就会创建相应的执行上下文。执行上下文的创建过程分为两个阶段。下面我们来分析这两个阶段。
 
@@ -108,8 +111,11 @@ function myInfo() {
 ```
 
 这里我们按执行上下文的创建过程简单制作一张图：
+<div style="text-align: center">
 
 ![](/images/this/执行上下文的创建.png)
+</div>
+
 
 
 
@@ -122,24 +128,32 @@ function myInfo() {
 
 
 执行山下文是分析结束了，这里面的概念比较多，放张思维导图，结构化下。
+<div style="text-align: center">
 
 ![](/images/this/执行上下文.png)
+</div>
+
 
 
 
 在执行上下文的执行阶段我们有提到出栈的过程，这里就涉及到执行上下文的上一层，也是Javascript引擎的重要组成部分调用堆栈。关于调用堆栈我们还是有必要提一下的，因为大家在debug中，少不了分析调用堆栈中的情况。
 
 ## 调用堆栈
+<div style="text-align: center">
 
 ![](/images/this/JS引擎.jpg)
+</div>
+
 
 > JS 引擎主要由emory Heap(内存堆)，Call Stack(调用堆栈)组成。前者负责内存分配地址，后者负责执行代码。
 
 当一段Javascript需要执行的时候，Javascript引擎会将本次所需执行的所有代码块逐一推入栈中，我们称之为入栈。
 
 > 栈：一种限定仅在表尾进行插入和删除操作的线性表，遵循先进后出规则。
+<div style="text-align: center">
+    ![](/images/this/callStack.png)
+</div>
 
-![](/images/this/callStack.png)
 
 当我们在Vue组件的created中进行debug时，可以清楚的看到调用栈中的情况，即Vue都做了什么：
 
@@ -250,25 +264,183 @@ bar() // "Global A"
 
 ### 显示绑定
 
+在JavaScript中所有函数都可以通过调用call、apply、bind方法显示绑定this（这三个方法位于Function.prototype），从而改变函数的执行上下文。
+
 #### call
+
+#####  使用call
+
+```js
+function callMe(prefix) {
+	console.log(prefix + this.name)
+}
+var obj = {
+	name: "剑大瑞"
+}
+callMe.call(obj, "Hello， ") // “Hello 剑大瑞”
+```
+
+调用call时可以传递两个参数，第一个参数是需要绑定的对象，第二个参数是函数执行时所需要的参数。
+
+> 可以为call传若干个参数，但是第一个参数一定是需要绑定的对象
+
+
+
+这里我们通过手写call，来分析call内部做了什么？
 
 ##### 手写call
 
-```js
+- 通过解构获取需要绑定的对象（第一个参数 thisArg ）及其余参数
+- 将第一个参数转换为对象，如果为假则为window
+- 创建一个具有唯一性的表示（ Symbol ）
+- **将当前函数设置为需要绑定对象的方法**，这里是函数能访问到绑定对象上下文的关键，因为他已经是对象的一部分。
+- 传参并获取结果
+- 删除绑定在对象上的方法
+- 返回结果
 
+```js
+Function.prototype.myCall = function () {
+    let [thisArg, ...args] = [...arguments]
+    thisArg = Object(thisArg) || window
+    let fn = Symbol()
+    thisArg[fn] = this
+    let result = thisArg[fn](...args)
+    delete thisArg[fn]
+    return result
+}
 ```
 
 #### apply
 
-##### 手写apply
+##### 使用apply
 
 ```js
-
+function callMe(prefix) {
+	console.log(prefix + this.name)
+}
+var obj = {
+	name: "剑大瑞"
+}
+callMe.apply(obj, [ "Hello， " ]) // “Hello 剑大瑞”
 ```
+
+apply与call在使用上的区别仅在于传入的第二个参数是否是数组，在性能上apply要低于call。
+
+
+
+接下来分析apply内部做了什么？
+
+##### 手写apply
+
+- 通过解构获取需要绑定的对象（第一个参数 thisArg ）及传入的数组
+- 将第一个参数转换为对象
+- 创建一个具有唯一性的表示（ Symbol ）
+- **将当前函数设置为需要绑定对象的方法**，这里是函数能访问到绑定对象上下文的关键，因为他已经是对象的一部分。
+- 传参并获取结果
+- 删除绑定在对象上的方法
+- 返回结果
+
+```js
+Function.prototype.myApply = function () {
+    // 需要注意 args 与 ...args 的区别
+    let [thisArg, args] = [...arguments];
+    thisArg = Object(thisArg)
+    let fn = Symbol()
+    thisArg[fn] = this;
+    // 将数组解构
+    let result = thisArg[fn](...args);
+    delete thisArg.fn;
+    return result;
+}
+```
+
+
 
 #### bind
 
-手写bind
+##### 使用bind
+
+```js
+function callMe(prefix) {
+	console.log(prefix + this.name)
+}
+var obj = {
+	name: "剑大瑞"
+}
+var foo = callMe.bind(obj, "Hello， ")
+foo() // “Hello 剑大瑞”
+```
+
+
+
+bind与call、apply的区别在于内部利用Javascrip**闭包**的特点实现**函数柯里化**，最后返回一个函数，返回的函数可以访问缓存的变量，基本原理我们已经了解，那就实现下吧。
+
+##### 手写bind
+
+- 首先缓存当前函数 this。比如上面示例代码中的callMe。
+- 判断是否传参
+- 返回新的函数
+- 在新的函数内部调用原函数的apply方法，并将新旧参数一起传入
+
+```js
+Function.prototype.myBind = function (context, ...args) {
+    const fn = this
+    args = args ? args : []
+    return function newFn(...newFnArgs) {
+        if (this instanceof newFn) {
+            return new fn(...args, ...newFnArgs)
+        }
+        return fn.apply(context, [...args,...newFnArgs])
+    }
+}
+
+```
+
+这里给各位铁汁们放段bind的polyfill代码欣赏下：
+
+```js
+//  Yes, it does work with `new (funcA.bind(thisArg, args))`
+if (!Function.prototype.bind) (function(){
+  var ArrayPrototypeSlice = Array.prototype.slice;
+  Function.prototype.bind = function(otherThis) {
+    if (typeof this !== 'function') {
+      // closest thing possible to the ECMAScript 5
+      // internal IsCallable function
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+
+    var baseArgs= ArrayPrototypeSlice.call(arguments, 1),
+        baseArgsLength = baseArgs.length,
+        fToBind = this,
+        fNOP    = function() {},
+        fBound  = function() {
+          baseArgs.length = baseArgsLength; // reset to default base arguments
+          baseArgs.push.apply(baseArgs, arguments);
+          return fToBind.apply(
+                 fNOP.prototype.isPrototypeOf(this) ? this : otherThis, baseArgs
+          );
+        };
+
+    if (this.prototype) {
+      // Function.prototype doesn't have a prototype property
+      fNOP.prototype = this.prototype; 
+    }
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+})();
+```
+
+
+
+
+
+#### new
+
+#### 箭头函数
+
+
 
 #### 闭包中的this
 
