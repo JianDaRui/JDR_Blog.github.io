@@ -1,5 +1,3 @@
-<!-- #  Javascript深入浅出之this -->
-
 在JavaScript中this为开发者提供了函数调用非常简洁的表达方式，但是关于Javascript中的this指向问题，我们经常听到的回答就是**谁调用就指向谁**。但是在实际的面试中的面试题中你试试看能领的清**谁是谁**吗？
 
 或者你用这种方式回答面试官有关this的问题。请自行脑补后期画面。
@@ -489,6 +487,10 @@ const myNew = function () {
 }
 ```
 
+
+
+> 从我们手写new的代码来看，new实现this绑定的方式其实也是通过显示绑定来实现的。
+
 #### 箭头函数
 
 箭头函数极简的书写方式，带来很大便利，但是箭头函数有一下几个特性：
@@ -498,9 +500,44 @@ const myNew = function () {
 - 不能通过new创建构造函数
 - 多层嵌套的箭头函数，this指向保证与最外层一致
 
+```js
+var name = "King"
+var foo = () => console.log(this.name)
+foo() // "king"
+
+
+var girlFriend = {
+    name: "feifei",
+    height: 175,
+    braSize: "G"
+}
+// call绑定
+var obj = {
+    foo: () => {
+        console.log(this)
+    }
+}
+obj.foo() // Window
+obj.foo.call(girlFriend) // Window
+
+// 多层嵌套
+var obj = {
+    name: "king",
+    baz: function() {
+		console.log(this)
+    },
+    foo: () => boo => bra => console.log(this)
+}
+
+obj.baz() // obj
+obj.foo()()() // Window
+```
+
+
+
 #### 闭包中的this
 
-在闭包中使用this要非常注意，这里容易犯晕的主要原因使搞不清楚Javascript的词法作用域及执行上下文的变化，通过闭包返回的函数，可以通过闭包访问其所声明位置的父级及以上作用域中的标识，但是该函数中的this只会记录其所在执行环境中的标识。所以如果想在闭包中使用上一级的this，只能通过闭包缓存父级执行上下文。比如bind方法、new方法。
+在闭包中使用this要非常注意，这里容易犯晕的主要原因使搞不清楚Javascript的词法作用域及执行上下文的变化，通过闭包返回的函数，可以通过闭包访问其所声明位置的父级及以上作用域中的标识，但是该函数中的this只会记录其所在执行环境中的标识。所以如果想在闭包中使用上一级的this，只能通过闭包缓存父级执行上下文。bind方法、new方法中就用到了闭包缓存。
 
 👉：[闭包传送门](https://juejin.im/post/6844904195527540744)
 
