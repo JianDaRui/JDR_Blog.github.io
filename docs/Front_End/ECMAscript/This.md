@@ -153,6 +153,7 @@ function myInfo() {
 
 这里我们按执行上下文的创建过程简单制作一张图：
 <div style="text-align: center">
+
 ![](images/this/执行上下文的创建.png)
 </div>
 
@@ -164,6 +165,7 @@ function myInfo() {
 
 执行上下文是分析结束了，但这里面的概念比较多，我放张思维导图，结构化下。
 <div style="text-align: center">
+
 ![](/images/this/执行上下文.png)
 </div>
 
