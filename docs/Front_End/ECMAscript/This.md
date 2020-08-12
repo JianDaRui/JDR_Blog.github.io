@@ -221,13 +221,12 @@ foo()
 ```
 
 让我们用图片演示一下上面这段代码的**调用堆栈**情况：
-
 <div style="text-align: center">
 
-​    
+![](images/this/调用栈.png) 
 
-![](images/this/调用栈.png)
 </div>
+
 
 经过上面两部分的分析，我们已经知道了Javascript中的调用堆栈的情况及执行上下文的创建过程，并且明确了this的绑定就是在执行上下文创建的第一阶段确定的。
 
@@ -579,3 +578,10 @@ obj.foo()()() // Window
 
 最后闭上眼睛👀回顾下this，哇，感觉在放动画。
 
+本文首发于我的个人公众号**老瑞三部曲**
+<div style="text-align: center;width:500px;">
+
+​    
+
+![](images/qrcode.png)
+</div>

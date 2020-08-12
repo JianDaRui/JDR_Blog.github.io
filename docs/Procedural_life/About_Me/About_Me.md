@@ -141,6 +141,10 @@
 
 
 > 失败中学习经验，黑暗中保持成长，安稳时罗列危机。——剑大瑞
+<div style="text-align:center;">
+
+!()[images/code.jpg]
+</div>
 
 
 
