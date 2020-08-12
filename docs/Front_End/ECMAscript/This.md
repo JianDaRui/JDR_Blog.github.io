@@ -153,7 +153,6 @@ function myInfo() {
 
 这里我们按执行上下文的创建过程简单制作一张图：
 <div style="text-align: center">
-
 ![](images/this/执行上下文的创建.png)
 </div>
 
@@ -201,29 +200,34 @@ created—》invokeWithErrorHandling—》callHook—》_init—》VueComponent�
 看下面代码：
 
 ```js 
-function info() {
-    // info  
+function foo() {
+    // foo
     let name = "剑大瑞"
 	console.log(name)
     body() 
 }
-function body() {
-    // info -> body
-    let bodyInfo = "身高一米八"
-    console.log(bodyInfo)
+function height() {
+    // foo -> body
+    let heightInfo = "身高一米八"
+    console.log(heightInfo)
     age()
 }
 function age() {
-    // info -> body -> age
+    // foo -> height -> age
     var ageInfo = "今年18岁"
 	console.log(ageInfo)
 }
-info()
+foo()
 ```
 
 让我们用图片演示一下上面这段代码的**调用堆栈**情况：
 
-[]()
+<div style="text-align: center">
+
+​    
+
+![](images/this/调用栈.png)
+</div>
 
 经过上面两部分的分析，我们已经知道了Javascript中的调用堆栈的情况及执行上下文的创建过程，并且明确了this的绑定就是在执行上下文创建的第一阶段确定的。
 
@@ -564,4 +568,14 @@ obj.foo()()() // Window
 
 👉：[闭包传送门](https://juejin.im/post/6844904195527540744)
 
+一张思维导图总结全文
+<div style="text-align: center">
+
+​    
+
+![](images/this/this.png)
+</div>
+
+
 最后闭上眼睛👀回顾下this，哇，感觉在放动画。
+
