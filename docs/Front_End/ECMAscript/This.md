@@ -579,9 +579,9 @@ obj.foo()()() // Window
 最后闭上眼睛👀回顾下this，哇，感觉在放动画。
 
 本文首发于我的个人公众号**老瑞三部曲**
+
 <div style="text-align: center;width:500px;">
 
-​    
-
 ![](images/qrcode.png)
+
 </div>
