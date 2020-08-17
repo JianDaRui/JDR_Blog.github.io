@@ -1,7 +1,7 @@
 <!--
  * @Author:JDR
  * @Date: 2020-08-03 11:12:29
- * @LastEditTime: 2020-08-03 23:24:06
+ * @LastEditTime: 2020-08-17 16:47:14
  * @LastEditors: Please set LastEditors
  * @Description: 导航栏
  * @FilePath: \JDR_Blog\docs\_navbar.md
@@ -29,9 +29,6 @@
   * [传记](Reading_note/)
   * [小说](Reading_note/)
   * [其他](Reading_note/)
-
-* 程序人生
-  * [关于我](Procedural_life/)
-  * [忏悔录](Procedural_life/)
-  * [回忆录](Procedural_life/) 
   -->
+* 程序人生
+  * [关于我](Procedural_life/About_Me.md)
