@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-08-03 18:48:15
- * @LastEditTime: 2020-08-29 18:39:13
+ * @LastEditTime: 2020-09-02 07:59:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \JDR_Blog\docs\Front_End\ECMAscript\Prototype.md
@@ -82,14 +82,133 @@ console.dir(myGirl.callMe())
 console.dir(youGirl.giveServe())
 
 ```
-- 优点:
- - 解决创建相似对象问题，但是没有解决对象识别问题。
+- 特点:
+ - 解决多次创建相似对象问题
+ - 但是没有解决对象识别问题，因为获取的实例是通过new Object产生的而不是我们自己创建的类。
 
-> 当需要 `instanceOf` 时, 就会出现问题。因为`girl`实际是通过`Object`创建的。
+> 当需要 `instanceOf` 时, 就会出现问题。因为`myGirl`实际是通过`Object`创建的。
+既然工厂模式因为使用new Object，带来无法识别对象的问题，那我们为什么不直接使用函数直接创建对象呢？别忘了在JS中函数可以一等公民啊。
+
+哎，这就是接下来要说的构造函数模式。
 
 - 构造函数模式
-
 ```js 
+function GirlFriend(height, braSize, job) {
+  this.height = height
+  this.braSize = braSize
+  this.job = job
+  this.callMe = function() {
+    console.log("剑大瑞")
+  }
+  this.giveServe = function {
+    console.log("老公坐，我给你煲了牛鞭汤🙈")
+  }
+} 
+let myGirl = new GirlFriend(180, "G", "Model")
+let youGirl = new GirlFriend(150, "A", "FE engineer")
 
+console.dir(myGirl.giveServe())
+console.dir(youGirl.braSize)
+```
+特点：
+- 没有显示的创建对象
+- 直接将属性和方法赋值给了this对象
+- 没有return语句
+- 函数名称以大写字母开头（约定）
+
+通过构造函数方式创建对象过程中，我们并没有显示的创建对象，但是确获得了一个对象。这是因为在调用new的时候，他为我们做了一下几件事情：
+- 创建一个新的对象
+- 将构造函数的作用域赋给新对象（将this于这个新对象进行隐式绑定）
+- 执行构造函数的代码（为这个对象添加属性）
+- 返回新的对象
+
+都写到这里了，那我们再手写个new?
+```js
+const myNew = function () {
+  // 获取构造函数
+  let Constructor = Array.prototype.shift.call(arguments);
+  // 创建一个新的对象
+  let obj = {};
+  // 确定原型对象
+  obj.__proto__ = Constructor.prototype;
+  // 为新的对象添加属性
+  let res = Constructor.apply(obj, arguments);
+  // 返回新对象
+  return res instanceof Object ? res : obj;
+}
 ```
 
+- 前面说过工厂模式创建的对象会带来对象识别问题
+- 原型对象默认属性constructor属性，指向原型的构造函数
+- 下面进行对象检测
+
+```js
+console.log(myGirl.constructor === GirlFriend) // true
+console.log(youGirl.constructor === GirlFriend) // true
+console.log(myGirl.constructor === Object) // true
+console.log(youGirl.constructor === Object) // true
+```
+特点： 
+- 解决对象的识别问题
+- 如果不使用new调用，与普通方法别无二致
+- 在使用构造函数时，如果属性值为方法（引用类型），那每次都会创建一个新的方法，这回带来大量的内存浪费。因为方法的功能是一样的，我们为什么要创造那么多重复的呢？
+
+```js
+console.log(myGirl.callMe === youGirl.callMe) // false
+```
+为解决方法不一致问题，我们可以将方法移至构造函数外部，来解决这个问题。
+```js 
+function GirlFriend(height, braSize, job) {
+  this.height = height
+  this.braSize = braSize
+  this.job = job
+  this.callMe = callMe
+  this.giveServe = giveServe
+} 
+function callMe() {
+  console.log("剑大瑞")
+}
+function giveServe() {
+  console.log("老公坐，我给你煲了牛鞭汤🙈")
+}
+let myGirl = new GirlFriend(180, "G", "Model")
+let youGirl = new GirlFriend(150, "A", "FE engineer")
+
+console.log(myGirl.callMe === youGirl.callMe) // true
+
+```
+但这种方式带来了新的问题，因为将方法设置在构造函数外部，导致方法成为全局方法，会造成变量污染。而且这样的方式对于我们自定义的类就没有封装性可言。那怎么办？
+
+还记得前面说过的原型与原型链吗？我们创建的每一个函数都有一个prototype属性，这个属性是一个指针，指向一个对象（原型），而这个对象的用途就是包含可以由特定类型的所有实例共享的属性和方法。如果调用一个对象的属性，JS引擎没有在对象自身找到，就回去他的原型对象上去找，直到最顶层null。
+
+那可不可以将对象的共有属性或者方法定义在原型对象上？
+当然可以，这就是接下来要说的原型模式。
+
+- 原型模式
+
+```js 
+function GirlFriend(height, braSize, job) {
+  this.height = height
+  this.braSize = braSize
+  this.job = job
+} 
+GirlFriend.prototype.callMe = function () {
+  console.log("剑大瑞")
+}
+GirlFriend.prototype.giveServe = function () {
+  console.log("老公坐，我给你煲了牛鞭汤🙈")
+}
+let myGirl = new GirlFriend(180, "G", "Model")
+let youGirl = new GirlFriend(150, "A", "FE engineer")
+
+console.log(myGirl.callMe === youGirl.callMe) // true
+
+```
+特点：
+- 原型对象上的所有属性，所有实例共享
+- 存在的问题也是因为原型共享属性导致的，如果一个实例修改了原型上的属性，则会影响到其他实例
+
+- 构造函数模式+原型模式
+- 动态原型模式
+- 寄生构造函数模式
+- 稳妥构造韩式模式
