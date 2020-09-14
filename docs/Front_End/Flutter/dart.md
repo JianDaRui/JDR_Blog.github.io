@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-09-12 15:41:52
- * @LastEditTime: 2020-09-14 20:23:05
+ * @LastEditTime: 2020-09-14 20:25:47
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \JDR_Blog\docs\Front_End\Flutter\dart.md
@@ -123,6 +123,8 @@ assert(iMeantToDoThis.isNaN);
   12. reduce, 遍历并压缩数组
   13. map, 遍历数组,并返回一个新的数组
   14. sublist, 返回指定范围内的元素组成的数组
+  15. insert, 在数组指定位置插入元素
+  16. insertAll, 在数组指定位置插入新的数组(可迭代对象)
   ... 
  
 
