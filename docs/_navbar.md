@@ -1,14 +1,14 @@
 <!--
  * @Author:JDR
  * @Date: 2020-08-03 11:12:29
- * @LastEditTime: 2020-09-30 15:05:52
+ * @LastEditTime: 2020-10-13 15:55:20
  * @LastEditors: Please set LastEditors
  * @Description: 导航栏
  * @FilePath: \JDR_Blog\docs\_navbar.md
 --> 
 
 * Front End
-  * [ECMAscript](Front_End/ECMAscript/)
+  * [ECMAScript](Front_End/ECMAScript/)
   * [HTTP](Front_End/HTTP/)
 
 
