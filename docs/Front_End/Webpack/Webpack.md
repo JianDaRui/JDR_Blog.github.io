@@ -86,7 +86,66 @@ module.exports = {
 
 ### Entry
 
+
+
+
+
 ### Module
+
+#### 配置Loader
+
+rules配置模块的读取和解析规则，通常用来配置Loader。其类型是一个对象数组，数组里的每一个对象都描述如何处理部分文件。配置Rules:
+
+- 条件匹配：通过test、include、exclude三个配置项来选中Loader要应用规则的文件。
+- 应用规则：对选中的文件通过use配置项来应用Loader，可以之应用一个Loader或者按照从后往前的顺序应用一组Loader，同时可以分别向Loader传入参数。
+- 充值顺序：一组Loader的执行顺序默认是从右到左执行，通过Enforce选项可以将其中一个Loader的执行顺序放到最前或者最后。
+
+```js
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // 将 JS 字符串生成为 style 节点
+          'style-loader',
+          // 将 CSS 转化成 CommonJS 模块
+          'css-loader',
+          // 将 Sass 编译成 CSS
+          'sass-loader',
+        ],
+      },
+    ],
+  },
+}
+```
+
+### Plugin
+
+Plugin配置项为一个数组，数组中的每一项都是一个要使用的Plugin的实例，Plugin的难点在于掌握Plugin提供的配置项。
+
+```js
+webpack.config.js
+var webpack = require('webpack');
+// 导入非 webpack 自带默认插件
+var DashboardPlugin = require('webpack-dashboard/plugin');
+
+// 在配置中添加插件
+module.exports = {
+  //...
+  plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+   // 编译时(compile time)插件
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"',
+    }),
+   // webpack-dev-server 强化插件
+    new DashboardPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+  ]
+};
+```
 
 
 
