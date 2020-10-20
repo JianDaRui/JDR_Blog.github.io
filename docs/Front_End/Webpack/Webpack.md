@@ -72,12 +72,11 @@ module.exports = {
 
 接下来我们就能继续搞事情了。
 
-## 使用Webpack
+## 熟悉Webpack
 
 ### Webpack核心概念
 
 - **Entry：入口**。Webpack执行构建的第一步将从Entry开始搜寻及递归解析出所有入口依赖的模块。
-  - 值可以是字符串、数组或者对象。
 - **Module：模块**。在Webpack里一切皆是模块，一个模块对应一个文件。Webpack会从配置的Entry开始递归找出所有依赖的模块。本文的第一张图象形的展示了这个过程（官网的更形象🙊）
 - **Chunk：代码块**。一个Chunk由多个模块组合而成，用于代码合并和分割。
 - **Loader：模块转换器**。用于将模块的原内容按照需求转换成新内容。
@@ -86,19 +85,28 @@ module.exports = {
 
 ### Entry
 
+- 书写方式：
+  - 字符串：'./app/entry'
+  - 数组：[ './app/entry1',  './app/entry2' ]
+  - 对象：{  a: './app/entry-a',  b: ['./app/entry-b1', './app/entry-b2'] }
+- 单页应用为字符串形式，如果为多页应用或者需要与第三方库进行分离，需要使用数组或者对象形式
 
+### Output
 
+output配置如何输出最终想要的代码，为Object形式。
 
+- filename，输出的文件名，为String类型，`filename: 'bundle.js'`，`filename: '[name].js'`
+- chunkFilename，决定了非初始（non-initial）chunk 文件的名称。与filename类似，但是只用于指定在运行过程中生成的Chunk在输出是的文件名称，常见使用场景：使用`CommonChunkPlugin`、使用`import('path/to/module')`动态加载等。
+- path，配置输出文件存放在本地的目录，必须是string类型的绝对路径，`path: path.resolve(__dirname, 'dist_[hash]')`
+- publicPath，用于配置发布到线上资源的URL前缀，为string类型，默认值是空字符串，使用相对路径。有时候需要将一些资源文件上传到CDN服务上，以加快页面的打开速度。`publicPath: 'https://cdn.example.com/assets/'`
+- crossOriginLoading，通过JSONP的方式实现代码块的异步加载。
 
 ### Module
 
-#### 配置Loader
-
-rules配置模块的读取和解析规则，通常用来配置Loader。其类型是一个对象数组，数组里的每一个对象都描述如何处理部分文件。配置Rules:
-
-- 条件匹配：通过test、include、exclude三个配置项来选中Loader要应用规则的文件。
-- 应用规则：对选中的文件通过use配置项来应用Loader，可以之应用一个Loader或者按照从后往前的顺序应用一组Loader，同时可以分别向Loader传入参数。
-- 充值顺序：一组Loader的执行顺序默认是从右到左执行，通过Enforce选项可以将其中一个Loader的执行顺序放到最前或者最后。
+- 配置Loader。rules配置模块的读取和解析规则，通常用来配置Loader。其类型是一个对象数组，数组里的每一个对象都描述如何处理部分文件。配置Rules:
+  - 条件匹配：通过test、include、exclude三个配置项来选中Loader要应用规则的文件。
+  - 应用规则：对选中的文件通过use配置项来应用Loader，可以之应用一个Loader或者按照从后往前的顺序应用一组Loader，同时可以分别向Loader传入参数。
+  - 充值顺序：一组Loader的执行顺序默认是从右到左执行，通过Enforce选项可以将其中一个Loader的执行顺序放到最前或者最后。
 
 ```js
 // webpack.config.js
@@ -120,6 +128,108 @@ module.exports = {
   },
 }
 ```
+
+- noParse配置项可以让webpack忽略对部分没采用模块化的文件的递归解析和处理，提高构建性能。
+
+```js
+module.exports = {
+  //...
+  module: {
+    noParse: /jquery|lodash/,  
+    noParse: (content) => /jquery|lodash/.test(content)
+  }
+};
+```
+
+- parsers可以更细粒度的配置哪些模块语法被解析、哪些不被解析，可以精确到语法层面。
+  - 将选项设置为 `false`，将禁用解析器。
+  - 将选项设置为 `true`，或不修改将其保留为 `undefined`，可以启用解析器。
+
+```js
+module.exports = {
+  //...
+  module: {
+    rules: [
+      {
+        //...
+        parser: {
+          amd: false, // 禁用 AMD
+          commonjs: false, // 禁用 CommonJS
+          system: false, // 禁用 SystemJS
+          harmony: false, // 禁用 ES2015 Harmony import/export
+          requireInclude: false, // 禁用 require.include
+          requireEnsure: false, // 禁用 require.ensure
+          requireContext: false, // 禁用 require.context
+          browserify: false, // 禁用特殊处理的 browserify bundle
+          requireJs: false, // 禁用 requirejs.*
+          node: false, // 禁用 __dirname, __filename, module, require.extensions, require.main, 等。
+          node: {...}, // 在模块级别(module level)上重新配置 [node](/configuration/node) 层(layer)
+          worker: ["default from web-worker", "..."] // 自定义 WebWorker 对 JavaScript 的处理，其中 "..." 为默认值。
+        }
+      }
+    ]
+  }
+}
+```
+
+### Resolve
+
+Resolve配置Webpack如何寻找模块所对应的文件
+
+- alias配置项通过别名来将原导入路径映射成一个新的导入路径。
+
+```js
+const path = require('path');
+
+module.exports = {
+  //...
+  resolve: {
+    alias: {
+      Utilities: path.resolve(__dirname, 'src/utilities/'),
+      Templates: path.resolve(__dirname, 'src/templates/'),
+    },
+  },
+};
+```
+
+- mainFields，有一些第三方模块会针对不同的环境提供几份代码。mainFields用来决定优先采用哪份代码。mainFields: ['browser', 'module', 'main'],
+- extensions，在导入的语句没有带文件后缀时，Webpack会自动带上后缀去尝试访问文件是否存在。
+  - 问题：影响构建速度
+
+```js
+module.exports = {
+  //...
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.json'],
+  },
+};
+```
+
+- modules。告诉 webpack 解析模块时应该搜索的目录，默认为'node_modules'，但是有时我们会从其他目录下引用模块。
+
+```js
+const path = require('path');
+
+module.exports = {
+  //...
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+  },
+};
+```
+
+- enforceExtension配置为true，则所有导入语句都必须带文件后缀，`import './foo.js'`
+
+### DevServer
+
+- hot配置是否启用模块热替换功能。
+- headers配置项可以在HTTP响应中注入一些HTTP响应头。
+- host配置项用于配置DevServer服务监听的地址。
+- port配置项用于配置DevServer服务器监听的端口，默认8080
+- proxy配置项用来启用代理
+- inline，DevServer的实时预览功能依赖一个注入页面里的代理客户端，去接收来自DevServer的命令并负责刷新网页的工作，inline用于配置是否将代理客户端自动注入将运行在页面中的Chunk里，默认注入，
+- https配置项用来启用HTTPS服务，会自动生成一份HTTPS证书，也可以自己配置。
+- compress配置项用来启用Gzip压缩
 
 ### Plugin
 
@@ -146,6 +256,75 @@ module.exports = {
   ]
 };
 ```
+
+
+
+上面已经把几个重要的概念的相关配置熟悉了下，下面开始干正事：配置。
+
+
+
+## 配置Webpack
+
+### 切入角度
+
+- 项目
+  - 使用什么框架
+  - 项目**构建目标**
+- 开发环境
+  - 更好的**开发体验**
+  - 更快的刷新响应速度
+  - 更好的调试体验
+- 生产环境
+  - 更小的代码体积
+  - 更小的宽带流量
+  - 更好的**用户体验**
+
+### 配置
+
+- Babel，将新的ES6代码转为ES5代码，为新的API注入polyfill。
+- scss-loader，css-loader，style-loader。将scss转换为css。
+- PostCSS为CSS属性自动添加浏览器前缀，使用最新的CSS语法。
+- vue-loader，解析和转化.vue文件，提取其中的script、style、template，再将他们分别交给对应的Loader处理。
+- file-loader可以将javascript和css中导入图片的语句替换为正确的地址，同时将文件输出到对应的位置
+- Source Map，devtool选项用于控制是否生成，以及如何生成 source map。选择一种 [source map](http://blog.teamtreehouse.com/introduction-source-maps) 格式来增强调试过程。不同的值会影响到**构建(build)和重新构建(rebuild)的速度**。此处应该参考[DevTool配置项](https://webpack.docschina.org/configuration/devtool/)对开发环境或者生产环境进行配置。
+
+### 优化
+
+- **缩小文件搜索范围**
+  - 优化loader，通过loader的test、include、exclude三个配置项，明确哪些文件需要loader处理，哪些不需要。
+  - 优化resolve.modules配置，让Webpack明确去哪些目录下寻找第三方模块，减少匹配。
+  - 优化resolve.mainFields配置，明确第三方模块使用的入口文件。
+  - 优化resolve.alias配置，通过别名来将原导入路径映射成一个新的导入路径。
+  - 优化resolve.extensions配置，在导入模块时，虽然不写文件后缀名比较简洁，但是会为Webpack的打包工作造成影响，它会一直按extensions配置项进行寻找，所以extensions配置项要尽可能小，频率高的放前面，尽可能带上文件后缀。
+  - 优化module.noParse配置，让webpack构建过程中忽略对没采用模块化的文件的递归解析处理，提高构建性能。
+- DllPlugin，**动态链接库**，动态链接库中包含为其他模块调用的函数和数据。要给Web项目构建接入动态链接库的思想，需要完成一下事情：
+  - 将网页依赖的基础模块抽离出来，打包到一个个单独的动态连接库中，在一个动态链接库中可以包含多个模块
+  - 当需要导入的模块存在于某个动态连接库中时，这个模块不能被再次打包，而是去动态链接库中获取
+  - 页面依赖的所有动态链接库都需要被加载
+
+> 为什么接入动态链接库后，会大大提升构建速度？
+>
+> 原因在于，包含大量复用模块的动态链接库只需被编译一次，在之后的构建过程中被动态链接库包含的模块将不会重新编译，而是直接使用动态链接库中的代码。动态链接库中大多数包含的是常用的第三方模块，而这些模块一般不需要升级，则动态链接库就不用重新编译。
+
+- 使用HappyPack开启**多进程构建**。将构建任务分解给多个子进程去并发执行，子进程处理完后再将结果发送给主进程
+- 使用ParalleluglifyPlugin，**开启多进程压缩**。将对多个文件的压缩工作分配给多个子进程去完成，每个子进程其实还是通过UglifyJS去压缩代码，但是变成了并行执行。所以该插件可以更快完成对多个文件的压缩工作。
+- 使用Tree Shaking。剔除Javascript中用不上的代码。
+  - 必须使用 ES2015 模块语法（即 `import` 和 `export`）。
+  - 使用 `mode` 为 `"production"` 的配置项以启用[更多优化项](https://webpack.docschina.org/concepts/mode/#usage)，包括压缩代码与 tree shaking。
+- 使用CommonsChunkPlugin提起公共代码。
+  - 减少网络传输流量，降低服务器成本
+  - 提高用户再次访问其他页面的速度。
+- 分割代码按需加载，
+  - 实现异步加载
+  - 通过PrefetchPlugin实现预加载
+
+
+
+
+
+
+
+
 
 
 
