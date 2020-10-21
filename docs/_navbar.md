@@ -1,7 +1,7 @@
 <!--
  * @Author:JDR
  * @Date: 2020-08-03 11:12:29
- * @LastEditTime: 2020-10-13 15:55:20
+ * @LastEditTime: 2020-10-21 11:27:12
  * @LastEditors: Please set LastEditors
  * @Description: 导航栏
  * @FilePath: \JDR_Blog\docs\_navbar.md
@@ -10,6 +10,7 @@
 * Front End
   * [ECMAScript](Front_End/ECMAScript/)
   * [HTTP](Front_End/HTTP/)
+  * [WebPack](Front_End/Webpack/)
 
 
 <!-- 
