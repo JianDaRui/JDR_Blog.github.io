@@ -274,8 +274,6 @@ null && {} // null
    18 ? "daRui" : 18
    ```
 
-![大哥，给个赞吧](/images/type/kanxini.png)
-
 参考文献：
 
 - 《你不知道的`Javascript`》中卷
