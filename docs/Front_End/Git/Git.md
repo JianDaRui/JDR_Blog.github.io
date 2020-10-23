@@ -7,3 +7,229 @@
 git diff ：本身只显示尚未暂存的改动，而不是自上次提交以来所做的所有改动
 
 切换分支时要留意你的工作目录和暂存区里那些还没有被提交的修改， 它可能会和你即将检出的分支产生冲突从而阻止 Git 切换到该分支。 最好的方法是，在你切换分支之前，保持好一个干净的状态。
+
+
+
+文件所处状态：
+
+- **已提交（committed）**。已提交表示数据已经安全地保存在本地数据库中。
+- **已修改（modified）** 。已修改表示修改了文件，但还没保存到数据库中。
+- **已暂存（staged）**。已暂存表示对一个已修改文件的当前版本做了标记，使之包含在下次提交的快照中。
+
+- 已追踪
+- 未追踪
+
+
+
+- git --version
+- git config
+- git config --list
+
+- git config --global user.name "John Doe"
+- git config --global `user.email johndoe@example.com`
+
+- git help
+
+- git add -h
+
+- git init
+
+- git add 
+
+  - 开始跟踪新文件
+  - 把已跟踪的文件放到暂存区
+  - 用于合并时把有冲突的文件标记为已解决状态
+  - 运行了 `git add` 之后又作了修订的文件，需要重新运行 `git add` 把最新版本重新暂存起来
+
+- git clone  <url>
+
+- git status
+
+  - git status -s / git status --short
+  -  新添加的未跟踪文件前面有 `??` 标记
+  - 新添加到暂存区中的文件前面有 `A` 标记
+  - 修改过的文件前面有 `M` 标记。
+
+  ```console
+  $ git status -s
+   M README
+  MM Rakefile
+  A  lib/git.rb
+  M  lib/simplegit.rb
+  ?? LICENSE.txt
+  ```
+
+- `.gitignore` 文件  的格式规范如下：
+  - 所有空行或者以 `#` 开头的行都会被 Git 忽略。
+  - 可以使用标准的 glob 模式匹配，它会递归地应用在整个工作区中。
+  - 匹配模式可以以（`/`）开头防止递归。
+  - 匹配模式可以以（`/`）结尾指定目录。
+  - 要忽略指定模式以外的文件或目录，可以在模式前加上叹号（`!`）取反。
+
+```
+# 忽略所有的 .a 文件
+*.a
+
+# 但跟踪所有的 lib.a，即便你在前面忽略了 .a 文件
+!lib.a
+
+# 只忽略当前目录下的 TODO 文件，而不忽略 subdir/TODO
+/TODO
+
+# 忽略任何目录下名为 build 的文件夹
+build/
+
+# 忽略 doc/notes.txt，但不忽略 doc/server/arch.txt
+doc/*.txt
+
+# 忽略 doc/ 目录及其所有子目录下的 .pdf 文件
+doc/**/*.pdf
+```
+
+- git diff。比较的是工作目录中当前文件和暂存区域快照之间的差异。 也就是修改之后还没有暂存起来的变化内容。
+
+- git diff --staged。将比对已暂存文件与最后一次提交的文件差异。
+
+- `git diff --cached` 查看已经暂存起来的变化
+
+- git commit
+
+- git commit -a / git commit --all 。Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 `git add` 步骤。
+
+- git rm <filename>：将某个文件从已跟踪文件清单中移除（确切地说，是从暂存区域移除）
+
+- git rm -f <filename>：删除之前修改过或已经放到暂存区的文件，强制删除
+
+- git mv file_from file_to
+
+- git log：查看提交历史
+
+- git log -p：显示每次提交所引入的差异（按 **补丁** 的格式输出）
+
+- git log -p -2：可以限制显示的日志条目数量，例如使用 `-2` 选项来只显示最近的两次提交
+
+- git log --stat：看到每次提交的**简略统计信息**
+
+- `git log --pretty=format`：可以使用不同于默认格式的方式展示提交历史， `format` 可以定制记录的显示格式
+
+- git log --since=2.weeks。 限制输出长度。`--since` 和 `--until` 这种按照时间作限制的选项很有用
+
+- 在 [限制 `git log` 输出的选项](https://git-scm.com/book/zh/v2/ch00/limit_options) 中列出了常用的选项
+
+  | 选项                  | 说明                                       |
+  | :-------------------- | :----------------------------------------- |
+  | `-<n>`                | 仅显示最近的 n 条提交。                    |
+  | `--since`, `--after`  | 仅显示指定时间之后的提交。                 |
+  | `--until`, `--before` | 仅显示指定时间之前的提交。                 |
+  | `--author`            | 仅显示作者匹配指定字符串的提交。           |
+  | `--committer`         | 仅显示提交者匹配指定字符串的提交。         |
+  | `--grep`              | 仅显示提交说明中包含指定字符串的提交。     |
+  | `-S`                  | 仅显示添加或删除内容匹配指定字符串的提交。 |
+  | --no-merges           | 去掉合并的信息                             |
+
+- git commit --amend：
+- git reset HEAD <file>：取消暂存
+- git checkout -- CONTRIBUTING.md：撤消对文件的修改。**请务必记得 `git checkout -- <file>` 是一个危险的命令。 你对那个文件在本地的任何修改都会消失——Git 会用最近提交的版本覆盖掉它。 除非你确实清楚不想要对那个文件的本地修改了，否则请不要使用这个命令。**
+- git remote -v：会显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL。
+
+- git remote add <shortname> <url>：添加一个新的远程 Git 仓库，同时指定一个方便使用的简写：
+- git fetch <remote>：从远程仓库中抓取与拉取。这个命令会访问远程仓库，从中拉取所有你还没有的数据。 执行完成后，你将会拥有那个远程仓库中所有分支的引用，可以随时合并或查看。
+
+> 如果你使用 `clone` 命令克隆了一个仓库，命令会自动将其添加为远程仓库并默认以 “origin” 为简写。 所以，`git fetch origin` 会抓取克隆（或上一次抓取）后新推送的所有工作。 必须注意 `git fetch` 命令只会将数据下载到你的本地仓库——它并不会自动合并或修改你当前的工作。 当准备好时你必须手动将其合并入你的工作。
+>
+> 如果你的当前分支设置了跟踪远程分支（阅读下一节和 [Git 分支](https://git-scm.com/book/zh/v2/ch00/ch03-git-branching) 了解更多信息）， 那么可以用 `git pull` 命令来自动抓取后合并该远程分支到当前分支。 这或许是个更加简单舒服的工作流程。默认情况下，`git clone` 命令会自动设置本地 master 分支跟踪克隆的远程仓库的 `master` 分支（或其它名字的默认分支）。 运行 `git pull` 通常会从最初克隆的服务器上抓取数据并自动尝试合并到当前所在的分支。
+
+- git push <remote> <branch>：推送到远程仓库。
+- git remote show <remote>：查看某一个远程仓库的更多信息。
+- git remote rename <oldname> <newname>：修改一个远程仓库的简写名。
+  - 注意的是这同样也会修改你所有远程跟踪的分支名字。
+- git remote remove <repName>:移除一个远程仓库
+  - 所有和这个远程仓库相关的远程跟踪分支以及配置信息也会一起被删除
+- git tag：列出标签
+  - git tag -l "v1.8.5*"： 如果只列出1.8.5 系列的标签。
+- 创建标签
+  - 轻量标签：轻量标签很像一个不会改变的分支——它只是某个特定提交的引用。
+  - 附注标签：是存储在 Git 数据库中的一个完整对象， 它们是可以被校验的，其中包含打标签者的名字、电子邮件地址、日期时间， 此外还有一个标签信息，并且可以使用 GNU Privacy Guard （GPG）签名并验证。
+
+- 附注标签
+
+在 Git 中创建附注标签十分简单。 最简单的方式是当你在运行 `tag` 命令时指定 `-a` 选项：
+
+```console
+$ git tag -a v1.4 -m "my version 1.4"
+$ git tag
+v0.1
+v1.3
+v1.4
+```
+
+`-m` 选项指定了一条将会存储在标签中的信息。 如果没有为附注标签指定一条信息，Git 会启动编辑器要求你输入信息。
+
+通过使用 `git show` 命令可以看到标签信息和与之对应的提交信息：
+
+```console
+$ git show v1.4
+tag v1.4
+Tagger: Ben Straub <ben@straub.cc>
+Date:   Sat May 3 20:19:12 2014 -0700
+
+my version 1.4
+
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+```
+
+输出显示了打标签者的信息、打标签的日期时间、附注信息，然后显示具体的提交信息。
+
+- 轻量标签
+
+另一种给提交打标签的方式是使用轻量标签。 轻量标签本质上是将提交校验和存储到一个文件中——没有保存任何其他信息。 创建轻量标签，不需要使用 `-a`、`-s` 或 `-m` 选项，只需要提供标签名字：
+
+```console
+$ git tag v1.4-lw
+$ git tag
+v0.1
+v1.3
+v1.4
+v1.4-lw
+v1.5
+```
+
+这时，如果在标签上运行 `git show`，你不会看到额外的标签信息。 命令只会显示出提交信息：
+
+```console
+$ git show v1.4-lw
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon <schacon@gee-mail.com>
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+```
+
+- git tag -d <tagname>：删除标签
+
+  - 上述命令并不会从任何远程仓库中移除这个标签，
+- git push <remote> :refs/tags/<tagname>：更新远程仓库标签
+- git push origin --delete <tagname>：删除远程仓库标签
+- git checkout <tagname>：检出标签。 这会使你的仓库处于“分离头指针（detached HEAD）”的状态。这个状态下不建议进行修改操作。
+- git branch <branchname>: 创建分支
+- git checkout  <branchname>: 切换分支
+- git checkout -b <branchname>: 创建并切换到新的分支
+- git merge <branchname>: 合并分支
+- git branch -v:  查看每一个分支的最后一次提交，
+- git branch --merged:   要查看哪些分支已经合并到当前分支
+- git branch --no-merged:  看所有包含未合并工作的分支
+- git branch -d <branchname>:  删除某一个分支
+- `git remote show <remote>` 获得远程分支的更多信息
+- git fetch <remote>与给定的远程仓库同步数据  。从中抓取本地没有的数据，并且更新本地数据库，移动 `origin/master` 指针到更新之后的位置。当 `git fetch` 命令从服务器上抓取本地没有的数据时，它并不会修改工作目录中的内容。 它只会获取数据然后让你自己合并
+- 有一个命令叫作 `git pull` 在大多数情况下它的含义是一个 `git fetch` 紧接着一个 `git merge` 命令
+- git push origin --delete  <branchname>:  删除远程分支
+- git rebase <branchname>: 变基。提交到某一分支上的所有修改都移至另一分支上，就好像“重新播放”一样。
+  - 变基使得提交历史更加整洁
+  - 该项目的维护者就不再需要进行整合工作，只需要快进合并便可。
+  - **如果提交存在于你的仓库之外，而别人可能基于这些提交进行开发，那么不要执行变基。**
+- git rebase --onto master server client
+- 
