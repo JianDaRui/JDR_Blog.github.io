@@ -242,3 +242,10 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
 - 使用 `git clean -f -d` 命令来移除工作目录中所有未追踪的文件以及空的子目录。 `-f` 意味着“强制（force）”或“确定要移除”，使用它需要 Git 配置变量 `clean.requireForce` 没有显式设置为 `false`。
 - git grep。Git 提供了一个 `grep` 命令，你可以很方便地从提交历史、工作目录、甚至索引中查找一个字符串或者正则表达式。 我们用 Git 本身源代码的查找作为例子。
 - git commit --amend。这条命令会将最后一次的提交信息载入到编辑器中供你修改。 当保存并关闭编辑器后，编辑器会将更新后的提交信息写入新提交中，它会成为新的最后一次提交。
+  - `git commit --amend` 以新的改进后的提交来 **替换** 掉旧有的最后一次提交，
+- git rebase -i HEAD~3。通过变基修改多个提交信息。
+- git filter-branch。会用来擦洗整个提交历史的工具
+- git reset --soft HEAD~。撤销了上一次 `git commit` 命令。
+- git reset [--mixed] HEAD~。更新索引。
+- git reset --hard HEAD~。更新工作目录
+- 
