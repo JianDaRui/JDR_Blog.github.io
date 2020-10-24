@@ -2,9 +2,48 @@
 
 
 
-`git add` ：可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等。
+## Git基本概念
 
-git diff ：本身只显示尚未暂存的改动，而不是自上次提交以来所做的所有改动
+Git维护两个主要的数据结构：对象库（object store）和索引（index）
+
+### 对象库
+
+​		对象库包含原始数据文件、日志消息、作者信息、日期，以及其他用来重建项目任意版本或者分支的信息。
+
+4种数据类型：
+
+- 块(blob)
+  - 文件的每一个版本标识为一个块(blob)
+  -  处于数据结构的低端，什么也不引用而且只能被树对象引用
+- 目录树(tree)
+  - 一个目录树对象代表一层目录信息
+  - 指向若干blob对象，或者其他tree对象
+  - 记录blob标识符、路径名和一个目录里所有文件的一些元数据
+  - 可以递归引用其他目录树和子树对象
+- 提交(commit)
+  - 保存版本库中每一次变化的元数据，包括作者、提交者、提交日期和日志消息
+  - 指向一个特定的tree对象，及一个或多个父提交对象。并且这个tree对象是由commit对象引入版本库的
+  - 数据流从父提交流向子提交（这也是版本库的状态箭头反画的原因）
+- 标签(tag)
+  - 分配一个任意的且我们可读的名字给一个特定对象
+  - 本质就是一个被标记的commit对象
+  - 轻量标签只是一个提交对象的索引，通常被版本库视为是私有的
+  - 附注标签会创建一个tag对象
+
+### 索引
+
+​		索引是一个临时的、动态的二进制文件，用以描述整个版本库的目录结构。实质用以捕获项目在某一个时刻的整体结构的一个版本。通常用以暂存变更，比如添加、删除或者变基某个文件或某些文件。
+
+
+
+​		Git本质是一个内容寻址文件系统。核心部分是一个简单的键值对数据库（key-value data store）。 可以向 Git 仓库中插入任意类型的内容，它会返回一个唯一的键（SHA-1值），通过该键可以在任意时刻再次取回该内容。特点：
+
+- 基于追踪文件内容，而不是文件名称、目录名
+- 存储文件快照，保存文件版本，而不是差异
+
+
+
+​		当使用git add命令时，git会给添加的每个文件的内容创建一个对象，但它并不会马上为tree创建一个对象。相反，索引更新了，索引位于.git/index中，他跟踪文件的路径名和相应的blob。每次执行命令（例  git add、git rm 或者 git mv）的时候，git会用新的路径名和blob信息更新索引。
 
 切换分支时要留意你的工作目录和暂存区里那些还没有被提交的修改， 它可能会和你即将检出的分支产生冲突从而阻止 Git 切换到该分支。 最好的方法是，在你切换分支之前，保持好一个干净的状态。
 
@@ -15,24 +54,28 @@ git diff ：本身只显示尚未暂存的改动，而不是自上次提交以�
 - **已提交（committed）**。已提交表示数据已经安全地保存在本地数据库中。
 - **已修改（modified）** 。已修改表示修改了文件，但还没保存到数据库中。
 - **已暂存（staged）**。已暂存表示对一个已修改文件的当前版本做了标记，使之包含在下次提交的快照中。
-
 - 已追踪
 - 未追踪
 
+指令：
 
+- git：获取git选项和最常用的子命令
+- git help：获取常用git子命令表
+- git help --all：获取完整git子命令表（多的吓人😂）
 
-- git --version
-- git config
-- git config --list
+- git --version：显示git版本号
 
-- git config --global user.name "John Doe"
-- git config --global `user.email johndoe@example.com`
+- git init：初始化版本库
 
-- git help
+- git config：获取git配置选项
+
+- git config --list：获取本地git配置信息
+
+- git config --global user.name "John Doe"：配置提交作者名称
+
+- git config --global `user.email johndoe@example.com`：配置提交作者邮箱
 
 - git add -h
-
-- git init
 
 - git add 
 
@@ -248,4 +291,11 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
 - git reset --soft HEAD~。撤销了上一次 `git commit` 命令。
 - git reset [--mixed] HEAD~。更新索引。
 - git reset --hard HEAD~。更新工作目录
+- [Git重置揭秘](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86)
+- git checkout [branch]。
+- git merge --abort。退出合并
+- git submodule add <URL> 添加子模块
+- `git reflog` 命令来了解你曾经做过什么
+- `git log -g`，这个命令会以标准日志的格式输出引用日志。
 - 
+
