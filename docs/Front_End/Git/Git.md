@@ -120,6 +120,17 @@ Git维护两个主要的数据结构：对象库（object store）和索引（in
 - 在当前分支中但不在要被检出的分支中的文件和目录，会从工作树中删除
 - 这两个分支都有的文件会被修改为要检出的分支的内容
 
+删除分支
+
+- Git会阻止删除当前分支
+- 会阻止删除一个包含不存在与当前分支中的提交的分支
+  - 意思是如果删除的分支不是以当前分支的某个提交节点开始的，那就不能删除
+- 不会保持任何形式的关于分支名创建、移动、操纵、合并或删除的历史记录
+
+
+
+
+
 指令：
 
 - git
@@ -210,7 +221,16 @@ doc/*.txt
 doc/**/*.pdf
 ```
 
-- git diff。比较的是工作目录中当前文件和暂存区域快照之间的差异。 也就是修改之后还没有暂存起来的变化内容。
+- git diff。
+  - 会显示工作目录和索引(暂存区)之间的差异
+- git diff commit 
+  - 会显示工作目录和给定提交间的差异、
+- git diff --cached commit
+  - 显示索引中的变更中和给定提交中的变更之间的差异。
+  - 如果省略commit，则默认为HEAD
+- git diff commit1 commit2
+  - 会显示指定的两个提交之间的差异
+  - 这条命令会忽略索引和工作目录
 - git diff --staged。将比对已暂存文件与最后一次提交的文件差异。
 - `git diff --cached` 查看已经暂存起来的变化
 - git commit
@@ -342,6 +362,7 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
 - git branch <branchname>: 创建分支
 - git checkout  <branchname>: 切换分支
 - git checkout -b <branchname>: 创建并切换到新的分支
+- git checkout -m <branchname>: 合并并检出目标分支
 - git merge <branchname>: 合并分支
 - git branch -v:  查看每一个分支的最后一次提交，
 - git branch --merged:   要查看哪些分支已经合并到当前分支
