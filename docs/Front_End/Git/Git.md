@@ -125,7 +125,7 @@
   - 意思是如果删除的分支不是以当前分支的某个提交节点开始的，那就不能删除
 - 不会保持任何形式的关于分支名创建、移动、操纵、合并或删除的历史记录
 
-指令：
+### 指令
 
 - `git`
   - 获取git选项和最常用的子命令
@@ -500,3 +500,9 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
 - `git diff --ours === git diff HEAD`
 - `git diff theirs === git diffMERGE_HEAD`
 - git 
+
+
+推荐阅读：
+ - 《Git版本控制管理》
+ - [《Git Book》](https://git-scm.com/book/en/v2)
+ - [Git内部原理揭秘！](https://zhuanlan.zhihu.com/p/96631135)
