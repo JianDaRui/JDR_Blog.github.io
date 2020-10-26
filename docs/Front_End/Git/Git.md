@@ -392,12 +392,31 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
 - git filter-branch。会用来擦洗整个提交历史的工具
 - git reset --soft HEAD~。撤销了上一次 `git commit` 命令。
 - git reset [--mixed] HEAD~。更新索引。
-- git reset --hard HEAD~。更新工作目录
+- git reset --hard HEAD~。
+  - 中止或重新启动合并任务，立即把工作目录还原到git merge命令之前
+  - 更新工作目录
+- git reset --hard ORIG_HEAD
+  - 中止或在它已经结束（已经引进一个新的合并提交）后放弃
+  - 这时因为在开始合并操作前，Git把原始分支的HEAD保存在ORIG_HEAD中
+  - 注意保持目录中没有任何未提交的修改，因为此操作会丢失脏内容
 - [Git重置揭秘](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E9%87%8D%E7%BD%AE%E6%8F%AD%E5%AF%86)
 - git checkout [branch]。
 - git merge --abort。退出合并
+- git merge-base
+  - 找到两个或两个以上分支之间的合并基础。一组分支等效的合并基础可能不止一个。
 - git submodule add <URL> 添加子模块
 - `git reflog` 命令来了解你曾经做过什么
 - `git log -g`，这个命令会以标准日志的格式输出引用日志。
+- git log --graph
+  - 使用提交图查看工具
+- 如果想知道什么时候、为什么、如何和有谁把冲突的内容添加到文件中的可以使用
+  - git log --merge：只显示跟产生冲突的文件相关的提交
+  - git log --left-right：如果提交来自合并的"左"边则显示<（"我们的"版本，就是你开始的版本），如果提交来自合并的"右"边则显示>（"他们的"版本，就是你要合并到的版本）
+  - git log -p：显示提交消息和每个提交相关联的补丁
+- git ls-files -u
+  - 显示工作树中仍然未合并的一组文件
+- git ls-files -s 
+  - 显示所有文件的各个阶段
+- git diff --ours === git diff HEAD
+- git diff theirs === git diffMERGE_HEAD
 - 
-
