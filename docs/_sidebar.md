@@ -7,7 +7,11 @@
  * @FilePath: \JDR_Blog\docs\sidebar.md
 --> 
 * [ECMAscript](Front_End/ECMAscript/)
+* [HTTP](Front_End/HTTP/)
+* [Webpack](Front_End/Webpack/)
+* [Git](Front_End/Git/)
 
 <!-- * [HTTP](Front_End/HTTP/)
+
 * [Vue](Front_End/Vue/)
 * [React](Front_End/React/) -->
