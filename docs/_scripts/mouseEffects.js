@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 19:41:29
- * @LastEditTime: 2020-08-03 19:54:45
+ * @LastEditTime: 2020-10-27 17:58:11
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \JDR_Blog\docs\_scripts\mouseEffects.js
@@ -16,6 +16,9 @@ var tips = [
   'Http 🐷',
   'Node 🐀',
   'TypeScript 🐍',
+  'Java ☕',
+  'Webpack 💒',
+  'Mysql 📉',
   '成长 🐱‍🏍',
   '撸铁 🐱‍👤',
   '读书 🤓',

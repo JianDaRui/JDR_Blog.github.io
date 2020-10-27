@@ -33,11 +33,11 @@
 
 - `Object.getAttribute()`，只能通过元素节点对象调用，用于查询属性的名字
 - `Object.setAttribute()`，用于对属性节点的值进行修改
-- element.childNodes，用来获取任何一个元素的所有子元素，是一个包含这个元素全部子元素的数组
-- nodeType属性，用以明确节点类型
-  - 元素节点的nodeType属性值是1
-  - 属性节点的nodeType属性值是2
-  - 文本节点的nodeType属性值是2
-- nodeValue属性，用来得到一个节点的值
-- node.firstChild和node.lastChild属性，分别用来获取一个节点的第一个或者最后一个子节点
+- `element.childNodes`，用来获取任何一个元素的所有子元素，是一个包含这个元素全部子元素的数组
+- `nodeType`属性，用以明确节点类型
+  - 元素节点的`nodeType`属性值是1
+  - 属性节点的`nodeType`属性值是2
+  - 文本节点的`nodeType`属性值是2
+- `nodeValue`属性，用来得到一个节点的值
+- `node.firstChild`和`node.lastChild`属性，分别用来获取一个节点的第一个或者最后一个子节点
                                                                 
