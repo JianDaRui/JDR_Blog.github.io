@@ -499,10 +499,10 @@ Date:   Mon Mar 17 21:52:11 2008 -0700
   - 显示所有文件的各个阶段
 - `git diff --ours === git diff HEAD`
 - `git diff theirs === git diffMERGE_HEAD`
-- git 
 
 
 推荐阅读：
  - 《Git版本控制管理》
  - [《Git Book》](https://git-scm.com/book/en/v2)
+ - [Git Magic](http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/index.html) (未读)
  - [Git内部原理揭秘！](https://zhuanlan.zhihu.com/p/96631135)
