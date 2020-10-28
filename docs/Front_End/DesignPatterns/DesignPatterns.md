@@ -83,3 +83,27 @@ var ProxySingletonCreateDiv = (function() {
 ```
 
 通过代理实现单例模式，任何普通的类如果需要，都可以通过代理来实现。对目标实例与类进行的拆分。
+
+
+
+```js
+function GetGrilFriend(cuteGirl) {
+    this.girlFriend = cuteGirl
+}
+GetGrilFriend.cuteGrilFriend = null
+GetGrilFriend.prototype.showGirlFriend = function() {
+    alert(this.girlFriend)
+}
+// hasGirlFriend作为全局访问点
+GetGrilFriend.hasGirlFriend = function(cuteGirl) {
+    if(!this.cuteGrilFriend) {
+        this.cuteGrilFriend = new GetGrilFriend(cuteGirl)
+    }
+    return this.cuteGrilFriend
+}
+
+let youGirlFriend = GetGrilFriend.hasGirlFriend("大乔")
+let yourGirlFriend = GetGrilFriend.hasGirlFriend("小乔")
+console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
+```
+
