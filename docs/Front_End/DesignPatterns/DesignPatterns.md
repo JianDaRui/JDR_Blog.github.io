@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 ## 单例模式
 
 特点：保证一个类仅有一个实例，并提供一个访问它的**全局访问点**
@@ -84,6 +92,12 @@ var ProxySingletonCreateDiv = (function() {
 
 通过代理实现单例模式，任何普通的类如果需要，都可以通过代理来实现。对目标实例与类进行的拆分。
 
+惰性代理模式
+
+
+
+
+
 
 
 ```js
@@ -109,8 +123,12 @@ GetGrilFriend.hasGirlFriend = (function() {
 let youGirlFriend = GetGrilFriend.hasGirlFriend("大乔")
 let yourGirlFriend = GetGrilFriend.hasGirlFriend("小乔")
 console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
+
 ```
 
+
+
+对象介绍所代理实现
 
 
 ```js
