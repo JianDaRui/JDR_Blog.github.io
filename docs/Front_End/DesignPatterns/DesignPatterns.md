@@ -88,22 +88,52 @@ var ProxySingletonCreateDiv = (function() {
 
 ```js
 function GetGrilFriend(cuteGirl) {
-    this.girlFriend = cuteGirl
+    this.cuteGirl = cuteGirl
 }
-GetGrilFriend.cuteGrilFriend = null
+
 GetGrilFriend.prototype.showGirlFriend = function() {
-    alert(this.girlFriend)
+    alert(this.cuteGirl)
 }
 // hasGirlFriend作为全局访问点
-GetGrilFriend.hasGirlFriend = function(cuteGirl) {
-    if(!this.cuteGrilFriend) {
-        this.cuteGrilFriend = new GetGrilFriend(cuteGirl)
+GetGrilFriend.hasGirlFriend = (function() {
+    let cuteGrilFriend = null
+    return function(cuteGirl) {
+		if(!cuteGrilFriend) {
+   		     cuteGrilFriend = new GetGrilFriend(cuteGirl)
+    	}
+   		 return cuteGrilFriend
     }
-    return this.cuteGrilFriend
-}
+    
+})()
 
 let youGirlFriend = GetGrilFriend.hasGirlFriend("大乔")
 let yourGirlFriend = GetGrilFriend.hasGirlFriend("小乔")
+console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
+```
+
+
+
+```js
+function GetGrilFriend(cuteGirl) {
+    this.cuteGirl = cuteGirl
+}
+
+GetGrilFriend.prototype.showGirlFriend = function() {
+    alert(this.cuteGirl)
+}
+
+var ProxyGrilFriendIntroduce = (function() {
+	var cuteGrilFriend
+    return function(cuteGirl) {
+        if(!cuteGrilFriend) {
+            cuteGrilFriend = new GetGrilFriend(cuteGirl)
+        }
+        return cuteGrilFriend
+    }
+})()
+
+let youGirlFriend = new ProxyGrilFriendIntroduce("大乔")
+let yourGirlFriend = new ProxyGrilFriendIntroduce("小乔")
 console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
 ```
 
