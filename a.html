@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=
+  , initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // 你的
+    // 1.创建获取GirlFriend的类
+    function YouGirlFriend(cuteGirl) {
+      this.cuteGirl = cuteGirl
+    }
+    YouGirlFriend.prototype.showGirlFriend = function () {
+      alert(this.cuteGirl)
+    }
+    // 孩子的
+    function ChildGirlFriend(cuteGirl) {
+      this.cuteGirl = cuteGirl
+    }
+    ChildGirlFriend.prototype.showGirlFriend = function () {
+      alert(this.cuteGirl)
+    }
+    // 3.代理保证目标对象唯一
+    function proxyGirlFriendIntroduce(fn, cuteGirl) {
+      fn.cuteGirlFriend = null
+      return function () {
+        return fn.cuteGirlFriend || (fn.cuteGirlFriend = new fn(cuteGirl))
+      }
+    }
+
+    let youGirlFriend = proxyGirlFriendIntroduce(YouGirlFriend, "大瑞")
+    let youGirlFriends = proxyGirlFriendIntroduce(YouGirlFriend, "大乔")
+    let childGirlFriend = proxyGirlFriendIntroduce(ChildGirlFriend, "小瑞")
+    let childGirlFriends = proxyGirlFriendIntroduce(ChildGirlFriend, "小乔")
+    console.dir(youGirlFriend())
+    console.dir(youGirlFriends())
+    console.dir(childGirlFriend())
+    console.dir(childGirlFriends())
+  </script>
+</body>
+
+</html>

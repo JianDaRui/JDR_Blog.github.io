@@ -1,6 +1,6 @@
 ## JavaScript单例模式给你分配一个`cuteGirl`
 
-马上就双十一了，我知道好多同志还没有对象，所以今天大瑞通过单例模式来给大家一人分配一个，只准有一个。
+马上就双十一了，我知道好多同志还没有对象，所以今天大瑞通过**单例模式**来给大家一人分配一个，只准有一个。
 
 单例模式根本不给渣男机会！！！
 
@@ -63,37 +63,41 @@ yourGirlFriend.showGirlFriend() // "大瑞"
 
 ### 对象介绍所代理实现
 
-
 ```js
 // 你的
-// 1.创建获取GrilFriend的类
-function YouGrilFriend(cuteGirl) {
-	this.cuteGirl = cuteGirl
+// 1.创建获取GirlFriend的类
+function YouGirlFriend(cuteGirl) {
+  this.cuteGirl = cuteGirl
 }
-//2. 秀GrilFriend的方法
-YouGrilFriend.prototype.showGirlFriend = function () {
-	alert(this.cuteGirl)
+// 2.秀GirlFriend
+YouGirlFriend.prototype.showGirlFriend = function () {
+  alert(this.cuteGirl)
 }
 // 孩子的
-function ChildGrilFriend(cuteGirl) {
-	this.cuteGirl = cuteGirl
+function ChildGirlFriend(cuteGirl) {
+  this.cuteGirl = cuteGirl
 }
-ChildGrilFriend.prototype.showGirlFriend = function () {
-	alert(this.cuteGirl)
+ChildGirlFriend.prototype.showGirlFriend = function () {
+  alert(this.cuteGirl)
 }
 // 3.代理保证目标对象唯一
-function ProxyGrilFriendIntroduce(Fn, cuteGirl) {
-	let cuteGrilFriend
-	return (function () {
-		return cuteGrilFriend || (cuteGrilFriend = new Fn(cuteGirl))
-	})()
+function proxyGirlFriendIntroduce(fn, cuteGirl) {
+  fn.cuteGirlFriend = null
+  return function () {
+    return fn.cuteGirlFriend || (fn.cuteGirlFriend = new fn(cuteGirl))
+  }
 }
-    
-let youGirlFriend = new ProxyGrilFriendIntroduce(YouGrilFriend, "大瑞")
-let childGirlFriend = new ProxyGrilFriendIntroduce(ChildGrilFriend, "小瑞")
-youGirlFriend.showGirlFriend() // "大瑞"
-childGirlFriend.showGirlFriend() // "小瑞"
+
+let youGirlFriend = proxyGirlFriendIntroduce(YouGirlFriend, "大瑞")
+let youGirlFriends = proxyGirlFriendIntroduce(YouGirlFriend, "大乔")
+let childGirlFriend = proxyGirlFriendIntroduce(ChildGirlFriend, "小瑞")
+let childGirlFriends = proxyGirlFriendIntroduce(ChildGirlFriend, "小乔")
+console.dir(youGirlFriend())
+console.dir(youGirlFriends())
+console.dir(childGirlFriend())
+console.dir(childGirlFriends())
 ```
+
 
 > 代理模式实现单例的优点：
 >
@@ -107,16 +111,15 @@ childGirlFriend.showGirlFriend() // "小瑞"
 - 关键逻辑代码：
 
 ```js
-let Singleton =(function(XXX) {
-    let obj
-	if(!obj) {
-    	obj = XXX
-	}
-	return obj
-})()
+let obj
+if(!obj) {
+    obj = XXX
+}
 ```
 
 
+
+> 温暖的女人的怀抱，对男人来说，永远就象港湾对于远航的船、襁褓对于婴儿一般的重要。这怀抱象大地一样宽阔而深厚，抚慰着男儿们创伤的心灵，给他温暖，快乐和重新投入风暴的力量！——路遥
 
 参考文献：
 

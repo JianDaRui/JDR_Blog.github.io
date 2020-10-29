@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 ## 单例模式
 
 特点：保证一个类仅有一个实例，并提供一个访问它的**全局访问点**
@@ -95,63 +87,4 @@ var ProxySingletonCreateDiv = (function() {
 惰性代理模式
 
 
-
-
-
-
-
-```js
-function GetGrilFriend(cuteGirl) {
-    this.cuteGirl = cuteGirl
-}
-
-GetGrilFriend.prototype.showGirlFriend = function() {
-    alert(this.cuteGirl)
-}
-// hasGirlFriend作为全局访问点
-GetGrilFriend.hasGirlFriend = (function() {
-    let cuteGrilFriend = null
-    return function(cuteGirl) {
-		if(!cuteGrilFriend) {
-   		     cuteGrilFriend = new GetGrilFriend(cuteGirl)
-    	}
-   		 return cuteGrilFriend
-    }
-    
-})()
-
-let youGirlFriend = GetGrilFriend.hasGirlFriend("大乔")
-let yourGirlFriend = GetGrilFriend.hasGirlFriend("小乔")
-console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
-
-```
-
-
-
-对象介绍所代理实现
-
-
-```js
-function GetGrilFriend(cuteGirl) {
-    this.cuteGirl = cuteGirl
-}
-
-GetGrilFriend.prototype.showGirlFriend = function() {
-    alert(this.cuteGirl)
-}
-
-var ProxyGrilFriendIntroduce = (function() {
-	var cuteGrilFriend
-    return function(cuteGirl) {
-        if(!cuteGrilFriend) {
-            cuteGrilFriend = new GetGrilFriend(cuteGirl)
-        }
-        return cuteGrilFriend
-    }
-})()
-
-let youGirlFriend = new ProxyGrilFriendIntroduce("大乔")
-let yourGirlFriend = new ProxyGrilFriendIntroduce("小乔")
-console.log( youGirlFriend , yourGirlFriend) // 大乔,大乔
-```
 
