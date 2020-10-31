@@ -56,8 +56,6 @@ var b = new CreateDiv("小瑞")
 - 使用自执行函数，创建闭包，作用域
 - 利用闭包中的变量来记录实例
 
-
-
 用代理实现代理模式
 
 ```js
@@ -88,3 +86,28 @@ var ProxySingletonCreateDiv = (function() {
 
 
 
+## 迭代器模式
+
+- 特点:
+  - 提供一种方法顺序访问一个聚合对象中的各个元素,而又不需要暴露该对象的内部表示
+
+```js
+function myEach(ary, callback) {
+	for(let i=0,l=ary.length;i<l;i++) {
+        callback.call(ary[i], i, ary[i])
+	}
+}
+myEach([1,2,3], function(i,n){
+    console.log(i, n)
+})
+```
+
+
+
+### 内部迭代器
+
+- 外界不需要关心迭代器内部的实现,给迭代器交互也仅是一次初始调用.这个是内部迭代器的缺点  
+
+### 外部迭代器
+
+- 必须显示地请求迭代下一个元素
