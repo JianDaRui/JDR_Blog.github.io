@@ -45,3 +45,17 @@ function insertValueSearch(arr, left, right, findVal) {
 
 let index = insertValueSearch(arr, 0, arr.length-1, 7)
 console.log(index)
+
+let arr = []
+arr[0] = 1
+arr[1] = 1
+for(let i=2; i<20; i++) {
+  arr[i] = arr[i-1] + a[i-2]
+}
+// 斐波那契数列
+function fibSearch(arr, key) {
+  let low = 0,
+  heigh = a.length - 1,
+  k = 0,
+  mid = 0,
+}
