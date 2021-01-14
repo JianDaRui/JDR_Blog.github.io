@@ -8,7 +8,7 @@
 
 - 单链表特点
   - 头节点`head`指向第一个节点
-  - 尾节点`next`值为`nul`l
+  - 尾节点`next`值为`null`
   - 每一个节点是一个对象，两个属性：`value`保存值，`next`保存下一节点地址
 
 ###### ![](D:\Study\JDR_Blog\docs\Front_End\Algorithm\LeetCode\LinkList\screen-shot-2018-04-12-at-152754.png)
