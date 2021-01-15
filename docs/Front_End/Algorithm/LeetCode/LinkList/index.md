@@ -180,7 +180,7 @@ var insertionSortList = function(head) {
 提示：
 
 两个链表的节点数目范围是 [0, 50]
--100 <= Node.val <= 100
+-100 <= `Node.val` <= 100
 l1 和 l2 均按 非递减顺序 排列
 
 #### 思路分析
@@ -190,8 +190,40 @@ l1 和 l2 均按 非递减顺序 排列
 1. 这道题可以使用递归实现，新链表也不需要构造新节点，我们下面列举递归三个要素
 2. 终止条件：两条链表分别名为 l1 和 l2，当 l1 为空或 l2 为空时结束
 3. 返回值：每一层调用都返回排序好的链表头
-4. 本级递归内容：如果 l1 的 val 值更小，则将 l1.next 与排序好的链表头相接，l2 同理
-5. O(m+n)O(m+n)，mm 为 l1的长度，nn 为 l2 的长度
+4. 本级递归内容：如果 l1 的 `val` 值更小，则将` l1.next `与排序好的链表头相接，l2 同理
+5. `O(m+n)O(m+n)`，m 为 l1的长度，n 为 l2 的长度
+
+```js
+// 当 l1 小于 l2 时
+// 需要l1做作为前一节点
+// 并比较l1.next与当前l2的大小
+// 获取其中的小值
+l1.next = function(l1.next, l2) {
+    if(l1.next === null) {
+       return l2
+    } else if(l2 === null) {
+        return l1.next         
+    } else if(l1.next.val < l2.val) {
+        return l1.next;
+    } else {
+        return l2;
+    }
+};
+// 同理
+l2.next = function(l1, l2.next) {
+    if(l1 === null) {
+       return l2.next
+    } else if(l2.next === null) {
+        return l1         
+    } else if(l1.val < l2.next.val) {
+        return l1;
+    } else {
+        return l2.next;
+    }
+};
+```
+
+两者结合为递归：
 
 ```js
 /**
@@ -247,7 +279,6 @@ var mergeTwoLists = function(l1, l2) {
         }
         prev = prev.next;
     }
-
     // 合并后 l1 和 l2 最多只有一个还未被合并完，我们直接将链表末尾指向未合并完的链表即可
     prev.next = l1 === null ? l2 : l1;
     return prehead.next;
