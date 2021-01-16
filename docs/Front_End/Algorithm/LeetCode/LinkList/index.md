@@ -285,6 +285,78 @@ var mergeTwoLists = function(l1, l2) {
 };
 ```
 
+### [160. 相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)
+
+#### 思路分析
+
+方法一：暴力解法
+
+1. 双循环。遍历l1中的每个节点寻找l2中是否有相同的节点
+
+```js
+var getIntersectionNode = function (headA, headB) {
+    if (!headA || !headB) return null;
+
+    let pA = headA;
+    while (pA) {
+        let pB = headB;
+
+        while (pB) {
+            if (pA === pB) return pA;
+            pB = pB.next;
+        }
+
+        pA = pA.next;
+    }
+};
+```
+
+方法二：哈希表
+
+1. 遍历链表A，将A中的每个节点存入哈希表中
+2. 遍历链表B，判断哈希表中是否存在B节点
+
+```js
+var getIntersectionNode = function (headA, headB) {
+    if (!headA || !headB) return null;
+
+    let pA = headA;
+    let pB = headB;
+    let hashSet = new Set()
+    while (pA) {
+        hashSet.add(pA)
+        pA = pA.next;
+    }
+    while(pB) {
+        if(hashSet.has(pB)) {
+            return pB
+        }
+        pB = pB.next
+    }
+};
+```
+
+方法三：双指针
+
+1. 两链表一长一短，长的先走完 短的后走完
+2. 相当于先计算出两链表的长度差再从相同的起点开始走，看能否相遇
+3.  `a - b = len`
+4. `b + len = a`
+
+```js
+var getIntersectionNode = function (headA, headB) {
+    if (!headA || !headB) return null;
+
+    let pA = headA;
+    let pB = headB;
+    while (pA !== pB) {
+        pA = pA.next ? pA.next : pB
+        pB = pB.next ? pB.next : PA
+    }
+    return pA
+};
+```
+
 
 
 
