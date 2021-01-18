@@ -20,6 +20,18 @@
 
 ![](D:\Study\JDR_Blog\docs\Front_End\Algorithm\LeetCode\LinkList\screen-shot-2018-04-17-at-161130.png)
 
+
+
+- 单链表反转
+
+- 链表中环的检测
+
+- 两个有序的链表合并
+
+- 删除链表倒数第 n 个结点
+
+- 求链表的中间结点
+
 ## 题目
 
 ### [147. 对链表进行插入排序](https://leetcode-cn.com/problems/insertion-sort-list/)
@@ -357,25 +369,285 @@ var getIntersectionNode = function (headA, headB) {
 };
 ```
 
+### [876. 链表的中间结点](https://leetcode-cn.com/problems/middle-of-the-linked-list/)
+
+#### 思路分析
+
+方法一：快慢指针
+
+1. 设立两个指针fast、slow.
+2. fast永远比slow多走两步
+3. fast走完，slow即为中间节点
+
+```javascript
+var middleNode = function(head) {
+  var fast = slow = head
+  while(fast && fast.next) {
+    slow = slow.next
+    fast = fast.next.next
+  }
+  return slow
+};
+```
+
+方法二：单指针
+
+1. 将链表遍历两边
+2. 第一遍获取链表长度L
+3. 第二遍获取链表L/2处的节点
+
+```javascript
+var middleNode = function(head) {
+  let node = head;
+  let l = 0;
+  while(node) {
+     ++l;
+     node = node.next;
+  }
+  node = head;
+  let k = 0;
+  while(k < Math.floor((l/2))) {
+     ++k;
+     node = node.next;
+  }
+  return node
+};
+```
+
+注意：
+
+1. `++i` 而不是`i++`
+2. `math.floor`的使用
+
+### [141. 环形链表](https://leetcode-cn.com/problems/linked-list-cycle/)
+
+#### 思路分析
+
+方法一：哈希表
+
+1. 遍历链表，将每个节点添加至哈希表
+2. 判断节点是否在哈希表中存在如果有就返回
+
+```javascript
+var hasCycle = function(head) {
+    var curr = head
+    var hashSet = new Set
+    while(curr) {
+      if(!hashSet.has(curr)) {
+        hashSet.add(curr)
+         curr = curr.next
+      } else {
+         return true
+      }
+    }
+    return false
+};
+```
+
+方法二：快慢指针
+
+1. 设立两个指针fast,slow
+2. 快的永远比慢的多走一步
+3. 则如果有环就会相遇
+
+```js
+var hasCycle = function(head) {
+    let slow = head
+    let fast = head.next
+    while(slow !== fast) {
+        if(!fast || !fast.next) return false
+        slow = slow.next
+        fast = fast.next.next
+    }
+    return true
+};
+```
+
+### [142. 环形链表 II](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
+
+#### 思路分析
+
+方法一：哈希表
+
+1. 遍历链表，将每个节点添加至哈希表中
+2. 判断是否添加过
+3. 如果有就返回 没有就返回 `-1`
+
+```js
+var detectCycle = function(head) {
+  if(!head) return null
+  let curr = head
+  let hashSet = new Set()
+  while(curr) {
+    if(hashSet.has(curr)) {
+      return curr
+    } else {
+      hashSet.add(curr)
+    }
+    curr = curr.next
+  }
+};
+```
+
+方法二：快慢指针
+
+[官方答案](https://leetcode-cn.com/problems/linked-list-cycle-ii/solution/huan-xing-lian-biao-ii-by-leetcode-solution/)
+
+```js
+var detectCycle = function(head) {
+    if (head === null) {
+        return null;
+    }
+    let slow = head, fast = head;
+    while (fast !== null) {
+        slow = slow.next;
+        if (fast.next !== null) {
+            fast = fast.next.next;
+        } else {
+            return null;
+        }
+        if (fast === slow) {
+            let ptr = head;
+            while (ptr !== slow) {
+                ptr = ptr.next;
+                slow = slow.next;
+            }
+            return ptr;
+        }
+    }
+    return null;
+}
+```
 
 
 
+### [19. 删除链表的倒数第N个节点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
 
+#### 思路分析
 
+方法一：快慢指针
 
+1. 设置一个哑节点，记录头节点的地址
+2. 设置快慢指针，fast比slow多走N个节点
+3. 当fast === null 时，slow指向该删除的节点
 
+```js
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+  var dummy = new ListNode(0, head);
+  var fast = head;
+  var slow = dummy;
+  // fast 先多走n步
+  for (var i = 0; i < n; ++i) {
+    fast = fast.next;
+  }
+  // fast 与 slow一起走
+  // 当fast为null时跳出循环
+  while (fast != null) {
+    fast = fast.next;
+    slow = slow.next;
+  }
+  slow.next = slow.next.next;
+  var ans = dummy.next;
+  return ans;
+}
+```
 
+方法二：栈
 
+1. 遍历链表，入栈
+2. 弹出栈顶的n个节点
+3. 则此时栈顶的节点为待删除节点的前一个节点
+4. 改变栈顶节点的next指针
 
+```js
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+  let dummy = new ListNode(0, head);
+  let stack = [];
+  let cur = dummy;
+  while (cur) {
+      stack.push(cur);
+      cur = cur.next;
+  }
+  for(let i = 0; i < n; ++i) {
+      stack.pop();
+  }
+  let prev = stack.pop();
+  prev.next = prev.next.next;
+  let ans = dummy.next;
+  return ans;
+};
+```
 
+### [2. 两数相加](https://leetcode-cn.com/problems/add-two-numbers/)
 
+思路分析：
 
+- 将两个链表看成是相同长度的进行遍历，如果一个链表较短则在前面补 0，比如 987 + 23 = 987 + 023 = 1010
+- 每一位计算的同时需要考虑上一位的进位问题，而当前位计算结束后同样需要更新进位值
+- 如果两个链表全部遍历完毕后，进位值为 1，则在新链表最前方添加节点 1
+- 小技巧：对于链表问题，返回结果为头结点时，通常需要先初始化一个哑节点 pre，该指针的下一个节点指向真正的头结点head。使用预先指针的目的在于链表初始化时无可用节点值，而且链表构造过程需要指针移动，进而会导致头指针丢失，无法返回结果。
 
+```js
+var addTwoNumbers = function(l1, l2) {
+  let head = null, tail = null;
+  let carry = 0;
+  while (l1 || l2) {
+      const n1 = l1 ? l1.val : 0;
+      const n2 = l2 ? l2.val : 0;
+      const sum = n1 + n2 + carry;
+      if (!head) {
+          head = tail = new ListNode(sum % 10);
+      } else {
+          tail.next = new ListNode(sum % 10);
+          tail = tail.next;
+      }
+      carry = Math.floor(sum / 10);
+      if (l1) {
+          l1 = l1.next;
+      }
+      if (l2) {
+          l2 = l2.next;
+      }
+  }
+  if (carry > 0) {
+      tail.next = new ListNode(carry);
+  }
+  return head;
+};
+```
 
+### [24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/)
 
+#### 思路分析：
 
+方法一:递归
 
-
+```javascript
+var swapPairs = function(head) {
+ 	if(head === null || head.next === null) return head
+  	let next = head.next
+ 	head.next = swapPairs(next.next)
+  	next.next = head
+  	return next
+};
+```
 
 
 
