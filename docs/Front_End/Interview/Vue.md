@@ -10,6 +10,7 @@
   - push 推
   - pull 拉
 - Vue的侦测方式使其可以做到更细粒度的更新
+- 
 - 问题：
   - 一个状态绑定好多依赖，每个依赖对应一个具体DOM节点
   - 粒度越细，依赖也就越多，占用的内存也就越多，内存也就开销越大
@@ -153,7 +154,131 @@ function defineReactive(data, key, val) {
 
 ```js
 export default class Watcher {
-    
+    constructor(vm, expOrFn, cb) {
+        this.vm = vm
+        this.getter = parsePath(expOrfn)
+        this.cb = cb
+        this.value = this.get()
+	}
+	get() {
+		window.target = this
+        let value = this.getter.call(this.vm, this.vm)
+        window.target = undefined
+        return value
+    }
+    update() {
+        const oldValue = this.value
+        this.value = this.get()
+        this.cb.vall(this.vm, this.value, oldValue)
+	}
 }
+```
+
+- 依赖收集阶段将当前watcher添加至Dep，
+- 更新节点，重新获取getter，并将新旧值传给回调（依赖）
+
+```js
+const bailRE = /[^\w.$]/
+export fnction parsePath(path) {
+    if(bail.test(path)) return
+    // [a,b,c]
+    // data.a.b.c
+    // data = data.a =》 data = data.b =》 data = data.c
+    const segments = path.split('.')
+    return function(obj) {
+        for(let i = 0; i<segments.length; i++) {
+            if(!obj) return
+            obj = obj[segments[i]]
+        }
+        return obj
+	}
+}
+```
+
+#### 递归侦测所有key
+
+**Observer类**：通过递归将一个数据中的所有属性都转换成getter/setter的形式，然后追踪他们的变化
+
+```js
+export class Observer {
+    constructor(value) {
+		this.value = value
+        
+        if(!Array.isArray(value)){
+            this.walk(value)
+        }
+    }
+    walk(obj) {
+        let keys = Object.keys(obj)
+		for(let i=0; i<keys.length; i++) {
+            defineReactive(obj, keys[i], obj[keys[i]])
+        }
+    }
+	
+}
+
+function defineReactive(data, key, val) {
+    if(typeof val === 'object') {
+		new Observer(val)
+    }
+    let dep = new Dep()
+    Obeject.defineProperty(data, key, {
+        enumerable: true,
+        configurable: true,
+        get: function() {
+            // 收集依赖
+            dep.depend()
+            return val
+        },
+        set: function(newVal) {
+            if(val === newVal) return
+            val = newVal
+            // 更新状态
+            dep.notify()
+        }
+    })
+}
+```
+
+#### 关于Object的问题
+
+Object.defineProperty将对象的key转换为getter/setter形式来追踪变化，但是getter/setter只能追踪一个数据否修改，无法追踪新增属性和删除属性
+
+解决方法：
+
+- 提供两个API。vm.$set与vm.$delete+
+
+### Array的变化侦测
+
+针对数组，可以通过调用数组原型上的方法修改数组数据，导致侦测Object上的方法失效。
+
+#### 如何追踪变化
+
+解决思路：使用拦截器覆盖Array.prototype，之后每当Array原型上的方法操作数组时，其实执行的都是拦截其中提供的方法，然后在拦截器中使用原生Array的原型方法去操作数组。
+
+#### 拦截器实现
+
+Array七个改变自身内容的方法，分别是push、pop、shift、unshift、splice、sort、reverse。
+
+代码实现
+
+```js
+// 获取原型
+const arrayProto = Array.prototype
+// 浅拷贝
+export const arrayMethods = Object.create(arrayProto)
+;['push', 'pop', 'shift', 'unshift','splice','sort','reverse'].forEach(function(method){
+    // 缓存原方法
+	const original = arrayProto[method]
+    Object.defineProperty(arrayMethods, method, {
+		value: function mutator(...agrs) {
+            // 触发原方法
+			return original.apply(this, args)
+        },
+        enumerable: false,
+        writable: true,
+        configurable: true
+    })
+})
 ```
 
