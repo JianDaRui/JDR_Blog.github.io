@@ -1,4 +1,4 @@
-## 深入浅出Vue 读书笔记
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  深入浅出Vue 读书笔记
 
 ### Object的变化侦测
 
@@ -280,5 +280,29 @@ export const arrayMethods = Object.create(arrayProto)
         configurable: true
     })
 })
+```
+
+#### 使用拦截器覆盖Array原型
+
+- 为避免全局污染Array，只需在Observer中使用拦截器覆盖那些即将被转换成响应式Array类型数据的原型
+
+```js
+export class Observer {
+    constructor(value) {
+		this.value = value
+        if(Array.isArray(value)) {
+			value.__proto__ = arrayMethods
+        } else {
+			this.walk(value)
+        }
+    }
+    
+    walk(obj) {
+        let keys = Object.keys(obj)
+		for(let i=0; i<keys.length; i++) {
+            defineReactive(obj, keys[i], obj[keys[i]])
+        }
+    }
+}
 ```
 
