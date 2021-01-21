@@ -1454,8 +1454,6 @@ function myCreate(proto) {
 
 - [实现JSONP](http://www.conardli.top/docs/JavaScript/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0JSONP.html)
 
-
-
 ## 数组去重问题
 
 > 首先:我知道多少种去重方式
@@ -1532,9 +1530,102 @@ console.log("结果", resources);
 
 > 这种方法是利用高阶函数 `reduce` 进行去重， 这里只需要注意`initialValue`得放一个空数组[]，不然没法`push`
 
+### 调用ES6中的flat方法
+
+```js
+ary = ary.flat(Infinity);
+```
+
+### replace + split
+
+```js
+ary = str.replace(/(\[|\])/g, '').split(',')
+```
+
+### replace + JSON.parse
+
+```js
+str = str.replace(/(\[|\])/g, '');
+str = '[' + str + ']';
+ary = JSON.parse(str);
+```
+
+### 普通递归
+
+```js
+let result = [];
+let fn = function(ary) {
+  for(let i = 0; i < ary.length; i++) {
+    let item = ary[i];
+    if (Array.isArray(ary[i])){
+      fn(item);
+    } else {
+      result.push(item);
+    }
+  }
+}
+
+```
+
+### 利用reduce函数迭代
+
+```js
+function flatten(ary) {
+    return ary.reduce((pre, cur) => {
+        return pre.concat(Array.isArray(cur) ? flatten(cur) : cur);
+    }, []);
+}
+let ary = [1, 2, [3, 4], [5, [6, 7]]]
+console.log(flatten(ary))
+```
+
+### 扩展运算符
+
+```js
+//只要有一个元素有数组，那么循环继续
+while (ary.some(Array.isArray)) {
+  ary = [].concat(...ary);
+}
+
+```
+
 **参考资料**：
 
 - [数组去重](https://github.com/mqyqingfeng/Blog/issues/27)
+- [去重](https://juejin.cn/post/6844903986479251464)
+
+## 类数组转化为数组
+
+类数组是具有**length**属性，但不具有数组原型上的方法。常见的类数组有**arguments**、DOM操作方法返回的结果。
+
+### `Array.from`
+
+```javascript
+Array.from(document.querySelectorAll('div'))
+复制代码
+```
+
+### `Array.prototype.slice.call()`
+
+```javascript
+Array.prototype.slice.call(document.querySelectorAll('div'))
+复制代码
+```
+
+### 扩展运算符
+
+```javascript
+[...document.querySelectorAll('div')]
+复制代码
+```
+
+### 利用`concat`
+
+```javascript
+Array.prototype.concat.apply([], document.querySelectorAll('div'));
+```
+
+
 
 ## ES5实现继承的那些事-详细
 
@@ -1858,6 +1949,8 @@ const observer = new IntersectionObserver(changes => {
 Array.from(img).forEach(item => observer.observe(item));
 ```
 
+
+
 **关键概念**：
 
 - [图片懒加载](https://juejin.cn/post/6844904021308735502)
@@ -1928,14 +2021,61 @@ function currying(fn, ...args) {
 }
 ```
 
-
-
 **关键概念**：
 
 - 柯里化
 - 闭包
 
 **参考资料**：
+
+## 渲染几万条数据不卡住页面
+
+渲染大数据时，合理使用**createDocumentFragment**和**requestAnimationFrame**，将操作切分为一小段一小段执行。
+
+```javascript
+setTimeout(() => {
+  // 插入十万条数据
+  const total = 100000;
+  // 一次插入的数据
+  const once = 20;
+  // 插入数据需要的次数
+  const loopCount = Math.ceil(total / once);
+  let countOfRender = 0;
+  const ul = document.querySelector('ul');
+  // 添加数据的方法
+  function add() {
+    const fragment = document.createDocumentFragment();
+    for(let i = 0; i < once; i++) {
+      const li = document.createElement('li');
+      li.innerText = Math.floor(Math.random() * total);
+      fragment.appendChild(li);
+    }
+    ul.appendChild(fragment);
+    countOfRender += 1;
+    loop();
+  }
+  function loop() {
+    if(countOfRender < loopCount) {
+      window.requestAnimationFrame(add);
+    }
+  }
+  loop();
+}, 0)
+复制代码
+```
+
+## 打印出当前网页使用了多少种HTML元素
+
+一行代码可以解决：
+
+```javascript
+const fn = () => {
+  return [...new Set([...document.querySelectorAll('*')].map(el => el.tagName))].length;
+}
+复制代码
+```
+
+值得注意的是：DOM操作返回的是**类数组**，需要转换为数组之后才可以调用数组的方法。
 
 
 
@@ -2416,3 +2556,8 @@ str.replace(re,($0,$1) => {
 });
 console.log(`字符最多的是${char}，出现了${num}次`);
 ```
+
+**推荐资料**：
+
+- [手写原生](https://juejin.cn/post/6844903986479251464#heading-5)
+

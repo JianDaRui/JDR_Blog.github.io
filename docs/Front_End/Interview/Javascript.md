@@ -1,8 +1,38 @@
 # JavaScript
 
-## 重要概念
+## 语言特点
 
-### 闭包
+## 基本类型
+
+## 类型转换
+
+## 类型判断
+
+## 闭包
+
+作用域与作用域链
+
+原型与原型链
+
+面向对象继承
+
+模块化
+
+消息队列与事件循环
+
+异步
+
+高阶函数
+
+Object
+
+Set&Map
+
+Proxy&Reflect
+
+## 闭包
+
+
 
 - 闭包就是能够读取其他函数内部变量的函数
 - 闭包是指有权访问另一个函数作用域中变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数，通过另一个函数访问这个函数的局部变量,利用闭包可以突破作用链域
@@ -24,12 +54,19 @@
 - 由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露
 - 解决方法是，在退出函数之前，将不使用的局部变量全部删除
 
-### 作用域链
+**关键词**：
+
+- 自由变量
+- 动态作用域
+- 静态作用域
+- 词法作用域
+
+## 作用域链
 
 - 作用域链的作用是保证执行环境里有权访问的变量和函数是有序的，作用域链的变量只能向上访问，变量访问到`window`对象即被终止，作用域链向下访问变量是不被允许的
 - 简单的说，作用域就是变量与函数的可访问范围，即作用域控制着变量与函数的可见性和生命周期
 
-### 3 JavaScript原型，原型链 ? 有什么特点？
+## JavaScript原型，原型链
 
 - 每个对象都会在其内部初始化一个属性，就是`prototype`(原型)，当我们访问一个对象的属性时
 - 如果这个对象内部不存在这个属性，那么他就会去`prototype`里找这个属性，这个`prototype`又会有自己的`prototype`，于是就这样一直找下去，也就是我们平时所说的原型链的概念
@@ -48,23 +85,15 @@
 - **原型特点：**
   - `JavaScript`对象是通过引用来传递的，当修改原型时，与之相关的对象也会继承这一改变
 
-### 4 请解释什么是事件代理
+## 请解释什么是事件代理
 
 - 事件代理（`Event Delegation`），又称之为事件委托。是 `JavaScript` 中常用绑定事件的常用技巧。顾名思义，“事件代理”即是把原本需要绑定的事件委托给父元素，让父元素担当事件监听的职务。事件代理的原理是DOM元素的事件冒泡。使用事件代理的好处是可以提高性能
 - 可以大量节省内存占用，减少事件注册，比如在`table`上代理所有`td`的`click`事件就非常棒
 - 可以实现当新增子对象时无需再次对其绑定
 
-### 5 Javascript如何实现继承？
+## 继承
 
-
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_6-谈谈this对象的理解)6 谈谈This对象的理解
-
-- `this`总是指向函数的直接调用者（而非间接调用者）
-- 如果有`new`关键字，`this`指向`new`出来的那个对象
-- 在事件中，`this`指向触发这个事件的对象，特殊的是，`IE`中的`attachEvent`中的`this`总是指向全局对象`Window`
-
-### 7 事件模型
+## 事件模型
 
 > `W3C`中定义事件的发生经历三个阶段：捕获阶段（`capturing`）、目标阶段（`targetin`）、冒泡阶段（`bubbling`）
 
@@ -76,7 +105,7 @@
 
 
 
-### 9 Ajax原理
+### Ajax原理
 
 - `Ajax`的原理简单来说是在用户和服务器之间加了—个中间层(`AJAX`引擎)，通过`XmlHttpRequest`对象来向服务器发异步请求，从服务器获得数据，然后用`javascrip`t来操作`DOM`而更新页面。使用户操作与服务器响应异步化。这其中最关键的一步就是从服务器获得请求数据
 - `Ajax`的过程只涉及`JavaScript`、`XMLHttpRequest`和`DOM`。`XMLHttpRequest`是`aja`x的核心机制
@@ -114,7 +143,7 @@ xhr.onreadystatechange = function(){
   - 对搜索引擎的支持比较弱。
   - 不容易调试。
 
-### 10 如何解决跨域问题?
+### 如何解决跨域问题?
 
 > 首先了解下浏览器的同源策略 同源策略`/SOP（Same origin policy）`是一种约定，由Netscape公司1995年引入浏览器，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，浏览器很容易受到`XSS`、`CSFR`等攻击。所谓同源是指"**协议+域名+端口**"三者相同，即便两个不同的域名指向同一个ip地址，也非同源
 
@@ -162,7 +191,7 @@ alert('get js data from parent ---> ' + window.parent.user);
 - **nodejs中间件代理跨域**
 - **后端在头部信息里面设置安全域名**
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_11-模块化开发怎么做？)11 模块化开发怎么做？
+## 模块化开发怎么做？
 
 - 立即执行函数,不暴露私有成员
 
@@ -182,7 +211,7 @@ var module1 = (function(){
 })();
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_12-异步加载js的方式有哪些？)12 异步加载JS的方式有哪些？
+## 异步加载JS的方式有哪些？
 
 - 设置`<script>`属性 async="async" （一旦脚本可用，则会异步执行）
 - 动态创建 `script DOM`：`document.createElement('script');`
@@ -190,7 +219,7 @@ var module1 = (function(){
 - 异步加载库 `LABjs`
 - 模块加载器 `Sea.js`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_13-那些操作会造成内存泄漏？)13 那些操作会造成内存泄漏？
+## 那些操作会造成内存泄漏？
 
 > JavaScript 内存泄露指对象在不需要使用它时仍然存在，导致占用的内存不能使用或回收
 
@@ -202,7 +231,7 @@ var module1 = (function(){
 - `setTimeout` 的第一个参数使用字符串而非函数的话，会引发内存泄漏
 - 垃圾回收器定期扫描对象，并计算引用了每个对象的其他对象的数量。如果一个对象的引用数量为 0（没有其他对象引用过该对象），或对该对象的惟一引用是循环的，那么该对象的内存即可回收
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_14-xml和json的区别？)14 XML和JSON的区别？
+## XML和JSON的区别？
 
 - 数据体积方面
   - `JSON`相对`于XML`来讲，数据的体积小，传递的速度更快些。
@@ -213,59 +242,17 @@ var module1 = (function(){
 - 传输速度方面
   - `JSON`的速度要远远快于`XML`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_15-谈谈你对webpack的看法)15 谈谈你对webpack的看法
-
-- `WebPack` 是一个模块打包工具，你可以使用`WebPack`管理你的模块依赖，并编绎输出模块们所需的静态文件。它能够很好地管理、打包`Web`开发中所用到的`HTML`、`Javascript`、`CSS`以及各种静态文件（图片、字体等），让开发过程更加高效。对于不同类型的资源，`webpack`有对应的模块加载器。`webpack`模块打包器会分析模块间的依赖关系，最后 生成了优化且合并后的静态资源
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_16-说说你对amd和commonjs的理解)16 说说你对AMD和Commonjs的理解
+## 说说你对AMD和Commonjs的理解
 
 - `CommonJS`是服务器端模块的规范，`Node.js`采用了这个规范。`CommonJS`规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作。`AMD`规范则是非同步加载模块，允许指定回调函数
 - `AMD`推荐的风格通过返回一个对象做为模块对象，`CommonJS`的风格通过对`module.exports`或`exports`的属性赋值来达到暴露模块对象的目的
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_17-常见web安全及防护原理)17 常见web安全及防护原理
-
-- `sql`注入原理
-  - 就是通过把`SQL`命令插入到`Web`表单递交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令
-- 总的来说有以下几点
-  - 永远不要信任用户的输入，要对用户的输入进行校验，可以通过正则表达式，或限制长度，对单引号和双`"-"`进行转换等
-  - 永远不要使用动态拼装SQL，可以使用参数化的`SQL`或者直接使用存储过程进行数据查询存取
-  - 永远不要使用管理员权限的数据库连接，为每个应用使用单独的权限有限的数据库连接
-  - 不要把机密信息明文存放，请加密或者`hash`掉密码和敏感的信息
-
-**XSS原理及防范**
-
-- `Xss(cross-site scripting)`攻击指的是攻击者往`Web`页面里插入恶意`html`标签或者`javascript`代码。比如：攻击者在论坛中放一个看似安全的链接，骗取用户点击后，窃取`cookie`中的用户私密信息；或者攻击者在论坛中加一个恶意表单，当用户提交表单的时候，却把信息传送到攻击者的服务器中，而不是用户原本以为的信任站点
-
-**XSS防范方法**
-
-- 首先代码里对用户输入的地方和变量都需要仔细检查长度和对`”<”,”>”,”;”,”’”`等字符做过滤；其次任何内容写到页面之前都必须加以encode，避免不小心把`html tag` 弄出来。这一个层面做好，至少可以堵住超过一半的XSS 攻击
-
-**XSS与CSRF有什么区别吗？**
-
-- `XSS`是获取信息，不需要提前知道其他用户页面的代码和数据包。`CSRF`是代替用户完成指定的动作，需要知道其他用户页面的代码和数据包。要完成一次`CSRF`攻击，受害者必须依次完成两个步骤
-- 登录受信任网站`A`，并在本地生成`Cookie`
-- 在不登出`A`的情况下，访问危险网站`B`
-
-**CSRF的防御**
-
-- 服务端的`CSRF`方式方法很多样，但总的思想都是一致的，就是在客户端页面增加伪随机数
-- 通过验证码的方法
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_18-用过哪些设计模式？)18 用过哪些设计模式？
-
-- 工厂模式：
-  - 工厂模式解决了重复实例化的问题，但还有一个问题,那就是识别问题，因为根本无法
-  - 主要好处就是可以消除对象间的耦合，通过使用工程方法而不是`new`关键字
-- 构造函数模式
-  - 使用构造函数的方法，即解决了重复实例化的问题，又解决了对象识别的问题，该模式与工厂模式的不同之处在于
-  - 直接将属性和方法赋值给 `this`对象;
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_19-为什么要有同源限制？)19 为什么要有同源限制？
 
 - 同源策略指的是：协议，域名，端口相同，同源策略是一种安全协议
 - 举例说明：比如一个黑客程序，他利用`Iframe`把真正的银行登录页面嵌到他的页面上，当你使用真实的用户名，密码登录时，他的页面就可以通过`Javascript`读取到你的表单中`input`中的内容，这样用户名，密码就轻松到手了。
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_20-offsetwidth-offsetheight-clientwidth-clientheight与scrollwidth-scrollheight的区别)20 offsetWidth/offsetHeight,clientWidth/clientHeight与scrollWidth/scrollHeight的区别
+### offsetWidth/offsetHeight,clientWidth/clientHeight与scrollWidth/scrollHeight的区别
 
 - `offsetWidth/offsetHeight`返回值包含**content + padding + border**，效果与e.getBoundingClientRect()相同
 - `clientWidth/clientHeight`返回值只包含**content + padding**，如果有滚动条，也**不包含滚动条**
@@ -329,19 +316,6 @@ promise.then(onFulfilled, onRejected)
 
 - 接收两个函数作为参数，一个在 `fulfilled` 的时候被调用，一个在`rejected`的时候被调用，接收参数就是 `future`，`onFulfilled` 对应`resolve`, `onRejected`对应 `reject`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_24-你觉得jquery源码有哪些写的好的地方)24 你觉得jQuery源码有哪些写的好的地方
-
-- `jquery`源码封装在一个匿名函数的自执行环境中，有助于防止变量的全局污染，然后通过传入`window`对象参数，可以使`window`对象作为局部变量使用，好处是当`jquery`中访问`window`对象的时候，就不用将作用域链退回到顶层作用域了，从而可以更快的访问window对象。同样，传入`undefined`参数，可以缩短查找`undefined`时的作用域链
-- `jquery`将一些原型属性和方法封装在了`jquery.prototype`中，为了缩短名称，又赋值给了`jquery.fn`，这是很形象的写法
-- 有一些数组或对象的方法经常能使用到，`jQuery`将其保存为局部变量以提高访问速度
-- `jquery`实现的链式调用可以节约代码，所返回的都是同一个对象，可以提高代码效率
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_25-vue、react、angular)25 vue、react、angular
-
-- `Vue.js` 一个用于创建 `web` 交互界面的库，是一个精简的 `MVVM`。它通过双向数据绑定把 `View` 层和 `Model` 层连接了起来。实际的 `DOM` 封装和输出格式都被抽象为了`Directives` 和 `Filters`
-- `AngularJS` 是一个比较完善的前端`MVVM`框架，包含模板，数据双向绑定，路由，模块化，服务，依赖注入等所有功能，模板功能强大丰富，自带了丰富的 `Angular`指令
-- `react` `React` 仅仅是 `VIEW` 层是`facebook`公司。推出的一个用于构建`UI`的一个库，能够实现服务器端的渲染。用了`virtual dom`，所以性能很好。
-
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_26-node的应用场景)26 Node的应用场景
 
 - 特点：
@@ -356,77 +330,7 @@ promise.then(onFulfilled, onRejected)
   - 1、只支持单核`CPU`，不能充分利用`CPU`
   - 2、可靠性低，一旦代码某个环节崩溃，整个系统都崩溃
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_27-谈谈你对amd、cmd的理解)27 谈谈你对AMD、CMD的理解
-
-- 
-
-
-
-
-
-## 手写
-
-### call
-
-```js
-
-```
-
-### bind
-
-
-```js
-Function.prototype.bind2 = function (context) {
-
-    if (typeof this !== "function") {
-      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
-    }
-
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var fNOP = function () {};
-
-    var fBound = function () {
-        var bindArgs = Array.prototype.slice.call(arguments);
-        return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
-    }
-
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
-    return fBound;
-}
-```
-
-```js
-myCall = function(context = window, ...args) {
-  if(this === Function.prototype) {
-    return undefined
-  }
-  let fn = Symbol()
-  context[fn] = this
-  let res = context[fn](...arguments)
-  delete context[fn]
-  return res
-}
-```
-
-```js
-const sleep = function(timer, i) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function () {
-      resolve(i)
-    },timer)
-  })
-}
-
-const start = async function() {
-  for(let i=0;i<10;i++) {
-    let result = await sleep(1000, i)
-    console.log(result)
-  }
-}
-```
+### 谈谈你对AMD、CMD的理解
 
 - `CommonJS`是服务器端模块的规范，`Node.js`采用了这个规范。`CommonJS`规范加载模块是同步的，也就是说，只有加载完成，才能执行后面的操作。`AMD`规范则是非同步加载模块，允许指定回调函数
 - `AMD`推荐的风格通过返回一个对象做为模块对象，`CommonJS`的风格通过对`module.exports`或`exports`的属性赋值来达到暴露模块对象的目的
@@ -438,13 +342,13 @@ const start = async function() {
 - `AMD` 异步，需要定义回调`define`方式
 - `es6` 一个模块就是一个独立的文件，该文件内部的所有变量，外部无法获取。如果你希望外部能够读取模块内部的某个变量，就必须使用`export`关键字输出该变量 `es6`还可以导出类、方法，自动适用严格模式
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_28-那些操作会造成内存泄漏)28 那些操作会造成内存泄漏
+### 那些操作会造成内存泄漏
 
 - 内存泄漏指任何对象在您不再拥有或需要它之后仍然存在
 - `setTimeout` 的第一个参数使用字符串而非函数的话，会引发内存泄漏
 - 闭包、控制台日志、循环（在两个对象彼此引用且彼此保留时，就会产生一个循环）
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_29-web开发中会话跟踪的方法有哪些)29 web开发中会话跟踪的方法有哪些
+###  web开发中会话跟踪的方法有哪些
 
 - `cookie`
 - `session`
@@ -452,18 +356,18 @@ const start = async function() {
 - 隐藏`input`
 - `ip`地址
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_30-js的基本数据类型和引用数据类型)30 JS的基本数据类型和引用数据类型
+### JS的基本数据类型和引用数据类型
 
 - 基本数据类型：`undefined`、`null`、`boolean`、`number`、`string`、`symbol`
 - 引用数据类型：`object`、`array`、`function`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_31-介绍js有哪些内置对象)31 介绍js有哪些内置对象
+### 介绍js有哪些内置对象
 
 - `Object` 是 `JavaScript` 中所有对象的父对象
 - 数据封装类对象：`Object`、`Array`、`Boolean`、`Number` 和 `String`
 - 其他对象：`Function`、`Arguments`、`Math`、`Date`、`RegExp`、`Error`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_32-说几条写javascript的基本规范)32 说几条写JavaScript的基本规范
+### 说几条写JavaScript的基本规范
 
 - 不要在同一行声明多个变量
 - 请使用`===/!==`来比较`true/false`或者数值
@@ -473,7 +377,7 @@ const start = async function() {
 - `If`语句必须使用大括号
 - `for-in`循环中的变量 应该使用`var`关键字明确限定作用域，从而避免作用域污
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_33-javascript有几种类型的值)33 JavaScript有几种类型的值
+### JavaScript有几种类型的值
 
 - 栈：原始数据类型（`Undefined`，`Null`，`Boolean`，`Number`、`String`）
 - 堆：引用数据类型（对象、数组和函数）
@@ -482,7 +386,7 @@ const start = async function() {
 - 引用数据类型存储在堆(`heap`)中的对象,占据空间大、大小不固定,如果存储在栈中，将会影响程序运行的性能；引用数据类型在栈中存储了指针，该指针指向堆中该实体的起始地址。当解释器寻找引用值时，会首先检索其
 - 在栈中的地址，取得地址后从堆中获得实体
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_34-javascript创建对象的几种方式)34 javascript创建对象的几种方式
+### javascript创建对象的几种方式
 
 > `javascript`创建对象简单的说,无非就是使用内置对象或各种自定义对象，当然还可以用`JSON`；但写法有很多种，也能混合使用
 
@@ -558,13 +462,13 @@ var camry =new Car("凯美瑞",27);
 camry.sell();
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_35-eval是做什么的)35 eval是做什么的
+### eval是做什么的
 
 - 它的功能是把对应的字符串解析成`JS`代码并运行
 - 应该避免使用`eval`，不安全，非常耗性能（`2`次，一次解析成`js`语句，一次执行）
 - 由`JSON`字符串转换为JSON对象的时候可以用`eval，var obj =eval('('+ str +')')`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_36-null，undefined-的区别)36 null，undefined 的区别
+### null，undefined 的区别
 
 - `undefined` 表示不存在这个值。
 - `undefined` :是一个表示"无"的原始值或者说表示"缺少值"，就是此处应该有一个值，但是还没有定义。当尝试读取时会返回 `undefined`
@@ -574,16 +478,16 @@ camry.sell();
 - 例如作为函数的参数，表示该函数的参数不是对象；
 - 在验证`null`时，一定要使用　`===` ，因为 `==`无法分别`null` 和　`undefined`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_37-1-2-3-map-parseint-答案是多少)37 ["1", "2", "3"].map(parseInt) 答案是多少
+###  ["1", "2", "3"].map(parseInt) 答案是多少
 
 - `[1, NaN, NaN]`因为 `parseInt` 需要两个参数 `(val, radix)`，其中`radix` 表示解析时用的基数。
 - `map`传了 `3`个`(element, index, array)`，对应的 `radix` 不合法导致解析失败。
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_38-javascript-代码中的-use-strict-是什么意思)38 javascript 代码中的"use strict";是什么意思
+###  javascript 代码中的"use strict";是什么意思
 
 - `use strict`是一种`ECMAscript 5` 添加的（严格）运行模式,这种模式使得 Javascript 在更严格的条件下运行,使`JS`编码更加规范化的模式,消除`Javascript`语法的一些不合理、不严谨之处，减少一些怪异行为
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_39-json-的了解)39 JSON 的了解
+###  JSON 的了解
 
 - `JSON(JavaScript Object Notation)` 是一种轻量级的数据交换格式
 - 它是基于`JavaScript`的一个子集。数据格式简单, 易于读写, 占用带宽小
@@ -602,29 +506,29 @@ var last=obj.toJSONString();
 var last=JSON.stringify(obj);
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_40-js延迟加载的方式有哪些)40 js延迟加载的方式有哪些
+### js延迟加载的方式有哪些
 
 - 设置`<script>`属性 `defer="defer"` （脚本将在页面完成解析时执行）
 - 动态创建 `script DOM`：`document.createElement('script');`
 - `XmlHttpRequest` 脚本注入
 - 延迟加载工具 `LazyLoad`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_41-同步和异步的区别)41 同步和异步的区别
+### 同步和异步的区别
 
 - 同步：浏览器访问服务器请求，用户看得到页面刷新，重新发请求,等请求完，页面刷新，新内容出现，用户看到新内容,进行下一步操作
 - 异步：浏览器访问服务器请求，用户正常操作，浏览器后端进行请求。等请求完，页面不刷新，新内容也会出现，用户看到新内容
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_42-渐进增强和优雅降级)42 渐进增强和优雅降级
+### 渐进增强和优雅降级
 
 - 渐进增强 ：针对低版本浏览器进行构建页面，保证最基本的功能，然后再针对高级浏览器进行效果、交互等改进和追加功能达到更好的用户体验。
 - 优雅降级 ：一开始就构建完整的功能，然后再针对低版本浏览器进行兼容
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_43-defer和async)43 defer和async
+### defer和async
 
 - `defer`并行加载`js`文件，会按照页面上`script`标签的顺序执行
 - `async`并行加载`js`文件，下载完成立即执行，不会按照页面上`script`标签的顺序执行
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_44-说说严格模式的限制)44 说说严格模式的限制
+### 说说严格模式的限制
 
 - 变量必须声明后再使用
 - 函数的参数不能有同名属性，否则报错
@@ -642,14 +546,14 @@ var last=JSON.stringify(obj);
 - 不能使用`fn.caller`和`fn.arguments`获取函数调用的堆栈
 - 增加了保留字（比如`protected`、`static`和`interface`）
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_45-attribute和property的区别是什么)45 attribute和property的区别是什么
+### attribute和property的区别是什么
 
 - `attribute`是`dom`元素在文档中作为`html`标签拥有的属性；
 - `property`就是`dom`元素在`js`中作为对象拥有的属性。
 - 对于`html`的标准属性来说，`attribute`和`property`是同步的，是会自动更新的
 - 但是对于自定义的属性来说，他们是不同步的
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_46-谈谈你对es6的理解)46 谈谈你对ES6的理解
+### 谈谈你对ES6的理解
 
 - 新增模板字符串（为`JavaScript`提供了简单的字符串插值功能）
 - 箭头函数
@@ -661,18 +565,15 @@ var last=JSON.stringify(obj);
 - `let`命令实际上就增加了块级作用域。
 - 还有就是引入`module`模块的概念
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_47-ecmascript6-怎么写class么)47 ECMAScript6 怎么写class么
 
-- 这个语法糖可以让有`OOP`基础的人更快上手`js`，至少是一个官方的实现了
-- 但对熟悉`js`的人来说，这个东西没啥大影响；一个`Object.creat()`搞定继承，比`class`简洁清晰的多
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_48-什么是面向对象编程及面向过程编程，它们的异同和优缺点)48 什么是面向对象编程及面向过程编程，它们的异同和优缺点
+### 什么是面向对象编程及面向过程编程，它们的异同和优缺点
 
 - 面向过程就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候一个一个依次调用就可以了
 - 面向对象是把构成问题事务分解成各个对象，建立对象的目的不是为了完成一个步骤，而是为了描叙某个事物在整个解决问题的步骤中的行为
 - 面向对象是以功能来划分问题，而不是步骤
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_49-面向对象编程思想)49 面向对象编程思想
+### 面向对象编程思想
 
 - 基本思想是使用对象，类，继承，封装等基本概念来进行程序设计
 - 优点
@@ -682,13 +583,13 @@ var last=JSON.stringify(obj);
   - 开发工作的重用性、继承性高，降低重复工作量。
   - 缩短了开发周期
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_50-对web标准、可用性、可访问性的理解)50 对web标准、可用性、可访问性的理解
+### 对web标准、可用性、可访问性的理解
 
 - 可用性（Usability）：产品是否容易上手，用户能否完成任务，效率如何，以及这过程中用户的主观感受可好，是从用户的角度来看产品的质量。可用性好意味着产品质量高，是企业的核心竞争力
 - 可访问性（Accessibility）：Web内容对于残障用户的可阅读和可理解性
 - 可维护性（Maintainability）：一般包含两个层次，一是当系统出现问题时，快速定位并解决问题的成本，成本低则可维护性好。二是代码是否容易被人理解，是否容易修改和增强功能。
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_51-如何通过js判断一个数组)51 如何通过JS判断一个数组
+### 如何通过JS判断一个数组
 
 - ```
   instanceof
@@ -736,30 +637,30 @@ console.log(Array.isArray(a)); //true
 console.log(Array.isArray(b)); //false
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_52-谈一谈let与var的区别)52 谈一谈let与var的区别
+
 
 - `let`命令不存在变量提升，如果在`let`前使用，会导致报错
 - 如果块区中存在`let`和`const`命令，就会形成封闭作用域
 - 不允许重复声明，因此，不能在函数内部重新声明参数
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_53-map与foreach的区别)53 map与forEach的区别
+### map与forEach的区别
 
 - `forEach`方法，是最基本的方法，就是遍历与循环，默认有3个传参：分别是遍历的数组内容`item`、数组索引`index`、和当前遍历数组`Array`
 - `map`方法，基本用法与`forEach`一致，但是不同的，它会返回一个新的数组，所以在callback需要有`return`值，如果没有，会返回`undefined`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_54-谈一谈你理解的函数式编程)54 谈一谈你理解的函数式编程
+### 谈一谈你理解的函数式编程
 
 - 简单说，"函数式编程"是一种"编程范式"（programming paradigm），也就是如何编写程序的方法论
 - 它具有以下特性：闭包和高阶函数、惰性计算、递归、函数是"第一等公民"、只用"表达式"
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_55-谈一谈箭头函数与普通函数的区别？)55 谈一谈箭头函数与普通函数的区别？
+### 谈一谈箭头函数与普通函数的区别？
 
 - 函数体内的`this`对象，就是定义时所在的对象，而不是使用时所在的对象
 - 不可以当作构造函数，也就是说，不可以使用`new`命令，否则会抛出一个错误
 - 不可以使用`arguments`对象，该对象在函数体内不存在。如果要用，可以用`Rest`参数代替
 - 不可以使用`yield`命令，因此箭头函数不能用作`Generator`函数
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_56-谈一谈函数中this的指向)56 谈一谈函数中this的指向
+### 谈一谈函数中this的指向
 
 - this的指向在函数定义的时候是确定不了的，只有函数执行的时候才能确定this到底指向谁，实际上this的最终指向的是那个调用它的对象
 - 《javascript语言精髓》中大概概括了4种调用方式：
@@ -774,7 +675,7 @@ A-->B
 
 - apply/call调用模式
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_57-异步编程的实现方式)57 异步编程的实现方式
+## 异步编程的实现方式
 
 - 回调函数
   - 优点：简单、容易理解
@@ -794,11 +695,11 @@ A-->B
   - 优点：内置执行器、更好的语义、更广的适用性、返回的是Promise、结构清晰。
   - 缺点：错误处理机制
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_58-对原生javascript了解程度)58 对原生Javascript了解程度
+### 对原生Javascript了解程度
 
 - 数据类型、运算、对象、Function、继承、闭包、作用域、原型链、事件、`RegExp`、`JSON`、`Ajax`、`DOM`、`BOM`、内存泄漏、跨域、异步装载、模板引擎、前端`MVC`、路由、模块化、`Canvas`、`ECMAScript`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_59-js动画与css动画区别及相应实现)59 Js动画与CSS动画区别及相应实现
+### Js动画与CSS动画区别及相应实现
 
 - ```
   CSS3
@@ -816,7 +717,7 @@ A-->B
 
 - `JavaScript`的动画正好弥补了这两个缺点，控制能力很强，可以单帧的控制、变换，同时写得好完全可以兼容`IE6`，并且功能强大。对于一些复杂控制的动画，使用`javascript`会比较靠谱。而在实现一些小的交互动效的时候，就多考虑考虑`CSS`吧
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_60-js-数组和对象的遍历方式，以及几种方式的比较)60 JS 数组和对象的遍历方式，以及几种方式的比较
+### JS 数组和对象的遍历方式，以及几种方式的比较
 
 > 通常我们会用循环的方式来遍历数组。但是循环是 导致js 性能问题的原因之一。一般我们会采用下几种方式来进行数组的遍历
 
@@ -2022,32 +1923,20 @@ try {
 - `fetch`不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了量的浪费
 - `fetch`没有办法原生监测请求的进度，而XHR可以
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_106-javascript的组成)106 JavaScript的组成
+- - 
 
-- ```
-  JavaScript
-  ```
-
-   
-
-  由以下三部分组成：
-
-  - `ECMAScript（核心）：`JavaScript` 语言基础
-  - `DOM`（文档对象模型）：规定了访问`HTML`和`XML`的接口
-  - `BOM`（浏览器对象模型）：提供了浏览器窗口之间进行交互的对象和方法
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_107-检测浏览器版本版本有哪些方式？)107 检测浏览器版本版本有哪些方式？
+### 检测浏览器版本版本有哪些方式？
 
 - 根据 `navigator.userAgent` `UA.toLowerCase().indexOf('chrome')`
 - 根据 `window` 对象的成员 `'ActiveXObject' in window`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_108-介绍js有哪些内置对象)108 介绍JS有哪些内置对象
+### 介绍JS有哪些内置对象
 
 - 数据封装类对象：`Object`、`Array`、`Boolean`、`Number`、`String`
 - 其他对象：`Function`、`Arguments`、`Math`、`Date`、`RegExp`、`Error`
 - ES6新增对象：`Symbol`、`Map`、`Set`、`Promises`、`Proxy`、`Reflect`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_109-说几条写javascript的基本规范)109 说几条写JavaScript的基本规范
+## 说几条写JavaScript的基本规范
 
 - 代码缩进，建议使用“四个空格”缩进
 - 代码段使用花括号`{}`包裹
@@ -2057,7 +1946,7 @@ try {
 - 规范定义`JSON`对象，补全双引号
 - 用`{}`和`[]`声明对象和数组
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_110-如何编写高性能的javascript)110 如何编写高性能的JavaScript
+## 如何编写高性能的JavaScript
 
 - 遵循严格模式：`"use strict";`
 - 将js脚本放在页面底部，加快渲染页面
@@ -2091,7 +1980,7 @@ try {
 - 浏览器解析 `HTML` 是自上而下的线性过程，`script`作为 `HTML` 的一部分同样遵循这个原则
 - 因此，`script` 会延迟 `DomContentLoad`，只显示其上部分首屏内容，从而影响首屏显示的完成时间
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_113-解释javascript中的作用域与变量声明提升)113 解释JavaScript中的作用域与变量声明提升
+## 解释JavaScript中的作用域与变量声明提升
 
 - `JavaScript`作用域：
   - 在`Java`、`C`等语言中，作用域为for语句、`if`语句或`{}`内的一块区域，称为作用域；
@@ -2557,7 +2446,7 @@ document.cookie = 'user='+ encodeURIComponent('name')  + ';expires = ' + new Dat
 - `object.toLocaleString();`
 - `Class.prototype.isPropertyOf(object);`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_132-array-splice-与-array-splice-的区别？)132 Array.splice() 与 Array.splice() 的区别？
+### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_132-array-splice-与-array-splice-的区别？)132 Array.slice() 与 Array.splice() 的区别？
 
 **`slice`**
 
@@ -2744,7 +2633,7 @@ function defineReactive(obj, key, val) {
 
 - `(new WebSocket(SERVER_URL)).addEventListener("message", func);`
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_135-继承)135 继承
+### 继承
 
 - **原型链继承**，将父类的实例作为子类的原型，他的特点是实例是子类的实例也是父类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实现，缺点是来自原型对象的所有属性被所有实例共享，无法实现多继承，无法向父类构造函数传参。
 - **构造继承**，使用父类的构造函数来增强子类实例，即复制父类的实例属性给子类，构造继承可以向父类传递参数，可以实现多继承，通过`call`多个父类对象。但是构造继承只能继承父类的实例属性和方法，不能继承原型属性和方法，无法实现函数服用，每个子类都有父类实例函数的副本，影响性能
@@ -2753,55 +2642,7 @@ function defineReactive(obj, key, val) {
 - **组合继承**：通过调用父类构造，继承父类的属性并保留传参的优点，然后通过将父类实例作为子类原型，实现函数复用
 - **寄生组合继承**：通过寄生方式，砍掉父类的实例属性，这样，在调用两次父类的构造的时候，就不会初始化两次实例方法/属性，避免的组合继承的缺点
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_136-this指向)136 this指向
 
-**1. this 指向有哪几种**
-
-- 默认绑定：全局环境中，`this`默认绑定到`window`
-
-- 隐式绑定：一般地，被直接对象所包含的函数调用时，也称为方法调用，`this`隐式绑定到该直接对象
-
-- 隐式丢失：隐式丢失是指被隐式绑定的函数丢失绑定对象，从而默认绑定到`window`。显式绑定：通过`call()`、`apply()`、`bind()`方法把对象绑定到`this`上，叫做显式绑定
-
-- ```
-  new
-  ```
-
-  绑定：如果函数或者方法调用之前带有关键字
-
-  ```
-  new
-  ```
-
-  ，它就构成构造函数调用。对于
-
-  ```
-  this
-  ```
-
-  绑定来说，称为
-
-  ```
-  new
-  ```
-
-  绑定
-
-  - 构造函数通常不使用`return`关键字，它们通常初始化新对象，当构造函数的函数体执行完毕时，它会显式返回。在这种情况下，构造函数调用表达式的计算结果就是这个新对象的值
-  - 如果构造函数使用`return`语句但没有指定返回值，或者返回一个原始值，那么这时将忽略返回值，同时使用这个新对象作为调用结果
-  - 如果构造函数显式地使用`return`语句返回一个对象，那么调用表达式的值就是这个对象
-
-**2. 改变函数内部 this 指针的指向函数（bind，apply，call的区别）**
-
-- `apply`：调用一个对象的一个方法，用另一个对象替换当前对象。例如：`B.apply(A, arguments)`;即A对象应用B对象的方法
-- `call`：调用一个对象的一个方法，用另一个对象替换当前对象。例如：`B.call(A, args1,args2)`;即A对象调用B对象的方法
-- `bind`除了返回是函数以外，它的参数和`call`一样
-
-**3. 箭头函数**
-
-- 箭头函数没有`this`，所以需要通过查找作用域链来确定`this`的值，这就意味着如果箭头函数被非箭头函数包含，`this`绑定的就是最近一层非箭头函数的`this`，
-- 箭头函数没有自己的`arguments`对象，但是可以访问外围函数的`arguments`对象
-- 不能通过`new`关键字调用，同样也没有`new.target`值和原型
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/base.html#_137-判断是否是数组)137 判断是否是数组
 
@@ -2871,89 +2712,9 @@ var b = 'Hello world'
 
 > `var` 会产生很多错误，所以在 ES6中引入了 `let`。`let`不能在声明前使用，但是这并不是常说的 `let` 不会提升，`let`提升了，在第一阶段内存也已经为他开辟好了空间，但是因为这个声明的特性导致了并不能在声明前使用
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_2-bind、call、apply-区别)2 bind、call、apply 区别
 
-- `call` 和 `apply` 都是为了解决改变 `this` 的指向。作用都是相同的，只是传参的方式不同。
-- 除了第一个参数外，`call` 可以接收一个参数列表，`apply` 只接受一个参数数组
 
-```js
-let a = {
-    value: 1
-}
-function getValue(name, age) {
-    console.log(name)
-    console.log(age)
-    console.log(this.value)
-}
-getValue.call(a, 'yck', '24')
-getValue.apply(a, ['yck', '24'])
-```
 
-> `bind` 和其他两个方法作用也是一致的，只是该方法会返回一个函数。并且我们可以通过 `bind` 实现柯里化
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_3-如何实现一个-bind-函数)3 如何实现一个 bind 函数
-
-对于实现以下几个函数，可以从几个方面思考
-
-- 不传入第一个参数，那么默认为 `window`
-- 改变了 `this` 指向，让新的对象可以执行该函数。那么思路是否可以变成给新的对象添加一个函数，然后在执行完以后删除？
-
-```js
-Function.prototype.myBind = function (context) {
-  if (typeof this !== 'function') {
-    throw new TypeError('Error')
-  }
-  var _this = this
-  var args = [...arguments].slice(1)
-  // 返回一个函数
-  return function F() {
-    // 因为返回了一个函数，我们可以 new F()，所以需要判断
-    if (this instanceof F) {
-      return new _this(...args, ...arguments)
-    }
-    return _this.apply(context, args.concat(...arguments))
-  }
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_4-如何实现一个-call-函数)4 如何实现一个 call 函数
-
-```js
-Function.prototype.myCall = function (context) {
-  var context = context || window
-  // 给 context 添加一个属性
-  // getValue.call(a, 'yck', '24') => a.fn = getValue
-  context.fn = this
-  // 将 context 后面的参数取出来
-  var args = [...arguments].slice(1)
-  // getValue.call(a, 'yck', '24') => a.fn('yck', '24')
-  var result = context.fn(...args)
-  // 删除 fn
-  delete context.fn
-  return result
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_5-如何实现一个-apply-函数)5 如何实现一个 apply 函数
-
-```js
-Function.prototype.myApply = function (context) {
-  var context = context || window
-  context.fn = this
-
-  var result
-  // 需要判断是否存储第二个参数
-  // 如果存在，就将第二个参数展开
-  if (arguments[1]) {
-    result = context.fn(...arguments[1])
-  } else {
-    result = context.fn()
-  }
-
-  delete context.fn
-  return result
-}
-```
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_6-简单说下原型链？)6 简单说下原型链？
 
@@ -2982,31 +2743,6 @@ console.log(a()()())
 ```
 
 > 箭头函数其实是没有 `this` 的，这个函数中的 `this` 只取决于他外面的第一个不是箭头函数的函数的 `this`。在这个例子中，因为调用 `a` 符合前面代码中的第一个情况，所以 `this` 是`window`。并且 `this`一旦绑定了上下文，就不会被任何代码改变
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_9-this)9 This
-
-```js
-function foo() {
-	console.log(this.a)
-}
-var a = 1
-foo()
-
-var obj = {
-	a: 2,
-	foo: foo
-}
-obj.foo()
-
-// 以上两者情况 `this` 只依赖于调用函数前的对象，优先级是第二个情况大于第一个情况
-
-// 以下情况是优先级最高的，`this` 只会绑定在 `c` 上，不会被任何方式修改 `this` 指向
-var c = new foo()
-c.a = 3
-console.log(c.a)
-
-// 还有种就是利用 call，apply，bind 改变 this，这个优先级仅次于 new
-```
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_10-async、await-优缺点)10 async、await 优缺点
 
@@ -3100,213 +2836,9 @@ function test() {
 }
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_12-promise)12 Promise
+### 
 
-- `Promise` 是 `ES6` 新增的语法，解决了回调地狱的问题。
-- 可以把 `Promise`看成一个状态机。初始是 `pending` 状态，可以通过函数 `resolve` 和 `reject`，将状态转变为 `resolved` 或者 `rejected` 状态，状态一旦改变就不能再次变化。
-- `then` 函数会返回一个 `Promise` 实例，并且该返回值是一个新的实例而不是之前的实例。因为 `Promise` 规范规定除了 `pending` 状态，其他状态是不可以改变的，如果返回的是一个相同实例的话，多个 `then` 调用就失去意义了。 对于 `then` 来说，本质上可以把它看成是 `flatMap`
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_13-如何实现一个-promise)13 如何实现一个 Promise
-
-```js
-// 三种状态
-const PENDING = "pending";
-const RESOLVED = "resolved";
-const REJECTED = "rejected";
-// promise 接收一个函数参数，该函数会立即执行
-function MyPromise(fn) {
-  let _this = this;
-  _this.currentState = PENDING;
-  _this.value = undefined;
-  // 用于保存 then 中的回调，只有当 promise
-  // 状态为 pending 时才会缓存，并且每个实例至多缓存一个
-  _this.resolvedCallbacks = [];
-  _this.rejectedCallbacks = [];
-
-  _this.resolve = function (value) {
-    if (value instanceof MyPromise) {
-      // 如果 value 是个 Promise，递归执行
-      return value.then(_this.resolve, _this.reject)
-    }
-    setTimeout(() => { // 异步执行，保证执行顺序
-      if (_this.currentState === PENDING) {
-        _this.currentState = RESOLVED;
-        _this.value = value;
-        _this.resolvedCallbacks.forEach(cb => cb());
-      }
-    })
-  };
-
-  _this.reject = function (reason) {
-    setTimeout(() => { // 异步执行，保证执行顺序
-      if (_this.currentState === PENDING) {
-        _this.currentState = REJECTED;
-        _this.value = reason;
-        _this.rejectedCallbacks.forEach(cb => cb());
-      }
-    })
-  }
-  // 用于解决以下问题
-  // new Promise(() => throw Error('error))
-  try {
-    fn(_this.resolve, _this.reject);
-  } catch (e) {
-    _this.reject(e);
-  }
-}
-
-MyPromise.prototype.then = function (onResolved, onRejected) {
-  var self = this;
-  // 规范 2.2.7，then 必须返回一个新的 promise
-  var promise2;
-  // 规范 2.2.onResolved 和 onRejected 都为可选参数
-  // 如果类型不是函数需要忽略，同时也实现了透传
-  // Promise.resolve(4).then().then((value) => console.log(value))
-  onResolved = typeof onResolved === 'function' ? onResolved : v => v;
-  onRejected = typeof onRejected === 'function' ? onRejected : r => throw r;
-
-  if (self.currentState === RESOLVED) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      // 规范 2.2.4，保证 onFulfilled，onRjected 异步执行
-      // 所以用了 setTimeout 包裹下
-      setTimeout(function () {
-        try {
-          var x = onResolved(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (reason) {
-          reject(reason);
-        }
-      });
-    }));
-  }
-
-  if (self.currentState === REJECTED) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      setTimeout(function () {
-        // 异步执行onRejected
-        try {
-          var x = onRejected(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (reason) {
-          reject(reason);
-        }
-      });
-    }));
-  }
-
-  if (self.currentState === PENDING) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      self.resolvedCallbacks.push(function () {
-        // 考虑到可能会有报错，所以使用 try/catch 包裹
-        try {
-          var x = onResolved(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (r) {
-          reject(r);
-        }
-      });
-
-      self.rejectedCallbacks.push(function () {
-        try {
-          var x = onRejected(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (r) {
-          reject(r);
-        }
-      });
-    }));
-  }
-};
-// 规范 2.3
-function resolutionProcedure(promise2, x, resolve, reject) {
-  // 规范 2.3.1，x 不能和 promise2 相同，避免循环引用
-  if (promise2 === x) {
-    return reject(new TypeError("Error"));
-  }
-  // 规范 2.3.2
-  // 如果 x 为 Promise，状态为 pending 需要继续等待否则执行
-  if (x instanceof MyPromise) {
-    if (x.currentState === PENDING) {
-      x.then(function (value) {
-        // 再次调用该函数是为了确认 x resolve 的
-        // 参数是什么类型，如果是基本类型就再次 resolve
-        // 把值传给下个 then
-        resolutionProcedure(promise2, value, resolve, reject);
-      }, reject);
-    } else {
-      x.then(resolve, reject);
-    }
-    return;
-  }
-  // 规范 2.3.3.3.3
-  // reject 或者 resolve 其中一个执行过得话，忽略其他的
-  let called = false;
-  // 规范 2.3.3，判断 x 是否为对象或者函数
-  if (x !== null && (typeof x === "object" || typeof x === "function")) {
-    // 规范 2.3.3.2，如果不能取出 then，就 reject
-    try {
-      // 规范 2.3.3.1
-      let then = x.then;
-      // 如果 then 是函数，调用 x.then
-      if (typeof then === "function") {
-        // 规范 2.3.3.3
-        then.call(
-          x,
-          y => {
-            if (called) return;
-            called = true;
-            // 规范 2.3.3.3.1
-            resolutionProcedure(promise2, y, resolve, reject);
-          },
-          e => {
-            if (called) return;
-            called = true;
-            reject(e);
-          }
-        );
-      } else {
-        // 规范 2.3.3.4
-        resolve(x);
-      }
-    } catch (e) {
-      if (called) return;
-      called = true;
-      reject(e);
-    }
-  } else {
-    // 规范 2.3.4，x 为基本类型
-    resolve(x);
-  }
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_14-和-区别，什么情况用)14 == 和 ===区别，什么情况用 ==
-
-![img](https://user-gold-cdn.xitu.io/2018/3/30/16275f89ebf931e9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
-
-> 这里来解析一道题目 `[] == ![] // -> true` ，下面是这个表达式为何为 `true` 的步骤
-
-```js
-// [] 转成 true，然后取反变成 false
-[] == false
-// 根据第 8 条得出
-[] == ToNumber(false)
-[] == 0
-// 根据第 10 条得出
-ToPrimitive([]) == 0
-// [].toString() -> ''
-'' == 0
-// 根据第 6 条得出
-0 == 0 // -> true
-```
-
-> `===`用于判断两者类型和值是否相同。 在开发中，对于后端返回的 `code`，可以通过 `==`去判断
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_15-基本数据类型和引⽤类型在存储上的差别)15 基本数据类型和引⽤类型在存储上的差别
-
-> 前者存储在栈上，后者存储在堆上
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_16-浏览器-eventloop-和-node-中的有什么区别)16 浏览器 Eventloop 和 Node 中的有什么区别
+### 浏览器 Eventloop 和 Node 中的有什么区别
 
 > 众所周知 JS 是门非阻塞单线程语言，因为在最初 JS 就是为了和浏览器交互而诞生的。如果 JS 是门多线程的语言话，我们在多个线程中处理 DOM 就可能会发生问题（一个线程中新加节点，另一个线程中删除节点），当然可以引入读写锁解决这个问题。
 
@@ -3393,79 +2925,6 @@ function loop() {
 
 setTimeout(loop, currentInterval)
 ```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_18-数组降维)18 数组降维
-
-```js
-[1, [2], 3].flatMap(v => v)
-// -> [1, 2, 3]
-```
-
-> 如果想将一个多维数组彻底的降维，可以这样实现
-
-```js
-const flattenDeep = (arr) => Array.isArray(arr)
-  ? arr.reduce( (a, b) => [...a, ...flattenDeep(b)] , [])
-  : [arr]
-
-flattenDeep([1, [[2], [3, [4]], 5]])
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_19-深拷贝)19 深拷贝
-
-> 这个问题通常可以通过 `JSON.parse(JSON.stringify(object))` 来解决
-
-```js
-let a = {
-    age: 1,
-    jobs: {
-        first: 'FE'
-    }
-}
-let b = JSON.parse(JSON.stringify(a))
-a.jobs.first = 'native'
-console.log(b.jobs.first) // FE
-```
-
-**但是该方法也是有局限性的**：
-
-- 会忽略 `undefined`
-- 会忽略 `symbol`
-- 不能序列化函数
-- 不能解决循环引用的对象
-
-```js
-let obj = {
-  a: 1,
-  b: {
-    c: 2,
-    d: 3,
-  },
-}
-obj.c = obj.b
-obj.e = obj.a
-obj.b.c = obj.c
-obj.b.d = obj.b
-obj.b.e = obj.b.c
-let newObj = JSON.parse(JSON.stringify(obj))
-console.log(newObj)
-复
-```
-
-> 在遇到函数、 `undefined` 或者 `symbol` 的时候，该对象也不能正常的序列化
-
-```js
-let a = {
-    age: undefined,
-    sex: Symbol('male'),
-    jobs: function() {},
-    name: 'yck'
-}
-let b = JSON.parse(JSON.stringify(a))
-console.log(b) // {name: "yck"}
-```
-
-> 但是在通常情况下，复杂数据都是可以序列化的，所以这个函数可以解决大部分问题，并且该函数是内置函数中处理深拷贝性能最快的。当然如果你的数据中含有以上三种情况下，可以使用 `lodash` 的深拷贝函数
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/improve.html#_20-typeof-于-instanceof-区别)20 typeof 于 instanceof 区别
 
@@ -3657,96 +3116,9 @@ ToPrimitive([]) == 0
 - 每个对象都有 `__proto__`属性，指向了创建该对象的构造函数的原型。其实这个属性指向了 `[[prototype]]`，但是 `[[prototype]]` 是内部属性，我们并不能访问到，所以使用 `_proto_` 来访问。
 - 对象可以通过`__proto__` 来寻找不属于该对象的属性，`__proto__` 将对象连接起来组成了原型链
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_5-new)5 new
 
-- 新生成了一个对象
-- 链接到原型
-- 绑定 `this`
-- 返回新对象
 
-> 在调用 new 的过程中会发生以上四件事情，我们也可以试着来自己实现一个 new
-
-```js
-function create() {
-    // 创建一个空的对象
-    let obj = new Object()
-    // 获得构造函数
-    let Con = [].shift.call(arguments)
-    // 链接到原型
-    obj.__proto__ = Con.prototype
-    // 绑定 this，执行构造函数
-    let result = Con.apply(obj, arguments)
-    // 确保 new 出来的是个对象
-    return typeof result === 'object' ? result : obj
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_6-instanceof)6 instanceof
-
-> ```
-> instanceof` 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 `prototype
-> ```
-
-> 我们也可以试着实现一下 `instanceof`
-
-```js
-function instanceof(left, right) {
-    // 获得类型的原型
-    let prototype = right.prototype
-    // 获得对象的原型
-    left = left.__proto__
-    // 判断对象的类型是否等于类型的原型
-    while (true) {
-    	if (left === null)
-    		return false
-    	if (prototype === left)
-    		return true
-    	left = left.__proto__
-    }
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_7-this)7 this
-
-```js
-function foo() {
-	console.log(this.a)
-}
-var a = 1
-foo()
-
-var obj = {
-	a: 2,
-	foo: foo
-}
-obj.foo()
-
-// 以上两者情况 `this` 只依赖于调用函数前的对象，优先级是第二个情况大于第一个情况
-
-// 以下情况是优先级最高的，`this` 只会绑定在 `c` 上，不会被任何方式修改 `this` 指向
-var c = new foo()
-c.a = 3
-console.log(c.a)
-
-// 还有种就是利用 call，apply，bind 改变 this，这个优先级仅次于 new
-```
-
-> 看看箭头函数中的 `this`
-
-```js
-function a() {
-    return () => {
-        return () => {
-        	console.log(this)
-        }
-    }
-}
-console.log(a()()())
-```
-
-> 箭头函数其实是没有 `this` 的，这个函数中的 `this` 只取决于他外面的第一个不是箭头函数的函数的 `this`。在这个例子中，因为调用 `a` 符合前面代码中的第一个情况，所以 `this` 是 `window`。并且 this 一旦绑定了上下文，就不会被任何代码改变
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_8-执行上下文)8 执行上下文
+## 执行上下文
 
 > 当执行 JS 代码时，会产生三种执行上下文
 
@@ -3870,199 +3242,9 @@ specialObject.foo = foo; // {DontDelete}, {ReadOnly}
 delete Scope[0]; // remove specialObject from the front of scope chain
 ```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_9-闭包)9 闭包
 
-> 闭包的定义很简单：函数 A 返回了一个函数 B，并且函数 B 中使用了函数 A 的变量，函数 B 就被称为闭包。
 
-```js
-function A() {
-  let a = 1
-  function B() {
-      console.log(a)
-  }
-  return B
-}
-```
-
-> 你是否会疑惑，为什么函数 `A`已经弹出调用栈了，为什么函数 `B` 还能引用到函数 `A`中的变量。因为函数 `A` 中的变量这时候是存储在堆上的。现在的 `JS`引擎可以通过逃逸分析辨别出哪些变量需要存储在堆上，哪些需要存储在栈上。
-
-经典面试题，循环中使用闭包解决 var 定义函数的问题
-
-```js
-for ( var i=1; i<=5; i++) {
-	setTimeout( function timer() {
-		console.log( i );
-	}, i*1000 );
-}
-```
-
-- 首先因为 `setTimeout` 是个异步函数，所有会先把循环全部执行完毕，这时候 `i` 就是 `6` 了，所以会输出一堆 `6`。
-- 解决办法两种，第一种使用闭包
-
-```js
-for (var i = 1; i <= 5; i++) {
-  (function(j) {
-    setTimeout(function timer() {
-      console.log(j);
-    }, j * 1000);
-  })(i);
-}
-```
-
-- 第二种就是使用 `setTimeout` 的第三个参数
-
-```js
-for ( var i=1; i<=5; i++) {
-	setTimeout( function timer(j) {
-		console.log( j );
-	}, i*1000, i);
-}
-```
-
-> 第三种就是使用 `let` 定义 `i` 了
-
-```js
-for ( let i=1; i<=5; i++) {
-	setTimeout( function timer() {
-		console.log( i );
-	}, i*1000 );
-}
-```
-
-> 因为对于 `let` 来说，他会创建一个块级作用域，相当于
-
-```js
-{ // 形成块级作用域
-  let i = 0
-  {
-    let ii = i
-    setTimeout( function timer() {
-        console.log( i );
-    }, i*1000 );
-  }
-  i++
-  {
-    let ii = i
-  }
-  i++
-  {
-    let ii = i
-  }
-  ...
-}
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_10-深浅拷贝)10 深浅拷贝
-
-```js
-letet a a = {
-    age     : 1
-}
-let b = a
-a.age = 2
-console.log(b.age) // 2
-```
-
-- 从上述例子中我们可以发现，如果给一个变量赋值一个对象，那么两者的值会是同一个引用，其中一方改变，另一方也会相应改变。
-- 通常在开发中我们不希望出现这样的问题，我们可以使用浅拷贝来解决这个问题
-
-**浅拷贝**
-
-> 首先可以通过 `Object.assign` 来解决这个问题
-
-```js
-let a = {
-    age: 1
-}
-let b = Object.assign({}, a)
-a.age = 2
-console.log(b.age) // 1
-```
-
-> 当然我们也可以通过展开运算符`（…）`来解决
-
-```js
-let a = {
-    age: 1
-}
-let b = {...a}
-a.age = 2
-console.log(b.age) // 1
-```
-
-> 通常浅拷贝就能解决大部分问题了，但是当我们遇到如下情况就需要使用到深拷贝了
-
-```js
-let a = {
-    age: 1,
-    jobs: {
-        first: 'FE'
-    }
-}
-let b = {...a}
-a.jobs.first = 'native'
-console.log(b.jobs.first) // native
-```
-
-> 浅拷贝只解决了第一层的问题，如果接下去的值中还有对象的话，那么就又回到刚开始的话题了，两者享有相同的引用。要解决这个问题，我们需要引入深拷
-
-**深拷贝**
-
-> 这个问题通常可以通过 `JSON.parse(JSON.stringify(object))` 来解决
-
-```js
-let a = {
-    age: 1,
-    jobs: {
-        first: 'FE'
-    }
-}
-let b = JSON.parse(JSON.stringify(a))
-a.jobs.first = 'native'
-console.log(b.jobs.first) // FE
-```
-
-> 但是该方法也是有局限性的：
-
-- 会忽略 `undefined`
-- 不能序列化函数
-- 不能解决循环引用的对象
-
-```js
-let obj = {
-  a: 1,
-  b: {
-    c: 2,
-    d: 3,
-  },
-}
-obj.c = obj.b
-obj.e = obj.a
-obj.b.c = obj.c
-obj.b.d = obj.b
-obj.b.e = obj.b.c
-let newObj = JSON.parse(JSON.stringify(obj))
-console.log(newObj)
-```
-
-> 如果你有这么一个循环引用对象，你会发现你不能通过该方法深拷贝
-
-- 在遇到函数或者 `undefined` 的时候，该对象也不能正常的序列化
-
-```js
-let a = {
-    age: undefined,
-    jobs: function() {},
-    name: 'poetries'
-}
-let b = JSON.parse(JSON.stringify(a))
-console.log(b) // {name: "poetries"}
-```
-
-- 你会发现在上述情况中，该方法会忽略掉函数和`undefined。
-- 但是在通常情况下，复杂数据都是可以序列化的，所以这个函数可以解决大部分问题，并且该函数是内置函数中处理深拷贝性能最快的。当然如果你的数据中含有以上三种情况下，可以使用 `lodash` 的深拷贝函数。
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_11-模块化)11 模块化
+## 模块化
 
 > 在有 `Babel` 的情况下，我们可以直接使用 `ES6`的模块化
 
@@ -4132,405 +3314,9 @@ var load = function (module) {
 
 > `AMD` 是由 `RequireJS` 提出的
 
-```js
-// AMD
-define(['./a', './b'], function(a, b) {
-    a.do()
-    b.do()
-})
-define(function(require, exports, module) {   
-    var a = require('./a')  
-    a.doSomething()   
-    var b = require('./b')
-    b.doSomething()
-})
-```
 
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_12-防抖)12 防抖
 
-> 你是否在日常开发中遇到一个问题，在滚动事件中需要做个复杂计算或者实现一个按钮的防二次点击操作。
 
-- 这些需求都可以通过函数防抖动来实现。尤其是第一个需求，如果在频繁的事件回调中做复杂计算，很有可能导致页面卡顿，不如将多次计算合并为一次计算，只在一个精确点做操作
-- PS：防抖和节流的作用都是防止函数多次调用。区别在于，假设一个用户一直触发这个函数，且每次触发函数的间隔小于`wait`，防抖的情况下只会调用一次，而节流的 情况会每隔一定时间（参数`wait`）调用函数
-
-```js
-// 这个是用来获取当前时间戳的
-function now() {
-  return +new Date()
-}
-/**
- * 防抖函数，返回函数连续调用时，空闲时间必须大于或等于 wait，func 才会执行
- *
- * @param  {function} func        回调函数
- * @param  {number}   wait        表示时间窗口的间隔
- * @param  {boolean}  immediate   设置为ture时，是否立即调用函数
- * @return {function}             返回客户调用函数
- */
-function debounce (func, wait = 50, immediate = true) {
-  let timer, context, args
-
-  // 延迟执行函数
-  const later = () => setTimeout(() => {
-    // 延迟函数执行完毕，清空缓存的定时器序号
-    timer = null
-    // 延迟执行的情况下，函数会在延迟函数中执行
-    // 使用到之前缓存的参数和上下文
-    if (!immediate) {
-      func.apply(context, args)
-      context = args = null
-    }
-  }, wait)
-
-  // 这里返回的函数是每次实际调用的函数
-  return function(...params) {
-    // 如果没有创建延迟执行函数（later），就创建一个
-    if (!timer) {
-      timer = later()
-      // 如果是立即执行，调用函数
-      // 否则缓存参数和调用上下文
-      if (immediate) {
-        func.apply(this, params)
-      } else {
-        context = this
-        args = params
-      }
-    // 如果已有延迟执行函数（later），调用的时候清除原来的并重新设定一个
-    // 这样做延迟函数会重新计时
-    } else {
-      clearTimeout(timer)
-      timer = later()
-    }
-  }
-}
-```
-
-- 对于按钮防点击来说的实现：如果函数是立即执行的，就立即调用，如果函数是延迟执行的，就缓存上下文和参数，放到延迟函数中去执行。一旦我开始一个定时器，只要我定时器还在，你每次点击我都重新计时。一旦你点累了，定时器时间到，定时器重置为 `null`，就可以再次点击了。
-- 对于延时执行函数来说的实现：清除定时器`ID`，如果是延迟调用就调用函数
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_13-节流)13 节流
-
-> 防抖动和节流本质是不一样的。防抖动是将多次执行变为最后一次执行，节流是将多次执行变成每隔一段时间执行
-
-```js
-/**
- * underscore 节流函数，返回函数连续调用时，func 执行频率限定为 次 / wait
- *
- * @param  {function}   func      回调函数
- * @param  {number}     wait      表示时间窗口的间隔
- * @param  {object}     options   如果想忽略开始函数的的调用，传入{leading: false}。
- *                                如果想忽略结尾函数的调用，传入{trailing: false}
- *                                两者不能共存，否则函数不能执行
- * @return {function}             返回客户调用函数   
- */
-_.throttle = function(func, wait, options) {
-    var context, args, result;
-    var timeout = null;
-    // 之前的时间戳
-    var previous = 0;
-    // 如果 options 没传则设为空对象
-    if (!options) options = {};
-    // 定时器回调函数
-    var later = function() {
-      // 如果设置了 leading，就将 previous 设为 0
-      // 用于下面函数的第一个 if 判断
-      previous = options.leading === false ? 0 : _.now();
-      // 置空一是为了防止内存泄漏，二是为了下面的定时器判断
-      timeout = null;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    };
-    return function() {
-      // 获得当前时间戳
-      var now = _.now();
-      // 首次进入前者肯定为 true
-	  // 如果需要第一次不执行函数
-	  // 就将上次时间戳设为当前的
-      // 这样在接下来计算 remaining 的值时会大于0
-      if (!previous && options.leading === false) previous = now;
-      // 计算剩余时间
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      // 如果当前调用已经大于上次调用时间 + wait
-      // 或者用户手动调了时间
- 	  // 如果设置了 trailing，只会进入这个条件
-	  // 如果没有设置 leading，那么第一次会进入这个条件
-	  // 还有一点，你可能会觉得开启了定时器那么应该不会进入这个 if 条件了
-	  // 其实还是会进入的，因为定时器的延时
-	  // 并不是准确的时间，很可能你设置了2秒
-	  // 但是他需要2.2秒才触发，这时候就会进入这个条件
-      if (remaining <= 0 || remaining > wait) {
-        // 如果存在定时器就清理掉否则会调用二次回调
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-        previous = now;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-      } else if (!timeout && options.trailing !== false) {
-        // 判断是否设置了定时器和 trailing
-	    // 没有的话就开启一个定时器
-        // 并且不能不能同时设置 leading 和 trailing
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-  };
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_14-继承)14 继承
-
-> 在 ES5 中，我们可以使用如下方式解决继承的问题
-
-```js
-function Super() {}
-Super.prototype.getNumber = function() {
-  return 1
-}
-
-function Sub() {}
-let s = new Sub()
-Sub.prototype = Object.create(Super.prototype, {
-  constructor: {
-    value: Sub,
-    enumerable: false,
-    writable: true,
-    configurable: true
-  }
-})
-```
-
-- 以上继承实现思路就是将子类的原型设置为父类的原型
-- 在 `ES6` 中，我们可以通过 `class` 语法轻松解决这个问题
-
-```js
-class MyDate extends Date {
-  test() {
-    return this.getTime()
-  }
-}
-let myDate = new MyDate()
-myDate.test()
-```
-
-- 但是 `ES6` 不是所有浏览器都兼容，所以我们需要使用 `Babel` 来编译这段代码。
-- 如果你使用编译过得代码调用 `myDate.test()`你会惊奇地发现出现了报错
-
-> 因为在 `JS` 底层有限制，如果不是由 `Date`构造出来的实例的话，是不能调用 `Date` 里的函数的。所以这也侧面的说明了：`ES6` 中的 `class` 继承与 `ES5` 中的一般继承写法是不同的。
-
-- 既然底层限制了实例必须由 `Date` 构造出来，那么我们可以改变下思路实现继承
-
-```js
-function MyData() {
-
-}
-MyData.prototype.test = function () {
-  return this.getTime()
-}
-let d = new Date()
-Object.setPrototypeOf(d, MyData.prototype)
-Object.setPrototypeOf(MyData.prototype, Date.prototype)
-```
-
-- 以上继承实现思路：先创建父类实例 => 改变实例原先的 `_proto__`转而连接到子类的 `prototype`=> 子类的 `prototype` 的 `__proto__` 改为父类的 `prototype`。
-- 通过以上方法实现的继承就可以完美解决 `JS` 底层的这个限制
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_15-call-apply-bind)15 call, apply, bind
-
-- `call` 和 `apply` 都是为了解决改变 `this` 的指向。作用都是相同的，只是传参的方式不同。
-- 除了第一个参数外，`call` 可以接收一个参数列表，`apply` 只接受一个参数数组
-
-```js
-let a = {
-    value: 1
-}
-function getValue(name, age) {
-    console.log(name)
-    console.log(age)
-    console.log(this.value)
-}
-getValue.call(a, 'yck', '24')
-getValue.apply(a, ['yck', '24'])
-```
-
-### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_16-promise-实现)16 Promise 实现
-
-- 可以把 `Promise` 看成一个状态机。初始是 `pending` 状态，可以通过函数 `resolve`和 `reject` ，将状态转变为 `resolved`或者 `rejected` 状态，状态一旦改变就不能再次变化。
-- `then` 函数会返回一个 `Promise` 实例，并且该返回值是一个新的实例而不是之前的实例。因为 `Promise` 规范规定除了 `pending` 状态，其他状态是不可以改变的，如果返回的是一个相同实例的话，多个 `then` 调用就失去意义了。
-- 对于 `then`来说，本质上可以把它看成是 `flatMap`
-
-```js
-// 三种状态
-const PENDING = "pending";
-const RESOLVED = "resolved";
-const REJECTED = "rejected";
-// promise 接收一个函数参数，该函数会立即执行
-function MyPromise(fn) {
-  let _this = this;
-  _this.currentState = PENDING;
-  _this.value = undefined;
-  // 用于保存 then 中的回调，只有当 promise
-  // 状态为 pending 时才会缓存，并且每个实例至多缓存一个
-  _this.resolvedCallbacks = [];
-  _this.rejectedCallbacks = [];
-
-  _this.resolve = function (value) {
-    if (value instanceof MyPromise) {
-      // 如果 value 是个 Promise，递归执行
-      return value.then(_this.resolve, _this.reject)
-    }
-    setTimeout(() => { // 异步执行，保证执行顺序
-      if (_this.currentState === PENDING) {
-        _this.currentState = RESOLVED;
-        _this.value = value;
-        _this.resolvedCallbacks.forEach(cb => cb());
-      }
-    })
-  };
-
-  _this.reject = function (reason) {
-    setTimeout(() => { // 异步执行，保证执行顺序
-      if (_this.currentState === PENDING) {
-        _this.currentState = REJECTED;
-        _this.value = reason;
-        _this.rejectedCallbacks.forEach(cb => cb());
-      }
-    })
-  }
-  // 用于解决以下问题
-  // new Promise(() => throw Error('error))
-  try {
-    fn(_this.resolve, _this.reject);
-  } catch (e) {
-    _this.reject(e);
-  }
-}
-
-MyPromise.prototype.then = function (onResolved, onRejected) {
-  var self = this;
-  // 规范 2.2.7，then 必须返回一个新的 promise
-  var promise2;
-  // 规范 2.2.onResolved 和 onRejected 都为可选参数
-  // 如果类型不是函数需要忽略，同时也实现了透传
-  // Promise.resolve(4).then().then((value) => console.log(value))
-  onResolved = typeof onResolved === 'function' ? onResolved : v => v;
-  onRejected = typeof onRejected === 'function' ? onRejected : r => throw r;
-
-  if (self.currentState === RESOLVED) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      // 规范 2.2.4，保证 onFulfilled，onRjected 异步执行
-      // 所以用了 setTimeout 包裹下
-      setTimeout(function () {
-        try {
-          var x = onResolved(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (reason) {
-          reject(reason);
-        }
-      });
-    }));
-  }
-
-  if (self.currentState === REJECTED) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      setTimeout(function () {
-        // 异步执行onRejected
-        try {
-          var x = onRejected(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (reason) {
-          reject(reason);
-        }
-      });
-    }));
-  }
-
-  if (self.currentState === PENDING) {
-    return (promise2 = new MyPromise(function (resolve, reject) {
-      self.resolvedCallbacks.push(function () {
-        // 考虑到可能会有报错，所以使用 try/catch 包裹
-        try {
-          var x = onResolved(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (r) {
-          reject(r);
-        }
-      });
-
-      self.rejectedCallbacks.push(function () {
-        try {
-          var x = onRejected(self.value);
-          resolutionProcedure(promise2, x, resolve, reject);
-        } catch (r) {
-          reject(r);
-        }
-      });
-    }));
-  }
-};
-// 规范 2.3
-function resolutionProcedure(promise2, x, resolve, reject) {
-  // 规范 2.3.1，x 不能和 promise2 相同，避免循环引用
-  if (promise2 === x) {
-    return reject(new TypeError("Error"));
-  }
-  // 规范 2.3.2
-  // 如果 x 为 Promise，状态为 pending 需要继续等待否则执行
-  if (x instanceof MyPromise) {
-    if (x.currentState === PENDING) {
-      x.then(function (value) {
-        // 再次调用该函数是为了确认 x resolve 的
-        // 参数是什么类型，如果是基本类型就再次 resolve
-        // 把值传给下个 then
-        resolutionProcedure(promise2, value, resolve, reject);
-      }, reject);
-    } else {
-      x.then(resolve, reject);
-    }
-    return;
-  }
-  // 规范 2.3.3.3.3
-  // reject 或者 resolve 其中一个执行过得话，忽略其他的
-  let called = false;
-  // 规范 2.3.3，判断 x 是否为对象或者函数
-  if (x !== null && (typeof x === "object" || typeof x === "function")) {
-    // 规范 2.3.3.2，如果不能取出 then，就 reject
-    try {
-      // 规范 2.3.3.1
-      let then = x.then;
-      // 如果 then 是函数，调用 x.then
-      if (typeof then === "function") {
-        // 规范 2.3.3.3
-        then.call(
-          x,
-          y => {
-            if (called) return;
-            called = true;
-            // 规范 2.3.3.3.1
-            resolutionProcedure(promise2, y, resolve, reject);
-          },
-          e => {
-            if (called) return;
-            called = true;
-            reject(e);
-          }
-        );
-      } else {
-        // 规范 2.3.3.4
-        resolve(x);
-      }
-    } catch (e) {
-      if (called) return;
-      called = true;
-      reject(e);
-    }
-  } else {
-    // 规范 2.3.4，x 为基本类型
-    resolve(x);
-  }
-}
-```
 
 ### [#](https://blog.poetries.top/FE-Interview-Questions/docs/advance.html#_17-generator-实现)17 Generator 实现
 
@@ -4768,82 +3554,9 @@ a > -1 // true
 
 > 在以上代码中，因为 `a` 是对象，所以会通过 `valueOf` 转换为原始类型再比较值。
 
-## [#](https://blog.poetries.top/FE-Interview-Questions/docs/excellent.html#_3-this)3 This
+## This
 
 
-
-> 我们先来看几个函数调用的场景
-
-```js
-function foo() {
-  console.log(this.a)
-}
-var a = 1
-foo()
-
-const obj = {
-  a: 2,
-  foo: foo
-}
-obj.foo()
-
-const c = new foo()
-```
-
-- 对于直接调用 `foo` 来说，不管 `foo` 函数被放在了什么地方，`this` 一定是`window`
-- 对于 `obj.foo()` 来说，我们只需要记住，谁调用了函数，谁就是 `this`，所以在这个场景下 `foo` 函数中的 `this` 就是 `obj` 对象
-- 对于 `new` 的方式来说，`this` 被永远绑定在了 `c` 上面，不会被任何方式改变 `this`
-
-> 说完了以上几种情况，其实很多代码中的 `this` 应该就没什么问题了，下面让我们看看箭头函数中的 `this`
-
-```js
-function a() {
-  return () => {
-    return () => {
-      console.log(this)
-    }
-  }
-}
-console.log(a()()())
-```
-
-- 首先箭头函数其实是没有 `this` 的，箭头函数中的 `this` 只取决包裹箭头函数的第一个普通函数的 `this`。在这个例子中，因为包裹箭头函数的第一个普通函数是 `a`，所以此时的 `this` 是 `window`。另外对箭头函数使用 `bind`这类函数是无效的。
-- 最后种情况也就是 `bind` 这些改变上下文的 `API` 了，对于这些函数来说，`this` 取决于第一个参数，如果第一个参数为空，那么就是 `window`。
-- 那么说到 `bind`，不知道大家是否考虑过，如果对一个函数进行多次 `bind`，那么上下文会是什么呢？
-
-```js
-let a = {}
-let fn = function () { console.log(this) }
-fn.bind().bind(a)() // => ?
-```
-
-> 如果你认为输出结果是 `a`，那么你就错了，其实我们可以把上述代码转换成另一种形式
-
-```js
-// fn.bind().bind(a) 等于
-let fn2 = function fn1() {
-  return function() {
-    return fn.apply()
-  }.apply(a)
-}
-fn2()
-```
-
-> 可以从上述代码中发现，不管我们给函数 `bind` 几次，`fn` 中的 `this` 永远由第一次 `bind` 决定，所以结果永远是 `window`
-
-```js
-let a = { name: 'poetries' }
-function foo() {
-  console.log(this.name)
-}
-foo.bind(a)() // => 'poetries'
-```
-
-> 以上就是 `this` 的规则了，但是可能会发生多个规则同时出现的情况，这时候不同的规则之间会根据优先级最高的来决定 `this` 最终指向哪里。
-
-> 首先，`new` 的方式优先级最高，接下来是 `bind` 这些函数，然后是 `obj.foo()` 这种调用方式，最后是 `foo` 这种调用方式，同时，箭头函数的 `this` 一旦被绑定，就不会再被任何方式所改变。
-
-![image.png](https://poetries1.gitee.io/img-repo/2020/07/2.png)
 
 ## [#](https://blog.poetries.top/FE-Interview-Questions/docs/excellent.html#_4-和-有什么区别)4 == 和 === 有什么区别
 
@@ -4886,76 +3599,11 @@ foo.bind(a)() // => 'poetries'
 
 > 对于 `===` 来说就简单多了，就是判断两者类型和值是否相同
 
-## [#](https://blog.poetries.top/FE-Interview-Questions/docs/excellent.html#_5-闭包)5 闭包
+## 
 
 
 
-> 闭包的定义其实很简单：函数 `A` 内部有一个函数 `B`，函数 `B` 可以访问到函数 `A` 中的变量，那么函数 `B` 就是闭包
 
-```js
-function A() {
-  let a = 1
-  window.B = function () {
-      console.log(a)
-  }
-}
-A()
-B() // 1
-```
-
-**闭包存在的意义就是让我们可以间接访问函数内部的变量**
-
-> 经典面试题，循环中使用闭包解决 `var` 定义函数的问题
-
-```js
-for (var i = 1; i <= 5; i++) {
-  setTimeout(function timer() {
-    console.log(i)
-  }, i * 1000)
-}
-```
-
-> 首先因为 `setTimeout` 是个异步函数，所以会先把循环全部执行完毕，这时候 `i`就是 `6` 了，所以会输出一堆 `6`
-
-**解决办法有三种**
-
-1. 第一种是使用闭包的方式
-
-```js
-for (var i = 1; i <= 5; i++) {
-  ;(function(j) {
-    setTimeout(function timer() {
-      console.log(j)
-    }, j * 1000)
-  })(i)
-}
-```
-
-> 在上述代码中，我们首先使用了立即执行函数将 `i` 传入函数内部，这个时候值就被固定在了参数 `j` 上面不会改变，当下次执行 `timer` 这个闭包的时候，就可以使用外部函数的变量 `j`，从而达到目的
-
-1. 第二种就是使用 `setTimeout` 的第三个参数，这个参数会被当成 `timer` 函数的参数传入
-
-```js
-for (var i = 1; i <= 5; i++) {
-  setTimeout(
-    function timer(j) {
-      console.log(j)
-    },
-    i * 1000,
-    i
-  )
-}
-```
-
-1. 第三种就是使用 `let` 定义 `i` 了来解决问题了，这个也是最为推荐的方式
-
-```js
-for (let i = 1; i <= 5; i++) {
-  setTimeout(function timer() {
-    console.log(i)
-  }, i * 1000)
-}
-```
 
 
 
@@ -5183,3 +3831,7 @@ export function a() {}
 export default function() {}
 ```
 
+**推荐资料**：
+
+- [冴羽的博客](https://github.com/mqyqingfeng/Blog)
+- [Js必须掌握的33个概念](https://github.com/stephentian/33-js-concepts)
