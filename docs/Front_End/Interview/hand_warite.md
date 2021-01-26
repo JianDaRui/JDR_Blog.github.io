@@ -1,3 +1,5 @@
+
+
 # 高频手写题目
 
 > 面试高频手写题目
@@ -2557,7 +2559,31 @@ str.replace(re,($0,$1) => {
 console.log(`字符最多的是${char}，出现了${num}次`);
 ```
 
+
+
+日期时间段中间的有效日期
+
+```js
+function rangeDate(startTime, endTime) {
+	let _start = new Date(startTime).getTime();
+	let _end = new Date(endTime).getTime();
+    let day = 24*60*60*1000
+	let arr = []
+    for(let i = _start; i < _end; i += day) {
+		arr.push(i)
+    }
+    return arr.map(item => {
+		let date = new Date(item);
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate()
+        return `${year}-${month}-${day}`
+    })
+
+}
+```
+
 **推荐资料**：
 
-- [手写原生](https://juejin.cn/post/6844903986479251464#heading-5)
+- [三元同学手写原生](https://juejin.cn/post/6844903986479251464#heading-5)
 

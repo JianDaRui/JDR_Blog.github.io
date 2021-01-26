@@ -83,6 +83,7 @@ var insertionSortList = function(head) {
   for(let i=0; i<len; i++) {
     for(let j=i; j > 0; j--) {
       if(set[j].val < set[j-1].val){
+        //[ set[j-1],  set[j]] = [set[j],  set[j-1]]
         let temp = set[j];
         set[j] = set[j-1];
         set[j-1] = temp;
@@ -326,7 +327,7 @@ var getIntersectionNode = function (headA, headB) {
 方法二：哈希表
 
 1. 遍历链表A，将A中的每个节点存入哈希表中
-2. 遍历链表B，判断哈希表中是否存在B节点
+2.  否存在B节点
 
 ```js
 var getIntersectionNode = function (headA, headB) {
@@ -635,6 +636,23 @@ var addTwoNumbers = function(l1, l2) {
 
 ### [24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/)
 
+给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+
+**你不能只是单纯的改变节点内部的值**，而是需要实际的进行节点交换。
+
+输入：head = [1,2,3,4]
+输出：[2,1,4,3]
+示例 2：
+
+输入：head = []
+输出：[]
+示例 3：
+
+输入：head = [1]
+输出：[1]
+
+![](D:\Study\JDR_Blog\docs\Front_End\Algorithm\LeetCode\LinkList\1602548103-pyYkxE-image.png)
+
 #### 思路分析：
 
 方法一:递归
@@ -649,25 +667,667 @@ var swapPairs = function(head) {
 };
 ```
 
+方法二: 迭代
+
+- 创建哑结点 dummyHead，令 dummyHead.next = head。令 temp 表示当前到达的节点，初始时 temp = dummyHead。每次需要交换 temp 后面的两个节点。
+
+- 如果 temp 的后面没有节点或者只有一个节点，则没有更多的节点需要交换，因此结束交换。
+- 否则，获得 temp 后面的两个节点 node1 和 node2，通过更新节点的指针关系实现两两交换节点。
+
+- 具体而言，交换之前的节点关系是 temp -> node1 -> node2，交换之后的节点关系要变成 temp -> node2 -> node1，因此需要进行如下操作。
+
+```js
+temp.next = node2
+node1.next = node2.next
+node2.next = node1
+```
+
+完成上述操作之后，节点关系即变成 temp -> node2 -> node1。
+
+- 再令 temp = node1，对链表中的其余节点进行两两交换，直到全部节点都被两两交换。
+
+- 两两交换链表中的节点之后，新的链表的头节点是 dummyHead.next，返回新的链表的头节点即可。
+
+```js
+var swapPairs = function(head) {
+    const dummyHead = new ListNode(0);
+    dummyHead.next = head;
+    let temp = dummyHead;
+    while (temp.next !== null && temp.next.next !== null) {
+        const node1 = temp.next;
+        const node2 = temp.next.next;
+        temp.next = node2;
+        node1.next = node2.next;
+        node2.next = node1;
+        temp = node1;
+    }
+    return dummyHead.next;
+};
+
+```
 
 
 
+### [61. 旋转链表](https://leetcode-cn.com/problems/rotate-list/)
+
+难度中等402
+
+给定一个链表，旋转链表，将链表每个节点向右移动 *k* 个位置，其中 *k* 是非负数。
+
+**示例 1:**
+
+```
+输入: 1->2->3->4->5->NULL, k = 2
+输出: 4->5->1->2->3->NULL
+解释:
+向右旋转 1 步: 5->1->2->3->4->NULL
+向右旋转 2 步: 4->5->1->2->3->NULL
+```
+
+**示例 2:**
+
+```
+输入: 0->1->2->NULL, k = 4
+输出: 2->0->1->NULL
+解释:
+向右旋转 1 步: 2->0->1->NULL
+向右旋转 2 步: 1->2->0->NULL
+向右旋转 3 步: 0->1->2->NULL
+向右旋转 4 步: 2->0->1->NULL
+```
+
+方法 1：
+直觉
+
+链表中的点已经相连，一次旋转操作意味着：
+
+- 先将链表闭合成环
+- 找到相应的位置断开这个环，确定新的链表头和链表尾
+
+
+新的链表头在哪里？
+
+- 在位置 n-k 处，其中 n 是链表中点的个数，新的链表尾就在头的前面，位于位置 n-k-1。
+
+- 我们这里假设 k < n
+
+如果 k >= n 怎么处理？
+
+- k 可以被写成 k = (k // n) * n + k % n 两者加和的形式，其中前面的部分不影响最终的结果，因此只需要考虑 k%n 的部分，这个值一定比 n 小。
+
+算法
+
+算法实现很直接：
+
+- 找到旧的尾部并将其与链表头相连 old_tail.next = head，整个链表闭合成环，同时计算出链表的长度 n。
+- 找到新的尾部，第 (n - k % n - 1) 个节点 ，新的链表头是第 (n - k % n) 个节点。
+- 断开环 new_tail.next = None，并返回新的链表头 new_head。
+  实现
+
+```java
+class Solution {
+  public ListNode rotateRight(ListNode head, int k) {
+    // base cases
+    if (head == null) return null;
+    if (head.next == null) return head;
+
+    // close the linked list into the ring
+    ListNode old_tail = head;
+    int n;
+    for(n = 1; old_tail.next != null; n++)
+      old_tail = old_tail.next;
+    old_tail.next = head;
+
+    // find new tail : (n - k % n - 1)th node
+    // and new head : (n - k % n)th node
+    ListNode new_tail = head;
+    for (int i = 0; i < n - k % n - 1; i++)
+      new_tail = new_tail.next;
+    ListNode new_head = new_tail.next;
+
+    // break the ring
+    new_tail.next = null;
+
+    return new_head;
+  }
+}
+```
+
+方法二： 双指针解决:
+
+![](D:\Study\JDR_Blog\docs\Front_End\Algorithm\LeetCode\LinkList\1602048483-IWdmcz-image.png)
+
+![](D:\Study\JDR_Blog\docs\Front_End\Algorithm\LeetCode\LinkList\1602048492-Jwboqd-image.png)
+
+```java
+public ListNode rotateRight(ListNode head, int k) {
+    if (head == null)
+        return head;
+    ListNode fast = head, slow = head;
+    //链表的长度
+    int len = 1;
+    //统计链表的长度，顺便找到链表的尾结点
+    while (fast.next != null) {
+        len++;
+        fast = fast.next;
+    }
+    //首尾相连，先构成环
+    fast.next = head;
+    //慢指针移动的步数
+    int step = len - k % len;
+    //移动步数，这里大于1实际上是少移了一步
+    while (step-- > 1) {
+        slow = slow.next;
+    }
+    //temp就是需要返回的结点
+    ListNode temp = slow.next;
+    //因为链表是环形的，slow就相当于尾结点了，
+    //直接让他的next等于空
+    slow.next = null;
+    return temp;
+}
+```
+
+哈希法 🪓
+
+- 在例子1中：k=2 ，head为 1->2->3->4->5->NULL
+- 链表第一步变成: 5->1->2->3->4->NULL
+- 第二步变成: 4->5->1->2->3->NULL
+- 那我们是否可以直接简化其步骤：直接拆分倒数k项，再插入到head呢？
+  当然是可以的，此时，步骤就变为：
+
+- 原链表：1->2->3->4->5->NULL
+- 拆分后k项，链表变为：1->2->3->NULL 和 4->5->NULL
+- 再合并：4->5->1->2->3->NULL
+
+```js
+const rotateRight = (head, k) => {
+    if (!head || !head.next) return head
+    let curr = head, n = 0
+    let hash = new Map()
+    // 遍历并将数据存入map
+    while (curr && ++n) {
+        hash.set(n, curr)
+        curr = curr.next
+    }
+    k = k % n // 去重
+    // 通过查找map对链表进行操作
+    hash.get(n).next = head // 链表最后一项指向头部形成环
+    head = hash.get(n - k).next // 定位新的头节点
+    hash.get(n - k).next = null // 打断链表环
+    return head
+}
+```
+
+
+通过Map数据存储的特性，把第一次遍历的数据存储在Map中
+而后直接通过 n-k 获取到链表右移的前一项
 
 
 
+链表转环 ♻️
+在哈希法中，我们最后处理链表时，把单链表转成了环
+
+那么，我们当然也可以直接把链表转成环，然后在环中找到k的位置将其打断～
+
+```js
+const rotateRight = (head, k) => {
+    if (!head) return null
+    let curr = head, n = 0
+    while (++n && curr.next) curr = curr.next
+    // 形成环链表
+    curr.next = head
+    k = k % n // 去重
+    while (++k < n) head = head.next // 找到打断位置
+    // 对环链表打断再拼接得到答案
+    let tmp = head
+    head = head.next
+    tmp.next = null
+    return head
+}
+```
+
+遍历链表，获得链表长度n
+curr.next = head 形成环链表
+去重
+通过循环n-k>0找到打断环的位置并打断
+
+穷举法 💪
+这种解法没什么好说的，就是按照正常思维逻辑，一步步来。
+
+```js
+const rotateRight = (head, k) => {
+    if (!head || !head.next) return head
+    let curr = head, n = 0
+    // 遍历链表计算其长度
+    while (++n && curr.next) curr = curr.next
+    k = k % n	// 去重
+    // 链表右移
+    while (k--) {
+        curr = head
+        while (curr.next.next) curr = curr.next
+        // 这里curr是链表的打断位置，即倒数第二项
+        curr.next.next = head // 链表最后一项指向头部形成环
+        head = curr.next // 定位新的头节点
+        curr.next = null // 打断链表环
+    }
+    return head
+}
+```
+
+- 遍历链表，获取链表长度 n
+- 对 k 取余进行去重
+- 循环 k 次，每次把最后一项移动到第一项
 
 
 
+### [82. 删除排序链表中的重复元素 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
+
+难度中等437
+
+给定一个排序链表，删除所有含有重复数字的节点，只保留原始链表中 *没有重复出现* 的数字。
+
+**示例 1:**
+
+```
+输入: 1->2->3->3->4->4->5
+输出: 1->2->5
+```
+
+**示例 2:**
+
+```
+输入: 1->1->1->2->3
+输出: 2->3
+```
+
+#### 思路分析
+
+##### 解法一: 哈希表
+
+- 遍历链表，将每个节点的值放到哈希表中，哈希表的key就是节点的值，value是这个值出现的频率
+- 遍历哈希表，将所有频率==1的key放到集合中
+- 对集合进行排序
+- 遍历集合，然后不断创建新的链表节点
+- 当然这里可以优化一下，比如使用LinkedHashMap或者OrderedDict这样的数据结构，可以省去排序环节。
+
+代码实现:
+
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head==null || head.next==null) {
+            return head;
+        }
+        //用哈希表记录每个节点值的出现频率
+        HashMap<Integer,Integer> cache = new HashMap<Integer,Integer>();
+        ArrayList<Integer> arr = new ArrayList<Integer>();
+        ListNode p = head;
+        while(p!=null) {
+            int val = p.val;
+            if(cache.containsKey(val)) {
+                cache.put(val,cache.get(val)+1);
+            } else {
+                cache.put(val,1);
+            }
+            p = p.next;
+        }
+        //将所有只出现一次的值放到arr中，之后再对这个arr排序
+        for(Integer k : cache.keySet()) {
+            if(cache.get(k)==1) {
+                arr.add(k);
+            }
+        }
+        Collections.sort(arr);
+        ListNode dummy = new ListNode(-1);
+        p = dummy;
+        //创建长度为arr.length长度的链表，依次将arr中的值赋给每个链表节点
+        for(Integer i : arr) {
+            ListNode tmp = new ListNode(i);
+            p.next = tmp;
+            p = p.next;
+        }
+        return dummy.next;
+    }
+}
+```
+
+##### 解法二: 双指针
+
+这里我们使用双指针的方式，定义a，b两个指针。
+
+考虑到一些边界条件，比如1->1->1->2这种情况，需要把开头的几个1给去掉，我们增加一个哑结点，方便边界处理。
+
+初始的两个指针如下:
+
+- 将a指针指向哑结点
+- 将b指针指向head(哑结点的下一个节点)
+- 如果a指向的值不等于b指向的值，则两个指针都前进一位
+  否则，就单独移动b，b不断往前走，直到a指向的值不等于b指向的值。
+
+注意，这里不是直接比较a.val==b.val，这么比较不对，因为初始的时候，a指向的是哑结点，所以比较逻辑应该是这样：
+
+a.next.val == b.next.val
+
+- 当两个指针指向的值相等时，b不断往前移动，这里是通过一个while循环判断的，因为要过滤掉1->2->2->2->3重复的2。
+- 那么整个逻辑就是两个while，但时间复杂度不是O(N^2)，而是O(N)，空间上也只是常数级别。
+
+代码实现:
+
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head==null || head.next==null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode a = dummy;
+        ListNode b = head;
+        while(b!=null && b.next!=null) {
+            //初始化的时a指向的是哑结点，所以比较逻辑应该是a的下一个节点和b的下一个节点
+            if(a.next.val!=b.next.val) {
+                a = a.next;
+                b = b.next;
+            }
+            else {
+                //如果a、b指向的节点值相等，就不断移动b，直到a、b指向的值不相等 
+                while(b!=null && b.next!=null && a.next.val==b.next.val) {
+                    b = b.next;
+                }
+                a.next = b.next;
+                b = b.next;
+            }
+        }
+        return dummy.next;
+    }
+}
+```
 
 
 
+##### 解法三
+
+解法三和解法二的代码实现很类似，区别是
+
+解法二初始化的时候b指针指向的是head
+而解法三初始化的时候b指针指向的是head.next
+
+所以判断两个指针指向的节点值是否相等时，解法三是这么做的:
+
+- a.next.val == b.val
+- 当两个指针指向的值不同时，a和b指针都是前移一位
+- 当两个指针指向的值相同时，解法二和解法三也略有不同
+- 主要体现在while循环后面的几句
+- 此外b指针还需要考虑边界条件，当循环结束后b指针可能会指向空，所以不能直接b=b.next，需要判断一下边界，这里请查看代码，并配合动态/静态图方便理解。
+
+时间复杂度和空间复杂度，解法二和解法三都是一样的。
 
 
 
+```java
+///代码实现中还有一个小细节，外层的while是这么写的
+while(b!=null)
+
+// 如果写成
+
+while(b!=null && b.next!=null)
+
+// 这就不对了，没法处理1->1这种情况。
+```
 
 
 
+代码实现:
 
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head==null || head.next==null) {
+            return head;
+        }
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode a = dummy;
+        ListNode b = head.next;
+        while(b!=null) {
+            if(a.next.val!=b.val) {
+                a = a.next;
+                b = b.next;
+            }
+            else {
+                while(b!=null && a.next.val==b.val) {
+                    b = b.next;
+                }
+                //这里的去重跟解法二有点差别，解法二的是
+                //a.next = b.next
+                a.next = b;
+                //b指针在while中判断完后，可能指向了null，这里需要处理边界问题
+                b = (b==null) ? null : b.next;
+            }
+        }
+        return dummy.next;
+    }
+}
+
+```
+
+
+
+#### [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
+
+难度中等137
+
+请实现 `copyRandomList` 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 `next` 指针指向下一个节点，还有一个 `random` 指针指向链表中的任意节点或者 `null`。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e1.png)
+
+```
+输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e2.png)
+
+```
+输入：head = [[1,1],[2,1]]
+输出：[[1,1],[2,1]]
+```
+
+**示例 3：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e3.png)**
+
+```
+输入：head = [[3,null],[3,0],[3,null]]
+输出：[[3,null],[3,0],[3,null]]
+```
+
+**示例 4：**
+
+```
+输入：head = []
+输出：[]
+解释：给定的链表为空（空指针），因此返回 null。
+```
+
+ 
+
+**提示：**
+
+- `-10000 <= Node.val <= 10000`
+- `Node.random` 为空（null）或指向链表中的节点。
+- 节点数目不超过 1000 。
+
+题意理解
+本题的意思是复制一个链表并返回，这个链表与一般链表不同的是多了一个 random 指针。
+
+在这里，复制的意思是指 深拷贝（Deep Copy），类似我们常用的“复制粘贴”，事实上，与此对应的还有 浅拷贝，它们的区别是：
+
+浅拷贝只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存。但深拷贝会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象。具体可以参考 @mraz-t 在下方评论中的解释。
+
+
+
+方法一：一行 python（不推荐）
+明白了以上原理，对于 python 可直接调用相关函数：
+
+
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        return copy.deepcopy(head)
+方法二：DFS & BFS
+图的基本单元是 顶点，顶点之间的关联关系称为 边，我们可以将此链表看成一个图：
+
+
+
+由于图的遍历方式有深度优先搜索和广度优先搜索，同样地，对于此链表也可以使用深度优先搜索和广度优先搜索两种方法进行遍历。
+
+算法：深度优先搜索
+从头结点 head 开始拷贝；
+由于一个结点可能被多个指针指到，因此如果该结点已被拷贝，则不需要重复拷贝；
+如果还没拷贝该结点，则创建一个新的结点进行拷贝，并将拷贝过的结点保存在哈希表中；
+使用递归拷贝所有的 next 结点，再递归拷贝所有的 random 结点。
+
+```python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        visited = {}
+    
+        def bfs(head):
+            if not head: return head
+            clone = Node(head.val, None, None) # 创建新结点
+            queue = collections.deque()
+            queue.append(head)
+            visited[head] = clone
+            while queue:
+                tmp = queue.pop()
+                if tmp.next and tmp.next not in visited:
+                    visited[tmp.next] = Node(tmp.next.val, [], [])
+                    queue.append(tmp.next)  
+                if tmp.random and tmp.random not in visited:
+                    visited[tmp.random] = Node(tmp.random.val, [], [])
+                    queue.append(tmp.random)
+                visited[tmp].next = visited.get(tmp.next)
+                visited[tmp].random = visited.get(tmp.random)
+            return clone
+        return bfs(head)
+```
+
+
+复杂度分析
+时间复杂度：O(N)O(N)。
+空间复杂度：O(N)O(N)。
+算法：广度优先搜索
+创建哈希表保存已拷贝结点，格式 {原结点：拷贝结点}
+创建队列，并将头结点入队；
+当队列不为空时，弹出一个结点，如果该结点的 next 结点未被拷贝过，则拷贝 next 结点并加入队列；同理，如果该结点的 random 结点未被拷贝过，则拷贝 random 结点并加入队列；
+
+```python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        visited = {}
+    
+        def bfs(head):
+            if not head: return head
+            clone = Node(head.val, None, None) # 创建新结点
+            queue = collections.deque()
+            queue.append(head)
+            visited[head] = clone
+            while queue:
+                tmp = queue.pop()
+                if tmp.next and tmp.next not in visited:
+                    visited[tmp.next] = Node(tmp.next.val, [], [])
+                    queue.append(tmp.next)  
+                if tmp.random and tmp.random not in visited:
+                    visited[tmp.random] = Node(tmp.random.val, [], [])
+                    queue.append(tmp.random)
+                visited[tmp].next = visited.get(tmp.next)
+                visited[tmp].random = visited.get(tmp.random)
+            return clone
+        return bfs(head)
+
+作者：z1m
+链接：https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/solution/lian-biao-de-shen-kao-bei-by-z1m/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+复杂度分析
+时间复杂度：O(N)O(N)。
+空间复杂度：O(N)O(N)。
+方法三：迭代
+该方法的思路比较直接，对于一个结点，分别拷贝此结点、next 指针指向的结点、random 指针指向的结点， 然后进行下一个结点...如果遇到已经出现的结点，那么我们不用拷贝该结点，只需将 next 或 random 指针指向该结点即可。
+
+```python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        visited = {}
+        def getClonedNode(node):
+            if node:
+                if node in visited:
+                    return visited[node]
+                else:
+                    visited[node] = Node(node.val,None,None)
+                    return visited[node]
+            return None
+        
+        if not head: return head
+        old_node = head
+        new_node = Node(old_node.val,None,None)
+        visited[old_node] = new_node
+
+        while old_node:
+            new_node.random = getClonedNode(old_node.random)
+            new_node.next = getClonedNode(old_node.next)
+            
+            old_node = old_node.next
+            new_node = new_node.next
+        return visited[head]
+```
+复杂度分析
+时间复杂度：O(N)O(N)。
+空间复杂度：O(N)O(N)。
+方法四：优化的迭代
+我们也可以不使用哈希表的额外空间来保存已经拷贝过的结点，而是将链表进行拓展，在每个链表结点的旁边拷贝，比如 A->B->C 变成 A->A'->B->B'->C->C'，然后将拷贝的结点分离出来变成 A->B->C和A'->B'->C'，最后返回 A'->B'->C'。
+
+![img](https://pic.leetcode-cn.com/c53b7c728bcf064803cefc137766e5dbfa0247059ed8adf76a86d7e3f2de7546-35_1.gif)
+
+```python
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head: return head
+        cur = head
+        while cur:
+            new_node = Node(cur.val,None,None)   # 克隆新结点
+            new_node.next = cur.next
+            cur.next = new_node   # 克隆新结点在cur 后面
+            cur = new_node.next   # 移动到下一个要克隆的点
+        cur = head
+
+        while cur:  # 链接random
+            cur.next.random = cur.random.next if cur.random else None
+            cur = cur.next.next
+
+        cur_old_list = head # 将两个链表分开
+        cur_new_list = head.next
+        new_head = head.next
+        while cur_old_list:
+            cur_old_list.next = cur_old_list.next.next
+            cur_new_list.next = cur_new_list.next.next if cur_new_list.next else None
+            cur_old_list = cur_old_list.next
+            cur_new_list = cur_new_list.next
+        return new_head
+```
+复杂度分析
+时间复杂度：O(N)O(N)。
+空间复杂度：O(1)O(1)。
+总结
+在对链表进行操作的时候，经常要记得把一个结点的指针域用另一个指针保存起来，这样返回的时候不容易出错。
 
 
 

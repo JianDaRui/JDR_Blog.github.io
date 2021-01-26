@@ -30,6 +30,24 @@ Set&Map
 
 Proxy&Reflect
 
+
+```js
+function createIterator(array) {
+  let i = 0
+  return {
+    next: function() {
+      let done =  i >= array.length
+      let value = !done ? array[i++] : undefined
+      return {
+        done: done,
+        next: value
+      }
+    }
+  }
+}
+
+var iterator = createIterator([1, 2, 3]);
+```
 ## 闭包
 
 
