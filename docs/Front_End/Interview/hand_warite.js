@@ -895,13 +895,24 @@ function curry(fn, args, holes) {
 function partial(fn) {
   let args = [].slice.call(arguments, 1);
   return function () {
-    let position = 0, len = args.length;
-    for(let i =0; i< len;i++) {
+    let position = 0,
+      len = args.length;
+    for (let i = 0; i < len; i++) {
       args[i] = args[i] === '_' ? arguments[position++] : args[i]
     }
-    while(position < arguments.length){
+    while (position < arguments.length) {
       args.push(arguments[position++])
     }
     return fn.apply(this, args)
   }
 }
+
+function fastPlay(speed) {
+  if(!document.getElementById('iframe')) {
+    var tags=document.getElementsByTagName("video");
+    [...tags].forEach(val=> val.playbackRate = speed);
+  } else {
+    document.getElementById('iframe').contentWindow.document.getElementById('video').playbackRate = speed;
+  }
+}
+fastPlay(16)

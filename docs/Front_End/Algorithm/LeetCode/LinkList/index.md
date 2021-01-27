@@ -738,7 +738,8 @@ var swapPairs = function(head) {
 向右旋转 4 步: 2->0->1->NULL
 ```
 
-方法 1：
+#### 方法 1：
+
 直觉
 
 链表中的点已经相连，一次旋转操作意味着：
@@ -830,7 +831,7 @@ public ListNode rotateRight(ListNode head, int k) {
 }
 ```
 
-哈希法 🪓
+#### 哈希法 🪓
 
 - 在例子1中：k=2 ，head为 1->2->3->4->5->NULL
 - 链表第一步变成: 5->1->2->3->4->NULL
@@ -865,9 +866,35 @@ const rotateRight = (head, k) => {
 通过Map数据存储的特性，把第一次遍历的数据存储在Map中
 而后直接通过 n-k 获取到链表右移的前一项
 
+#### 快慢指针➡️➡️
+
+```javascript
+var rotateRight = function (head, k) {
+    let fast = head, slow = head
+    // fast 先走k步
+    while (k--) {
+        if (fast && fast.next) fast = fast.next
+        else fast = head
+    }
+    // slow == fast说明k会被链表长度整除，故无需操作head直接返回即可
+    if (slow === fast) return head
+    // 快慢指针start
+    while (fast.next) {
+        slow = slow.next
+        fast = fast.next
+    }
+    // 对慢指针位置进行打断
+    fast.next = head
+    head = slow.next
+    slow.next = null
+    return head
+};
+```
 
 
-链表转环 ♻️
+
+#### 链表转环 ♻️
+
 在哈希法中，我们最后处理链表时，把单链表转成了环
 
 那么，我们当然也可以直接把链表转成环，然后在环中找到k的位置将其打断～
@@ -894,7 +921,8 @@ curr.next = head 形成环链表
 去重
 通过循环n-k>0找到打断环的位置并打断
 
-穷举法 💪
+#### 穷举法 💪
+
 这种解法没什么好说的，就是按照正常思维逻辑，一步步来。
 
 ```js
@@ -925,8 +953,6 @@ const rotateRight = (head, k) => {
 
 ### [82. 删除排序链表中的重复元素 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
 
-难度中等437
-
 给定一个排序链表，删除所有含有重复数字的节点，只保留原始链表中 *没有重复出现* 的数字。
 
 **示例 1:**
@@ -951,14 +977,14 @@ const rotateRight = (head, k) => {
 - 遍历哈希表，将所有频率==1的key放到集合中
 - 对集合进行排序
 - 遍历集合，然后不断创建新的链表节点
-- 当然这里可以优化一下，比如使用LinkedHashMap或者OrderedDict这样的数据结构，可以省去排序环节。
+- 当然这里可以优化一下，比如使用`LinkedHashMap`或者`OrderedDict`这样的数据结构，可以省去排序环节。
 
 代码实现:
 
 ```java
 class Solution {
     public ListNode deleteDuplicates(ListNode head) {
-        if(head==null || head.next==null) {
+        if(head===null || head.next===null) {
             return head;
         }
         //用哈希表记录每个节点值的出现频率
@@ -1114,9 +1140,9 @@ class Solution {
 
 ```
 
+标签：删除
 
-
-#### [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
+### [剑指 Offer 35. 复杂链表的复制](https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
 
 难度中等137
 
@@ -3936,6 +3962,1374 @@ var buildTree = function(inorder, postorder) {
 
 
 [kan这个这个牛逼](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/solution/cong-zhong-xu-yu-hou-xu-bian-li-xu-lie-gou-zao-14/)
+
+
+
+### [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+难度中等839
+
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+**注意:**
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+```
+
+返回如下的二叉树：
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+#### 方法一：递归
+
+```java
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+    HashMap<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < inorder.length; i++) {
+        map.put(inorder[i], i);
+    }
+    return buildTreeHelper(preorder, 0, preorder.length, inorder, 0, inorder.length, map);
+}
+
+private TreeNode buildTreeHelper(int[] preorder, int p_start, int p_end, int[] inorder, int i_start, int i_end,
+                                 HashMap<Integer, Integer> map) {
+    if (p_start == p_end) {
+        return null;
+    }
+    int root_val = preorder[p_start];
+    TreeNode root = new TreeNode(root_val);
+    int i_root_index = map.get(root_val);
+    int leftNum = i_root_index - i_start;
+    root.left = buildTreeHelper(preorder, p_start + 1, p_start + leftNum + 1, inorder, i_start, i_root_index, map);
+    root.right = buildTreeHelper(preorder, p_start + leftNum + 1, p_end, inorder, i_root_index + 1, i_end, map);
+    return root;
+}
+```
+
+#### 方法二： 迭代
+
+```java
+public TreeNode buildTree(int[] preorder, int[] inorder) {
+    if (preorder.length == 0) {
+        return null;
+    }
+    Stack<TreeNode> roots = new Stack<TreeNode>();
+    int pre = 0;
+    int in = 0;
+    //先序遍历第一个值作为根节点
+    TreeNode curRoot = new TreeNode(preorder[pre]);
+    TreeNode root = curRoot;
+    roots.push(curRoot);
+    pre++;
+    //遍历前序遍历的数组
+    while (pre < preorder.length) {
+        //出现了当前节点的值和中序遍历数组的值相等，寻找是谁的右子树
+        if (curRoot.val == inorder[in]) {
+            //每次进行出栈，实现倒着遍历
+            while (!roots.isEmpty() && roots.peek().val == inorder[in]) {
+                curRoot = roots.peek();
+                roots.pop();
+                in++;
+            }
+            //设为当前的右孩子
+            curRoot.right = new TreeNode(preorder[pre]);
+            //更新 curRoot
+            curRoot = curRoot.right;
+            roots.push(curRoot);
+            pre++;
+        } else {
+            //否则的话就一直作为左子树
+            curRoot.left = new TreeNode(preorder[pre]);
+            curRoot = curRoot.left;
+            roots.push(curRoot);
+            pre++;
+        }
+    }
+    return root;
+}
+```
+
+
+
+[这个优秀！！！](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--22/)
+
+
+
+### [116. 填充每个节点的下一个右侧节点指针](https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/)
+
+难度中等381
+
+给定一个 **完美二叉树** ，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+
+```
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+```
+
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 `NULL`。
+
+初始状态下，所有 next 指针都被设置为 `NULL`。
+
+**进阶：**
+
+- 你只能使用常量级额外空间。
+- 使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+
+ 
+
+**示例：**
+
+![img](https://assets.leetcode.com/uploads/2019/02/14/116_sample.png)
+
+```
+输入：root = [1,2,3,4,5,6,7]
+输出：[1,#,2,3,#,4,5,6,7,#]
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。序列化的输出按层序遍历排列，同一层节点由 next 指针连接，'#' 标志着每一层的结束。
+```
+
+ 
+
+**提示：**
+
+- 树中节点的数量少于 `4096`
+- `-1000 <= node.val <= 1000`
+
+####  方法一： 迭代
+
+```java
+class Solution {
+	public Node connect(Node root) {
+		if(root==null) {
+			return root;
+		}
+		LinkedList<Node> queue = new LinkedList<Node>();
+		queue.add(root);
+		while(queue.size()>0) {
+			int size = queue.size();
+			//将队列中的元素串联起来
+			Node tmp = queue.get(0);
+			for(int i=1;i<size;++i) {
+				tmp.next = queue.get(i);
+				tmp = queue.get(i);
+			}
+			//遍历队列中的每个元素，将每个元素的左右节点也放入队列中
+			for(int i=0;i<size;++i) {
+				tmp = queue.remove();
+				if(tmp.left!=null) {
+					queue.add(tmp.left);
+				}
+				if(tmp.right!=null) {
+					queue.add(tmp.right);
+				}
+			}
+		}
+		return root;
+	}
+}
+
+```
+
+#### 方法二：迭代
+
+```java
+class Solution {
+	public Node connect(Node root) {
+		if(root==null) {
+			return root;
+		}
+		Node pre = root;
+		//循环条件是当前节点的left不为空，当只有根节点
+		//或所有叶子节点都出串联完后循环就退出了
+		while(pre.left!=null) {
+			Node tmp = pre;
+			while(tmp!=null) {
+				//将tmp的左右节点都串联起来
+				//注:外层循环已经判断了当前节点的left不为空
+				tmp.left.next = tmp.right;
+				//下一个不为空说明上一层已经帮我们完成串联了
+				if(tmp.next!=null) {
+					tmp.right.next = tmp.next.left;
+				}
+				//继续右边遍历
+				tmp = tmp.next;
+			}
+			//从下一层的最左边开始遍历
+			pre = pre.left;
+		}
+		return root;
+	}
+}
+
+```
+
+#### 方法三
+
+```javascript
+var connect = function(root) {
+    if (root === null) {
+        return root;
+    }
+    
+    // 初始化队列同时将第一层节点加入队列中，即根节点
+    const Q = [root]; 
+    
+    // 外层的 while 循环迭代的是层数
+    while (Q.length > 0) {
+        
+        // 记录当前队列大小
+        const size = Q.length;
+        
+        // 遍历这一层的所有节点
+        for(let i = 0; i < size; i++) {
+            
+            // 从队首取出元素
+            const node = Q.shift();
+            
+            // 连接
+            if (i < size - 1) {
+                node.next = Q[0];
+            }
+            
+            // 拓展下一层节点
+            if (node.left !== null) {
+                Q.push(node.left);
+            }
+            if (node.right !== null) {
+                Q.push(node.right);
+            }
+        }
+    }
+    
+    // 返回根节点
+    return root;
+};
+
+```
+
+
+
+
+
+### [117. 填充每个节点的下一个右侧节点指针 II](https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii/)
+
+难度中等351
+
+给定一个二叉树
+
+```
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+```
+
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 `NULL`。
+
+初始状态下，所有 next 指针都被设置为 `NULL`。
+
+ 
+
+**进阶：**
+
+- 你只能使用常量级额外空间。
+- 使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+
+ 
+
+**示例：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/15/117_sample.png)
+
+```
+输入：root = [1,2,3,4,5,null,7]
+输出：[1,#,2,3,#,4,5,7,#]
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
+```
+
+ 
+
+**提示：**
+
+- 树中的节点数小于 `6000`
+- `-100 <= node.val <= 100`
+
+#### 方法一：层次遍历
+
+```js
+
+var connect = function(root) {
+    if (root === null) {
+        return null;
+    }
+    const queue = [root];
+    while (queue.length) {
+        const n = queue.length;
+        let last = null;
+        for (let i = 1; i <= n; ++i) {
+            let f = queue.shift();
+            if (f.left !== null) {
+                queue.push(f.left);
+            }
+            if (f.right !== null) {
+                queue.push(f.right);
+            }
+            if (i !== 1) {
+                last.next = f;
+            }
+            last = f;
+        }
+    }
+    return root;
+};
+
+```
+
+#### 方法二：使用已建立的 \rm nextnext 指针
+
+```js
+let last = null, nextStart = null;
+const handle = (p) => {
+    if (last !== null) {
+        last.next = p;
+    } 
+    if (nextStart === null) {
+        nextStart = p;
+    }
+    last = p;
+}
+var connect = function(root) {
+    if (root === null) {
+        return null;
+    }
+    let start = root;
+    while (start != null) {
+        last = null;
+        nextStart = null;
+        for (let p = start; p !== null; p = p.next) {
+            if (p.left !== null) {
+                handle(p.left);
+            }
+            if (p.right !== null) {
+                handle(p.right);
+            }
+        }
+        start = nextStart;
+    }
+    return root;
+};
+
+```
+
+#### BFS解决
+
+```java
+    public Node connect(Node root) {
+        if (root == null)
+            return root;
+        //cur我们可以把它看做是每一层的链表
+        Node cur = root;
+        while (cur != null) {
+            //遍历当前层的时候，为了方便操作在下一
+            //层前面添加一个哑结点（注意这里是访问
+            //当前层的节点，然后把下一层的节点串起来）
+            Node dummy = new Node(0);
+            //pre表示访下一层节点的前一个节点
+            Node pre = dummy;
+            //然后开始遍历当前层的链表
+            while (cur != null) {
+                if (cur.left != null) {
+                    //如果当前节点的左子节点不为空，就让pre节点
+                    //的next指向他，也就是把它串起来
+                    pre.next = cur.left;
+                    //然后再更新pre
+                    pre = pre.next;
+                }
+                //同理参照左子树
+                if (cur.right != null) {
+                    pre.next = cur.right;
+                    pre = pre.next;
+                }
+                //继续访问这一行的下一个节点
+                cur = cur.next;
+            }
+            //把下一层串联成一个链表之后，让他赋值给cur，
+            //后续继续循环，直到cur为空为止
+            cur = dummy.next;
+        }
+        return root;
+    }
+```
+
+### [236. 二叉树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+难度中等909
+
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+[百度百科](https://baike.baidu.com/item/最近公共祖先/8918834?fr=aladdin)中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（**一个节点也可以是它自己的祖先**）。”
+
+例如，给定如下二叉树: root = [3,5,1,6,2,0,8,null,null,7,4]
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/15/binarytree.png)
+
+ 
+
+**示例 1:**
+
+```
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+输出: 3
+解释: 节点 5 和节点 1 的最近公共祖先是节点 3。
+```
+
+**示例 2:**
+
+```
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+输出: 5
+解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。
+```
+
+####  方法一：
+
+[大佬的必看！！！](https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/solution/shou-hui-tu-jie-gei-chu-dfshe-bfsliang-chong-jie-f/)
+
+
+
+### [面试题 02.01. 移除重复节点](https://leetcode-cn.com/problems/remove-duplicate-node-lcci/)
+
+难度简单88
+
+编写代码，移除未排序链表中的重复节点。保留最开始出现的节点。
+
+**示例1:**
+
+```
+ 输入：[1, 2, 3, 3, 2, 1]
+ 输出：[1, 2, 3]
+```
+
+**示例2:**
+
+```
+ 输入：[1, 1, 1, 1, 2]
+ 输出：[1, 2]
+```
+
+**提示：**
+
+1. 链表长度在[0, 20000]范围内。
+2. 链表元素在[0, 20000]范围内。
+
+**进阶：**
+
+如果不得使用临时缓冲区，该怎么解决？
+
+#### 方法一：哈希表
+
+
+
+```java
+class Solution {
+    public ListNode removeDuplicateNodes(ListNode head) {
+        if (head == null) {
+            return head;
+        }
+        Set<Integer> occurred = new HashSet<Integer>();
+        occurred.add(head.val);
+        ListNode pos = head;
+        // 枚举前驱节点
+        while (pos.next != null) {
+            // 当前待删除节点
+            ListNode cur = pos.next;
+            if (occurred.add(cur.val)) {
+                pos = pos.next;
+            } else {
+                pos.next = pos.next.next;
+            }
+        }
+        pos.next = null;
+        return head;
+    }
+}
+```
+
+
+
+#### 方法二：两重循环
+
+```java
+class Solution {
+    public ListNode removeDuplicateNodes(ListNode head) {
+        ListNode ob = head;
+        while (ob != null) {
+            ListNode oc = ob;
+            while (oc.next != null) {
+                if (oc.next.val == ob.val) {
+                    oc.next = oc.next.next;
+                } else {
+                    oc = oc.next;
+                }
+            }
+            ob = ob.next;
+        }
+        return head;
+    }
+}
+
+```
+
+### [20. 有效的括号](https://leetcode-cn.com/problems/valid-parentheses/)
+
+难度简单2119
+
+给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s` ，判断字符串是否有效。
+
+有效字符串需满足：
+
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "()"
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：s = "()[]{}"
+输出：true
+```
+
+**示例 3：**
+
+```
+输入：s = "(]"
+输出：false
+```
+
+**示例 4：**
+
+```
+输入：s = "([)]"
+输出：false
+```
+
+
+
+
+
+**说明:**
+
+- 所有节点的值都是唯一的。
+- p、q 为不同节点且均存在于给定的二叉树中。
+
+
+
+#### 方法一
+
+```java
+class Solution {
+    private static final Map<Character,Character> map = new HashMap<Character,Character>(){{
+        put('{','}'); put('[',']'); put('(',')'); put('?','?');
+    }};
+    public boolean isValid(String s) {
+        if(s.length() > 0 && !map.containsKey(s.charAt(0))) return false;
+        LinkedList<Character> stack = new LinkedList<Character>() {{ add('?'); }};
+        for(Character c : s.toCharArray()){
+            if(map.containsKey(c)) stack.addLast(c);
+            else if(map.get(stack.removeLast()) != c) return false;
+        }
+        return stack.size() == 1;
+    }
+}
+```
+
+
+
+
+
+### [35. 搜索插入位置](https://leetcode-cn.com/problems/search-insert-position/)
+
+难度简单800
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+你可以假设数组中无重复元素。
+
+**示例 1:**
+
+```
+输入: [1,3,5,6], 5
+输出: 2
+```
+
+**示例 2:**
+
+```
+输入: [1,3,5,6], 2
+输出: 1
+```
+
+**示例 3:**
+
+```
+输入: [1,3,5,6], 7
+输出: 4
+```
+
+**示例 4:**
+
+```
+输入: [1,3,5,6], 0
+输出: 0
+```
+
+#### 方法一
+
+```java
+
+public class Solution {
+
+    public int searchInsert(int[] nums, int target) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        
+        int left = 0;
+        // 因为有可能数组的最后一个元素的位置的下一个是我们要找的，故右边界是 len
+        int right = len;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            // 小于 target 的元素一定不是解
+            if (nums[mid] < target) {
+                // 下一轮搜索的区间是 [mid + 1, right]
+                left = mid + 1;
+            } else {
+              	// 下一轮搜索的区间是 [left, mid]
+                right = mid;
+            }
+        }
+        return left;
+    }
+}
+
+```
+
+#### 方法二
+
+```java
+class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while(left <= right) {
+            int mid = (left + right) / 2;
+            if(nums[mid] == target) {
+                return mid;
+            } else if(nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+}
+```
+
+
+
+
+
+
+
+[看这个吧~！！！](https://leetcode-cn.com/problems/search-insert-position/solution/te-bie-hao-yong-de-er-fen-cha-fa-fa-mo-ban-python-/)
+
+
+
+### [394. 字符串解码](https://leetcode-cn.com/problems/decode-string/)
+
+难度中等637
+
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: `k[encoded_string]`，表示其中方括号内部的 *encoded_string* 正好重复 *k* 次。注意 *k* 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 *k* ，例如不会出现像 `3a` 或 `2[4]` 的输入。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "3[a]2[bc]"
+输出："aaabcbc"
+```
+
+**示例 2：**
+
+```
+输入：s = "3[a2[c]]"
+输出："accaccacc"
+```
+
+**示例 3：**
+
+```
+输入：s = "2[abc]3[cd]ef"
+输出："abcabccdcdcdef"
+```
+
+**示例 4：**
+
+```
+输入：s = "abc3[cd]xyz"
+输出："abccdcdcdxyz"
+```
+
+#### 方法一
+
+```java
+class Solution {
+    public String decodeString(String s) {
+        StringBuilder res = new StringBuilder();
+        int multi = 0;
+        LinkedList<Integer> stack_multi = new LinkedList<>();
+        LinkedList<String> stack_res = new LinkedList<>();
+        for(Character c : s.toCharArray()) {
+            if(c == '[') {
+                stack_multi.addLast(multi);
+                stack_res.addLast(res.toString());
+                multi = 0;
+                res = new StringBuilder();
+            }
+            else if(c == ']') {
+                StringBuilder tmp = new StringBuilder();
+                int cur_multi = stack_multi.removeLast();
+                for(int i = 0; i < cur_multi; i++) tmp.append(res);
+                res = new StringBuilder(stack_res.removeLast() + tmp);
+            }
+            else if(c >= '0' && c <= '9') multi = multi * 10 + Integer.parseInt(c + "");
+            else res.append(c);
+        }
+        return res.toString();
+    }
+}
+```
+
+#### 方法二：递归法
+
+```java
+class Solution {
+    public String decodeString(String s) {
+        return dfs(s, 0)[0];
+    }
+    private String[] dfs(String s, int i) {
+        StringBuilder res = new StringBuilder();
+        int multi = 0;
+        while(i < s.length()) {
+            if(s.charAt(i) >= '0' && s.charAt(i) <= '9') 
+                multi = multi * 10 + Integer.parseInt(String.valueOf(s.charAt(i))); 
+            else if(s.charAt(i) == '[') {
+                String[] tmp = dfs(s, i + 1);
+                i = Integer.parseInt(tmp[0]);
+                while(multi > 0) {
+                    res.append(tmp[1]);
+                    multi--;
+                }
+            }
+            else if(s.charAt(i) == ']') 
+                return new String[] { String.valueOf(i), res.toString() };
+            else 
+                res.append(String.valueOf(s.charAt(i)));
+            i++;
+        }
+        return new String[] { res.toString() };
+    } 
+}
+```
+
+### [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals/)
+
+难度中等783
+
+给出一个区间的集合，请合并所有重叠的区间。
+
+ 
+
+**示例 1:**
+
+```
+输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+```
+
+**示例 2:**
+
+```
+输入: intervals = [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+```
+
+**注意：**输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
+
+ 
+
+**提示：**
+
+- `intervals[i][0] <= intervals[i][1]`
+
+#### 方法一：排序
+
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length == 0) {
+            return new int[0][2];
+        }
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            public int compare(int[] interval1, int[] interval2) {
+                return interval1[0] - interval2[0];
+            }
+        });
+        List<int[]> merged = new ArrayList<int[]>();
+        for (int i = 0; i < intervals.length; ++i) {
+            int L = intervals[i][0], R = intervals[i][1];
+            if (merged.size() == 0 || merged.get(merged.size() - 1)[1] < L) {
+                merged.add(new int[]{L, R});
+            } else {
+                merged.get(merged.size() - 1)[1] = Math.max(merged.get(merged.size() - 1)[1], R);
+            }
+        }
+        return merged.toArray(new int[merged.size()][]);
+    }
+}
+
+```
+
+
+
+#### 方法二
+
+```c++
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end());
+        vector<vector<int>> ans;
+        for (int i = 0; i < intervals.size();) {
+            int t = intervals[i][1];
+            int j = i + 1;
+            while (j < intervals.size() && intervals[j][0] <= t) {
+                t = max(t, intervals[j][1]);
+                j++;
+            }
+            ans.push_back({ intervals[i][0], t });
+            i = j;
+        }
+        return ans;
+    }
+```
+
+### [48. 旋转图像](https://leetcode-cn.com/problems/rotate-image/)
+
+难度中等766
+
+给定一个 *n* × *n* 的二维矩阵表示一个图像。
+
+将图像顺时针旋转 90 度。
+
+**说明：**
+
+你必须在**[原地](https://baike.baidu.com/item/原地算法)**旋转图像，这意味着你需要直接修改输入的二维矩阵。**请不要**使用另一个矩阵来旋转图像。
+
+**示例 1:**
+
+```
+给定 matrix = 
+[
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+
+原地旋转输入矩阵，使其变为:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+```
+
+**示例 2:**
+
+```
+给定 matrix =
+[
+  [ 5, 1, 9,11],
+  [ 2, 4, 8,10],
+  [13, 3, 6, 7],
+  [15,14,12,16]
+], 
+
+原地旋转输入矩阵，使其变为:
+[
+  [15,13, 2, 5],
+  [14, 3, 4, 1],
+  [12, 6, 8, 9],
+  [16, 7,10,11]
+]
+```
+
+
+
+#### 方法一：使用辅助数组
+
+```javascript
+
+var rotate = function(matrix) {
+    const n = matrix.length;
+    const matrix_new = new Array(n).fill(0).map(() => new Array(n).fill(0));
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            matrix_new[j][n - i - 1] = matrix[i][j];
+        }
+    }
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            matrix[i][j] = matrix_new[i][j];
+        }
+    }
+};
+```
+
+#### 方法二：原地旋转
+
+```javascript
+var rotate = function(matrix) {
+    const n = matrix.length;
+    for (let i = 0; i < Math.floor(n / 2); ++i) {
+        for (let j = 0; j < Math.floor((n + 1) / 2); ++j) {
+            const temp = matrix[i][j];
+            matrix[i][j] = matrix[n - j - 1][i];
+            matrix[n - j - 1][i] = matrix[n - i - 1][n - j - 1];
+            matrix[n - i - 1][n - j - 1] = matrix[j][n - i - 1];
+            matrix[j][n - i - 1] = temp;
+        }
+    }
+};
+```
+
+
+
+#### 方法三：用翻转代替旋转
+
+```java
+var rotate = function(matrix) {
+    const n = matrix.length;
+    // 水平翻转
+    for (let i = 0; i < Math.floor(n / 2); i++) {
+        for (let j = 0; j < n; j++) {
+            [matrix[i][j], matrix[n - i - 1][j]] = [matrix[n - i - 1][j], matrix[i][j]];
+        }
+    }
+    // 主对角线翻转
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < i; j++) {
+            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+        }
+    }
+};
+```
+
+
+
+### [面试题 01.08. 零矩阵](https://leetcode-cn.com/problems/zero-matrix-lcci/)
+
+难度中等22
+
+编写一种算法，若M × N矩阵中某个元素为0，则将其所在的行与列清零。
+
+ 
+
+**示例 1：**
+
+```
+输入：
+[
+  [1,1,1],
+  [1,0,1],
+  [1,1,1]
+]
+输出：
+[
+  [1,0,1],
+  [0,0,0],
+  [1,0,1]
+]
+```
+
+**示例 2：**
+
+```
+输入：
+[
+  [0,1,2,0],
+  [3,4,5,2],
+  [1,3,1,5]
+]
+输出：
+[
+  [0,0,0,0],
+  [0,4,5,0],
+  [0,3,1,0]
+]
+```
+
+#### 方法一
+
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        boolean isFirstRowHaveZero = false;
+        boolean isFirstColHaveZero = false;
+        for(int i = 0; i < matrix.length; i++) {
+            if (matrix[i][0] == 0) {
+                isFirstColHaveZero = true;
+            }
+        }
+
+        for(int j = 0; j < matrix[0].length; j++) {
+            if (matrix[0][j] == 0) {
+                isFirstRowHaveZero = true;
+            }
+        }
+
+        for(int i = 1; i < matrix.length; i++) {
+            for(int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[0][j] = 0;
+                    matrix[i][0] = 0;
+                } 
+            }
+        }
+        
+        for(int i = 1; i < matrix.length; i++) {
+            for(int j = 1; j < matrix[i].length; j++) {
+                if (matrix[0][j] == 0 || matrix[i][0] == 0) {
+                    matrix[i][j] = 0;
+                } 
+            }
+        }
+
+        for(int i = 0; i < matrix.length; i++) {
+            if (isFirstColHaveZero) {
+                matrix[i][0] = 0;
+            }
+        }
+
+        for(int j = 0; j < matrix[0].length; j++) {
+            if (isFirstRowHaveZero) {
+                matrix[0][j] = 0;
+            }
+        }
+
+    }
+}
+```
+
+### [739. 每日温度](https://leetcode-cn.com/problems/daily-temperatures/)
+
+难度中等622
+
+请根据每日 `气温` 列表，重新生成一个列表。对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+例如，给定一个列表 `temperatures = [73, 74, 75, 71, 69, 72, 76, 73]`，你的输出应该是 `[1, 1, 4, 2, 1, 1, 0, 0]`。
+
+**提示：**`气温` 列表长度的范围是 `[1, 30000]`。每个气温的值的均为华氏度，都是在 `[30, 100]` 范围内的整数。
+
+#### 方法一：暴力
+
+```java
+class Solution {
+    public int[] dailyTemperatures(int[] T) {
+        int length = T.length;
+        int[] ans = new int[length];
+        int[] next = new int[101];
+        Arrays.fill(next, Integer.MAX_VALUE);
+        for (int i = length - 1; i >= 0; --i) {
+            int warmerIndex = Integer.MAX_VALUE;
+            for (int t = T[i] + 1; t <= 100; ++t) {
+                if (next[t] < warmerIndex) {
+                    warmerIndex = next[t];
+                }
+            }
+            if (warmerIndex < Integer.MAX_VALUE) {
+                ans[i] = warmerIndex - i;
+            }
+            next[T[i]] = i;
+        }
+        return ans;
+    }
+}
+```
+
+#### 方法二：单调栈
+
+```java
+class Solution {
+    public int[] dailyTemperatures(int[] T) {
+        int length = T.length;
+        int[] ans = new int[length];
+        Deque<Integer> stack = new LinkedList<Integer>();
+        for (int i = 0; i < length; i++) {
+            int temperature = T[i];
+            while (!stack.isEmpty() && temperature > T[stack.peek()]) {
+                int prevIndex = stack.pop();
+                ans[prevIndex] = i - prevIndex;
+            }
+            stack.push(i);
+        }
+        return ans;
+    }
+}
+```
+
+### [150. 逆波兰表达式求值](https://leetcode-cn.com/problems/evaluate-reverse-polish-notation/)
+
+难度中等230
+
+根据[ 逆波兰表示法](https://baike.baidu.com/item/逆波兰式/128437)，求表达式的值。
+
+有效的运算符包括 `+`, `-`, `*`, `/` 。每个运算对象可以是整数，也可以是另一个逆波兰表达式。
+
+ 
+
+**说明：**
+
+- 整数除法只保留整数部分。
+- 给定逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。
+
+ 
+
+**示例 1：**
+
+```
+输入: ["2", "1", "+", "3", "*"]
+输出: 9
+解释: 该算式转化为常见的中缀算术表达式为：((2 + 1) * 3) = 9
+```
+
+**示例 2：**
+
+```
+输入: ["4", "13", "5", "/", "+"]
+输出: 6
+解释: 该算式转化为常见的中缀算术表达式为：(4 + (13 / 5)) = 6
+```
+
+**示例 3：**
+
+```
+输入: ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
+输出: 22
+解释: 
+该算式转化为常见的中缀算术表达式为：
+  ((10 * (6 / ((9 + 3) * -11))) + 17) + 5
+= ((10 * (6 / (12 * -11))) + 17) + 5
+= ((10 * (6 / -132)) + 17) + 5
+= ((10 * 0) + 17) + 5
+= (0 + 17) + 5
+= 17 + 5
+= 22
+```
+
+
+
+
+
+
+
+### [200. 岛屿数量](https://leetcode-cn.com/problems/number-of-islands/)
+
+难度中等959
+
+给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+ 
+
+**示例 1：**
+
+```
+输入：grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+输出：1
+```
+
+**示例 2：**
+
+```
+输入：grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+输出：3
+```
+
+
+
+
+
+### [724. 寻找数组的中心索引](https://leetcode-cn.com/problems/find-pivot-index/)
+
+难度简单245
+
+给定一个整数类型的数组 `nums`，请编写一个能够返回数组 **“中心索引”** 的方法。
+
+我们是这样定义数组 **中心索引** 的：数组中心索引的左侧所有元素相加的和等于右侧所有元素相加的和。
+
+如果数组不存在中心索引，那么我们应该返回 -1。如果数组有多个中心索引，那么我们应该返回最靠近左边的那一个。
+
+ 
+
+**示例 1：**
+
+```
+输入：
+nums = [1, 7, 3, 6, 5, 6]
+输出：3
+解释：
+索引 3 (nums[3] = 6) 的左侧数之和 (1 + 7 + 3 = 11)，与右侧数之和 (5 + 6 = 11) 相等。
+同时, 3 也是第一个符合要求的中心索引。
+```
+
+**示例 2：**
+
+```
+输入：
+nums = [1, 2, 3]
+输出：-1
+解释：
+数组中不存在满足此条件的中心索引。
+```
+
+ 
+
+### [133. 克隆图](https://leetcode-cn.com/problems/clone-graph/)
+
+难度中等319
+
+给你无向 **[连通](https://baike.baidu.com/item/连通图/6460995?fr=aladdin)** 图中一个节点的引用，请你返回该图的 [**深拷贝**](https://baike.baidu.com/item/深拷贝/22785317?fr=aladdin)（克隆）。
+
+图中的每个节点都包含它的值 `val`（`int`） 和其邻居的列表（`list[Node]`）。
+
+```
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+```
+
+ 
+
+**测试用例格式：**
+
+简单起见，每个节点的值都和它的索引相同。例如，第一个节点值为 1（`val = 1`），第二个节点值为 2（`val = 2`），以此类推。该图在测试用例中使用邻接列表表示。
+
+**邻接列表** 是用于表示有限图的无序列表的集合。每个列表都描述了图中节点的邻居集。
+
+给定节点将始终是图中的第一个节点（值为 1）。你必须将 **给定节点的拷贝** 作为对克隆图的引用返回。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/133_clone_graph_question.png)
+
+```
+输入：adjList = [[2,4],[1,3],[2,4],[1,3]]
+输出：[[2,4],[1,3],[2,4],[1,3]]
+解释：
+图中有 4 个节点。
+节点 1 的值是 1，它有两个邻居：节点 2 和 4 。
+节点 2 的值是 2，它有两个邻居：节点 1 和 3 。
+节点 3 的值是 3，它有两个邻居：节点 2 和 4 。
+节点 4 的值是 4，它有两个邻居：节点 1 和 3 。
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/graph.png)
+
+```
+输入：adjList = [[]]
+输出：[[]]
+解释：输入包含一个空列表。该图仅仅只有一个值为 1 的节点，它没有任何邻居。
+```
+
+**示例 3：**
+
+```
+输入：adjList = []
+输出：[]
+解释：这个图是空的，它不含任何节点。
+```
+
+**示例 4：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/graph-1.png)
+
+```
+输入：adjList = [[2],[1]]
+输出：[[2],[1]]
+```
+
+ 
+
+**提示：**
+
+1. 节点数不超过 100 。
+2. 每个节点值 `Node.val` 都是唯一的，`1 <= Node.val <= 100`。
+3. 无向图是一个[简单图](https://baike.baidu.com/item/简单图/1680528?fr=aladdin)，这意味着图中没有重复的边，也没有自环。
+4. 由于图是无向的，如果节点 *p* 是节点 *q* 的邻居，那么节点 *q* 也必须是节点 *p* 的邻居。
+5. 图是连通图，你可以从给定节点访问到所有节点。
+
+
 
 
 
