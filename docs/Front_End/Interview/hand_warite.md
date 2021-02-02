@@ -1403,6 +1403,47 @@ function myCreate(proto) {
 
 - 原型模式
 
+## 模拟实现Object.assign
+
+思路：
+
+1、判断原生 `Object` 是否支持该函数，如果不存在的话创建一个函数 `assign`，并使用 `Object.defineProperty` 将该函数绑定到 `Object` 上。
+
+2、判断参数是否正确（目标对象不能为空，我们可以直接设置{}传递进去,但必须设置值）。
+
+3、使用 `Object()` 转成对象，并保存为 to，最后返回这个对象 to。
+
+4、使用 `for..in` 循环遍历出所有可枚举的自有属性。并复制给新的目标对象（使用 `hasOwnProperty` 获取自有属性，即非原型链上的属性）。
+
+```javascript
+
+if(typeof Object.assign2 !== 'function') {
+   Object.definedPrototype(Object, 'assign2', {
+	value: function(target) {
+        "use strict";
+        if(target === null) {
+			throw new Error('cannot convert undefined or null to object')
+        }
+        let o = Object(target);
+        for(let i=1, len = arguments; i<len; i++) {
+            let source = arguments[i];
+            if(source != null) {
+                for(let nextKey in source) {
+                    if(Object.prototype.hasOwnProperty.call(source, nextKey)) {
+                       to[nextKey] = nextSource[nextKey]
+                       }
+                }
+			}
+		}
+        return to;
+	},
+   	wariable: true,
+    configurable: true
+   })
+   
+}
+```
+
 
 
 ## 实现JSONP
@@ -1596,6 +1637,82 @@ while (ary.some(Array.isArray)) {
 - [数组去重](https://github.com/mqyqingfeng/Blog/issues/27)
 - [去重](https://juejin.cn/post/6844903986479251464)
 
+## 数组扁平化
+
+```js
+let arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
+```
+
+### `toString + split`
+
+```js
+arr.toString().split(',').sort((a, b) => a-b)
+```
+
+### flat + unique
+
+```js
+Array.prototype.flat = function() {
+	return [].concat(...this.map(item =>( Array.isArray(item) ? item.flat : [item])))
+}
+Array.prototype.unique = function() {
+    return [...new Set(this)]
+}
+arr.flat().unique()
+```
+
+### 递归
+
+```js
+function flatten(arr) {
+    let result = [];
+    for(let i=0;i<arr.length - 1; i++) {
+		if(Array.isArray(arr[i])) {
+           	result = result.concat(flatten(arr[i]))
+           } else {
+            result.push(arr[i])
+        }
+    }
+    return result;
+} 
+flatten(arr)
+```
+
+### reduce
+
+```javascript
+function flatten(arr) {
+    return arr.reduce((pre, curr) => {
+        return pre,concat(Array.isArray(curr) ? flatten(curr) : curr);
+    }, [])
+}
+
+const flatten = array =>array.reduce((arr, cur) => (Array.isArray(cur) ? [...acc,...flatten(cur)] : [...arr, cur]), [])
+```
+
+### some + while
+
+```js
+function flatten(arr) {
+    while(arr.some(item => Array.isArray(item))) {
+          arr = [].caoncat(...arr)
+    }
+    return arr;
+}
+```
+
+### `JSON.parse` + 正则
+
+```javascript
+let arr = [1,[3,4,[5,6,7,[8,11,23,55,[2]]]]]
+function flat(arr) {
+	return JSON.parse('['+JSON.stringify(arr).replace(/\[|\]/g, '')+']')
+}
+flat(arr)
+```
+
+
+
 ## 类数组转化为数组
 
 类数组是具有**length**属性，但不具有数组原型上的方法。常见的类数组有**arguments**、DOM操作方法返回的结果。
@@ -1625,6 +1742,67 @@ Array.prototype.slice.call(document.querySelectorAll('div'))
 
 ```javascript
 Array.prototype.concat.apply([], document.querySelectorAll('div'));
+```
+
+## 实现一个Sleep函数
+
+```javascript
+const sleep = time => {
+    return new Promise(resolve => setTimeout(resolve, time))
+}
+sleep(1000).then(() => {
+	console.log(1)
+})
+// Generator
+function* sleepGenerator(time) {
+	yield new Promise(resolve => setTimeout(resolve, time))
+}
+sleepGenerator(1000).next().value.then(() => {console.log(1)})
+//async
+function sleep(time) {
+	return new Promise(resolve => setTimeout(resolve, time))
+}
+async function output() {
+    let out = await sleep(1000)
+    console.log(1);
+    return out;
+}
+```
+
+
+
+## 实现(5).add(3).minus(2)
+
+```javascript
+Number.MAX_SAFE_DIGITS = Number.MAX_SAFE_INTEGER.toString().length-2
+Number.prototype.digits = function(){
+	let result = (this.valueOf().toString().split('.')[1] || '').length
+	return result > Number.MAX_SAFE_DIGITS ? Number.MAX_SAFE_DIGITS : result
+}
+Number.prototype.add = function(i=0){
+	if (typeof i !== 'number') {
+        	throw new Error('请输入正确的数字');
+    	}
+	const v = this.valueOf();
+	const thisDigits = this.digits();
+	const iDigits = i.digits();
+	const baseNum = Math.pow(10, Math.max(thisDigits, iDigits));
+	const result = (v * baseNum + i * baseNum) / baseNum;
+	if(result>0){ return result > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : result }
+	else{ return result < Number.MIN_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : result }
+}
+Number.prototype.minus = function(i=0){
+	if (typeof i !== 'number') {
+        	throw new Error('请输入正确的数字');
+    	}
+	const v = this.valueOf();
+	const thisDigits = this.digits();
+	const iDigits = i.digits();
+	const baseNum = Math.pow(10, Math.max(thisDigits, iDigits));
+	const result = (v * baseNum - i * baseNum) / baseNum;
+	if(result>0){ return result > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : result }
+	else{ return result < Number.MIN_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : result }
+}
 ```
 
 

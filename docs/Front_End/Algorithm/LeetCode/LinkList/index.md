@@ -1053,8 +1053,8 @@ class Solution {
         ListNode a = dummy;
         ListNode b = head;
         while(b!=null && b.next!=null) {
-            //初始化的时a指向的是哑结点，所以比较逻辑应该是a的下一个节点和b的下一个节点
-            if(a.next.val!=b.next.val) {
+            // 初始化的时a指向的是哑结点，所以比较逻辑应该是a的下一个节点和b的下一个节点
+            if(a.next.val != b.next.val) {
                 a = a.next;
                 b = b.next;
             }
@@ -1202,21 +1202,24 @@ class Solution {
 
 
 
-方法一：一行 python（不推荐）
-明白了以上原理，对于 python 可直接调用相关函数：
+#### 方法一：一行 python（不推荐）
 
+明白了以上原理，对于 python 可直接调用相关函数：
 
 class Solution:
     def copyRandomList(self, head: 'Node') -> 'Node':
         return copy.deepcopy(head)
-方法二：DFS & BFS
+
+#### 方法二：DFS & BFS
+
 图的基本单元是 顶点，顶点之间的关联关系称为 边，我们可以将此链表看成一个图：
 
 
 
 由于图的遍历方式有深度优先搜索和广度优先搜索，同样地，对于此链表也可以使用深度优先搜索和广度优先搜索两种方法进行遍历。
 
-算法：深度优先搜索
+#### 算法：深度优先搜索
+
 从头结点 head 开始拷贝；
 由于一个结点可能被多个指针指到，因此如果该结点已被拷贝，则不需要重复拷贝；
 如果还没拷贝该结点，则创建一个新的结点进行拷贝，并将拷贝过的结点保存在哈希表中；
@@ -1247,11 +1250,12 @@ class Solution:
         return bfs(head)
 ```
 
-
 复杂度分析
 时间复杂度：O(N)O(N)。
 空间复杂度：O(N)O(N)。
-算法：广度优先搜索
+
+#### 算法：广度优先搜索
+
 创建哈希表保存已拷贝结点，格式 {原结点：拷贝结点}
 创建队列，并将头结点入队；
 当队列不为空时，弹出一个结点，如果该结点的 next 结点未被拷贝过，则拷贝 next 结点并加入队列；同理，如果该结点的 random 结点未被拷贝过，则拷贝 random 结点并加入队列；
@@ -1288,7 +1292,9 @@ class Solution:
 复杂度分析
 时间复杂度：O(N)O(N)。
 空间复杂度：O(N)O(N)。
-方法三：迭代
+
+#### 方法三：迭代
+
 该方法的思路比较直接，对于一个结点，分别拷贝此结点、next 指针指向的结点、random 指针指向的结点， 然后进行下一个结点...如果遇到已经出现的结点，那么我们不用拷贝该结点，只需将 next 或 random 指针指向该结点即可。
 
 ```python
@@ -1320,7 +1326,9 @@ class Solution:
 复杂度分析
 时间复杂度：O(N)O(N)。
 空间复杂度：O(N)O(N)。
-方法四：优化的迭代
+
+#### 方法四：优化的迭代
+
 我们也可以不使用哈希表的额外空间来保存已经拷贝过的结点，而是将链表进行拓展，在每个链表结点的旁边拷贝，比如 A->B->C 变成 A->A'->B->B'->C->C'，然后将拷贝的结点分离出来变成 A->B->C和A'->B'->C'，最后返回 A'->B'->C'。
 
 ![img](https://pic.leetcode-cn.com/c53b7c728bcf064803cefc137766e5dbfa0247059ed8adf76a86d7e3f2de7546-35_1.gif)
@@ -1829,57 +1837,79 @@ class Solution {
 ```java
 /**
  * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode(int x) { val = x; }
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
  * }
  */
-class Solution {
-    int flow=0;
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        if(l1==null) return l2;
-        if(l2==null) return l1;
-        ListNode res1=l1,res2=l2;
-        int len1=0,len2=0;
-        while(l1!=null){
-            len1++;
-            l1=l1.next;
-        }
-        while(l2!=null){
-            len2++;
-            l2=l2.next;
-        }
-        ListNode res=len1>len2?add(res1,res2,len1,len2):add(res2,res1,len2,len1);
-        if(flow==1) {
-            res1=new ListNode(1);
-            res1.next=res;
-            return res1;
-        }
-        return res;
-    }
-    public ListNode add(ListNode l1, ListNode l2,int len1,int len2) {
-        int temp;
-        if((len1==1)&&(len2==1)){
-            temp=l1.val;
-            l1.val=(l1.val+l2.val)%10;
-            flow=(temp+l2.val)/10;
-            return l1;
-        } 
-        if(len1>len2) {
-            temp=l1.val;
-            l1.next=add(l1.next, l2,len1-1,len2);
-            l1.val=(temp+flow)%10;
-            flow=(temp+flow)/10;
-            return l1;
-        }
-        l1.next=add(l1.next, l2.next,len1-1,len2-1);
-        temp=l1.val;
-        l1.val=(temp+flow+l2.val)%10;
-        flow=(temp+flow+l2.val)/10;
-        return l1;
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var addTwoNumbers = function(l1, l2) {
+  let countl1 = 0, countl2 = 0
+  let l1List = l1
+  let l2List = l2
+  // 获取l1长度
+  while(l1List) {
+    countl1++
+    l1List = l1List.next
+  }
+   // 获取l2长度	
+  while(l2List) {
+    countl2++
+    l2List = l2List.next
+  }
 
+  // creat the frontest List
+  let tmpList = new ListNode(0)
+  let cur = tmpList
+  let diff = Math.abs(countl2 - countl1)
+  while (diff--) {
+    cur.next = new ListNode(0)
+    cur = cur.next
+  }
+	// 补齐链表	
+  if (countl1 < countl2) {
+    cur.next = l1
+    l1 = tmpList.next
+  } else if (countl2 < countl1) {
+    cur.next = l2
+    l2 = tmpList.next
+  }
+
+
+  // flag: 1 shows digit carry, 0 not;
+  let digitCarry = 0
+
+  /**
+   * calculate the sum of l1 and l2
+   */
+  function listNodeAdd(l1, l2) {
+    if (l1 === null) return
+
+    listNodeAdd(l1.next, l2.next)
+
+    let sum = l1.val + l2.val + digitCarry
+    if (sum >= 10) {
+      l1.val = sum % 10
+      digitCarry = 1
+    } else {
+      l1.val = sum
+      digitCarry = 0
     }
+  }
+
+  listNodeAdd(l1, l2)
+
+  let result = l1
+  if (digitCarry === 1) {
+    result = new ListNode(1)
+    result.next = l1
+  }
+
+  return result
 }
 ```
 

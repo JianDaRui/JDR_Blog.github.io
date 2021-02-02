@@ -9,19 +9,17 @@ function myCall(context = window) {
   delete context[fn];
   return result;
 }
-
-function myCall(context = window) {
-  let fn = Symbol();
-  let context[fn] = this;
-  let args = [];
-  for (let i = 0; i < arguments.length; i++) {
-    args.push('arguments[' + i + ']')
+function myCall(context = Window) {
+  let fn = Symbol('fn');
+  context[fn] = this;
+  let args = []
+  for(let i=0; i<arguments.length;i++) {
+    args.push(`arguments[${i}]`)
   }
-  let result = eval('context[fn](' + args + ')')
-  delete context.fn;
-  return result
+  let result = eval(`context[fn](${args})`);
+  delete context[fn]
+  return result;
 }
-
 
 function myApply(context = window, arr) {
   let fn = Symbol('fn');
@@ -39,7 +37,19 @@ function myApply(context = window, arr) {
   delete context[fn];
   return result
 }
-
+function myBind(context = window, arr) {
+  let fn = Symbol('fn');
+  context[fn] = this;
+  let result;
+  if(arr.length === 0) {
+    result = context[fn]()
+  } else {
+    let args = [....arr];
+    result = eval(`context[fn](${args})`)
+  }
+  delete context[fn];
+  return result;
+}
 Function.prototype.bind2 = function (context) {
   if (typeof this !== "function") {
     throw new Error("调用者必须为函数")
@@ -56,36 +66,21 @@ Function.prototype.bind2 = function (context) {
   return fBound;
 }
 
-Function.prototype.bind2 = function (context) {
-  if (typeof this !== 'function') {
-    throw new Error('调用者必须是函数')
-  }
-  let self = this;
-  let args = Array.prototype.slice.call(arguments, 1);
-  let fNOP = function () {};
-  let fBound = function () {
-    let bindArgs = Array.prototype.slice.call(arguments);
-    return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
-  }
-  fNOP.prototype = this.prototype;
-  fBound.prototype = new fNOP();
-  return fBound;
-}
 
-function myBind(context) {
-  if (typeof this !== 'function') {
-    throw new Error('必须为函数')
+function bind2(context) {
+  if(typeof this !== 'function') {
+    throw new Error('调用者必须是函数 ')
   }
-  let args = Array.prototype.slice.call(arguments, 1);
   let self = this;
-  let fNOP = function () {};
-  let fBound = function () {
+  let fNOP = function() {};
+  let args = Array.prototype.slice.call(arguments, 1);
+  function fBound () {
     let bindArgs = Array.prototype.slice.call(arguments);
-    return self.apply(this instanceof fNOP ? this : context, args.concat(bindArgs));
+    return self.apply(this instanceof fNOP ? this : context, [...args, ...bindArgs])
   }
   fNOP.prototype = this.prototype;
-  fBound.prototype = new fNOP
-  return fBound
+  fBound.prototype = new fNOP()
+  return fBound;
 }
 
 function muNew() {
@@ -95,14 +90,12 @@ function muNew() {
   let res = Constructor.apply(obj, arguments)
   return typeof res === 'object' ? res : obj;
 }
-
-
 function myNew() {
-  let obj = new Object()
-  let Constructor = Array.prototype.slice(arguments)
-  obj.__proto__ = Constructor.prototype
-  let res = Constructor.apply(obj, arguments)
-  return typeof res === 'object' ? res : obj;
+  let obj = new Object();
+  let Constructor = Array.prototype.shift.call(arguments);
+  obj.__proto__ = Constructor.prototype;
+  let res = Constructor.apply(obj, ...arguments);
+  return typeof res === 'object' ? res : obj 
 }
 
 function myCall(context = window) {
@@ -150,30 +143,7 @@ function bind2(context = window) {
   return fBound
 }
 
-function myBind(context) {
-  if (typeof this !== 'function') {
-    throw new Error('遇见问题')
-  }
-  let self = this;
-  let args = Array.prototype.slice.call(arguments, 1);
-  let fNOP = function () {};
-  let fBind = function () {
-    let bindArgs = Array.prototype.slice.call(arguments);
-    return self.apply(this instanceof fNOP ? this : context, [...args, ...bindArgs])
-  }
-  fNOP.prototype = this.prototype;
-  fBind.prototype = new fNOP()
 
-  return fBind
-}
-
-function muNew() {
-  let obj = new Object()
-  let Constructor = Array.prototype.shift.call(arguments)
-  obj.__proto__ = Constructor.prototype
-  let ret = Constructor.apply(obj, arguments)
-  return typeof res === 'object' ? ret : obj
-}
 
 function createPerson(name) {
   let o = new Object()
@@ -195,6 +165,13 @@ function Person(name) {
 
 }
 
+Child.prototype = Object.create(Parent.prototype, {
+  constructor: {
+    value: Child,
+    enumerable: false,
+    writable: false
+  }
+})
 Person.prototype.name = 'sdfsd'
 Person.prototype.getName = function () {
   console.log(this.name)
@@ -225,30 +202,10 @@ function Person(name) {
   }
 }
 
-function Parent() {
-  this.name = 'darui'
-}
-Parent.prototype.getName = function () {
-  return this.name;
-}
 
-function Child() {
 
-}
-Child.prototype = new Parent()
 
-let child1 = new Child()
 
-function Child() {
-  Parent.apply(this)
-}
-Child.prototype = Object.create(new Parent(), {
-  constructor: {
-    value: Child,
-    writable: false,
-    configurable: false,
-  }
-})
 // Child.prototype.constructor = Child
 
 function createOb(o) {
@@ -345,6 +302,31 @@ function debounce(func, wait, immediate) {
   return debounce
 }
 
+function debounce(func, wait, immediate = false) {
+  let result, timer;
+  let debounced = function() {
+    let context = this;
+    let args = arguments;
+    if(timer) clearTimeout(timer);
+    if(immediate) {
+      let callNow = !timer;
+      timer = setTimeout(function(){
+        timer = null
+      }, wait)
+      if(callNow) result = func.apply(context, args);
+    } else {
+      timer = setTimeout(function() {
+        result = func.apply(context, args)
+      }, wait)
+    }
+    return result
+  }
+  debounced.cancel = function() {
+    clearTimeout(timer)
+    timer = null;
+  }
+  return debounced
+}
 function throttle(func, wait) {
   let context, rags;
   let previous = 0;
@@ -359,6 +341,19 @@ function throttle(func, wait) {
   }
 }
 
+function throttle(func, wait) {
+  let result;
+  let previous = 0
+  return function() {
+    let now = new Date();
+    context = this;
+    args = arguments;
+    if(now - previous > wait){
+      func.apply(context, args);
+      previous = now
+    }
+  }
+}
 function throttle(func, wait) {
   let context, args;
   let timer = null;
@@ -916,3 +911,257 @@ function fastPlay(speed) {
   }
 }
 fastPlay(16)
+
+function wait(){
+  return new Promise(resolve => {
+    setTimeout(resolve, 10 * 1000)
+  })
+}
+
+async function main() {
+  console.time()
+  let a = wait()
+  let b = wait()
+  let c = wait()
+  await a;
+  await b;
+  await c;
+  console.timeEnd()
+}
+main()
+
+var name = "daRui";
+
+(function(){
+  if(typeof name == "undefined") {
+    name = "Jack";
+    console.log("goodbye " + name)
+  } else {
+    console.log("hello " + name)
+  }
+})()
+
+function debounce(func, wait, immediate) {
+  let timer, result;
+  
+  const debounced = function() {
+    let context = this;
+    let args = arguments;
+    if(timer) clearTimeout(timer)
+    if(immediate) {
+      let callNode =!timer;
+      timer = setTimeout(function() {
+        timer = null
+      }, wait)
+      if(callNow) result = func.apply(context, args)
+    } else {
+      timer = setTimeout(function() {
+        result = func.apply(context, args)
+      })
+    }
+    return timer
+  }
+  debounced.cancel = function() {
+    clearTimeout(timer);
+    timer = null
+  }
+  return debounced
+}
+
+function throttle(func, wait) {
+  let result;
+  let previous = 0;
+  return function() {
+    let context = this;
+    let args = [...arguments];
+    let now = new Date()
+    if(now-previous > wait) {
+      result = func.apply(context, args)
+      previous = now
+    }
+  }
+}
+let arr = new Array(10000000000)
+console.time('forStart')
+for(let i=0; i<arr.length; i++) {}
+console.timeEnd('forStart')
+console.time('foreachStart')
+arr.forEach(arr=>{});
+console.timeEnd('foreachStart')
+
+// 深度优先遍历
+let deepTraversal1 = (node, nodeList = []) => { 
+  if(node === null) return null
+  nodeList.push(node);
+  let children = node.children;
+  for(let i=0; i< children.length - 1;i++) {
+    deepTraversal1(children[i], nodeList)
+  }
+  return nodeList;
+}
+
+let dfs = (node) => {
+  let nodes = []
+  if(node === null) return;
+  nodes.push(node);
+  let children = node.children;
+  for(let i = 0; i < children.length - 1; i++) {
+    nodes = nodes.concat(dfs(children[i]))
+  }
+  return nodes
+}
+
+let dfs3 = (node) => {
+  if(node === null) return null;
+  let stack = [];
+  let nodes = [];
+  stack.push(node);
+  while(stack.length) {
+    let item = stack.pop();
+    let children = item.children;
+    nodes.push(item);
+    for(let i=0;i<children.length - 1;i++) {
+      stack.push(children[i])
+    }
+  }
+  return nodes;
+}
+
+let bfs = (node) => {
+  if(node === null) return null
+  let stack = [];
+  let nodes = [];
+  stack.push(node);
+  while(stack.length) {
+    let item = stack.shift();
+    nodes.push(item)
+    let children = item.children;
+    for(let i=0; i<children.length -1; i++) {
+      stack.push(children[i])
+    }
+  }
+}
+
+function getEmpty = (o) => {
+  if(Object.prototype.toString.call(o) === '[object Object]') {
+    return {}
+  }
+  if(Object.prototype.toString.call(o) === '[object Array]') {
+    return []
+  }
+  return o;
+}
+
+function deepBFS(origin) {
+  let queue = [];
+  let map = new WeakMap();
+  let target = getEmpty(origin)
+  if(target !== origin) {
+    queue.push([origin, target]);
+    map.set(origin, target);
+  }
+  while(queue.length) {
+    let [ori, tar] = queue.shift();
+    for(let key in ori) {
+      // 处理环
+      if(map.has(ori[key])) {
+        tar[key] = map.get(ori[key]);
+        continue;
+      }
+      tar[key] = getEmpty(ori[key]);
+      if(tar[key] !== ori[key]) {
+        queue.push([ori[key], tar[key]]);
+        map.set(ori[key], tar[key]);
+      }
+    }
+  }
+  return target
+}
+
+let getEmpty = (o) => {
+  const toString = Object.prototype.toString;
+  if(toString.call(o) === '[object Object]') {
+    return {}
+  }
+  if(toString.call(o) === '[object Array]') {
+    return []
+  }
+  return o
+}
+function BFS(origin) {
+  let queue = [];
+  let target = getEmpty(origin);
+  let map = new Map();
+  if(origin !== target) {
+    map.set(origin, target)
+    queue.push([origin, target])
+  }
+  
+  while(queue.length) {
+    let [ori, tar] = queue.shift()
+    for(let key of ori) {
+      if(map.has(ori[key])) {
+        tar[key] = map.get(ori[key])
+        continue
+      }
+      tar[key] = getEmpty(ori[key])
+      if(tar[key] !== ori[key]) {
+        map.set(ori[key], tatar[key])
+      queue.push([ori[key], tar[key]])
+      }
+    }
+  }
+  return target;
+}
+
+let DFS = (origin) => {
+  let stack = [];
+  let map = new Map()
+  let target = getEmpty(origin)
+  if(target !== origin) {
+    map.set(origin, target);
+    stack.push([origin, target])
+  }
+
+  while(stack.length) {
+    let [ori, tar] = stack.pop();
+    
+    for(let key in ori) {
+      if(map.has(ori[key])) {
+        tar[key] =map.get(ori[key]);
+        continue;
+      }
+      tar[key] = getEmpty(ori[key]);
+      if(tar[key] !== ori[key]) {
+        stack.push([ori[key], tar[key]])
+        map.set(ori[key], tar[key])
+      }
+    }
+  }
+  return target
+}
+
+// 
+let myNew = function () {
+  let obj = new Object();
+  let Constructor = Array.prototype.shift.call(arguments);
+  obj.__proto__ = Constructor.prototype
+  let res = Constructor.apply(obj, ...arguments);
+  return typeof res === 'object' ? res : obj;
+}
+
+let arr = []
+arr = arr.map(item => item + 3);
+arr.sort().map(item => {
+  if(item.includes('3')) {
+    return item.split('')[0];
+  }
+  return item;
+})
+
+for(var i=0; i<10; i++) {
+  setTimeout(() => {
+    console.log(i)
+  },1000)
+}
+
