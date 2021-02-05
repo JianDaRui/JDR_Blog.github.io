@@ -830,6 +830,13 @@ function curry(fn, length) {
   }
 }
 
+function curry(fn) {
+  let args = Array.prototype.slice.call(arguments,1);
+  return function() {
+    let newArg = [...args,...arguments];
+    return fn.apply(this, newArg)
+  }
+}
 
 // 第三版
 function curry(fn, args, holes) {
@@ -1165,3 +1172,454 @@ for(var i=0; i<10; i++) {
   },1000)
 }
 
+Number.prototype.add = function(i=0) {
+  return this.valueOf() + i
+}
+
+Number.prototype.minus = function(i=0) {
+  return this.valueOf() - i
+}
+
+arr = [1,3,4,2,7,5,6,9,8,]
+function bubbleSort(arr) {
+  for(let i=0, len = arr.length; i<len; i++ ) {
+    for(let j=0, len = arr.length; j<len - i + 1; j++ ) {
+      if(arr[j] > arr[j + 1]) {
+        [arr[j+1], arr[j]] = [arr[j], arr[j + 1]]
+      }
+    }
+  }
+  return arr;
+}
+
+function bubbleSort1(arr) {
+  let i = arr.length - 1;
+  while(i > 0) {
+    let pos = 0;
+    for(let j=0; j<i; j++) {
+      if(arr[j] > arr[j+1]) {
+        pos = j;
+        [arr[j+1], arr[j]] = [arr[j], arr[j + 1]]
+      }
+    }
+    i = pos;
+  }
+  return arr
+}
+bubbleSort(arr)
+let obj = {1: 222, 2: 133, 5: 888}
+const result = Array.from({length: 12}).map((_, index) => obj[index + 1] || null)
+Array({length : 12}).map((_, index) => obj[index + 1] || null)
+
+class LazyManClass {
+  constructor(name) {
+    this.name = name;
+    this.queue = [];
+    console.log(`I am ${name}`)
+    setTimeout(() => {
+      this.next()
+    })
+  }
+
+  sleepFirst(time) {
+    const fn = () => {
+      setTimeout(() => {
+        console.log(`等待了${time}秒......`);
+        this.next()
+      }, time)
+    }
+    this.queue.unshift(fn);
+    return this;
+  }
+
+  sleep(time) {
+    const fn = () => {
+      setTimeout(() => {
+        console.log(`等待了${time}秒......`)
+        this.next()
+      }, time)
+    }
+    this.queue.push(fn);
+    return this;
+  }
+
+  eat(food) {
+    const fn = () => {
+      console.log(`I am eating ${food}`);
+      this.next()
+    }
+    this.queue.push(fn)
+    return this;
+  }
+  next() {
+    const fn = this.queue.shift()
+    fn && fn()
+  }
+}
+
+function LazyMan(name) {
+  return new LazyManClass(name)
+}
+class LazyWomanClass {
+  constructor(name) {
+    this.name = name;
+    this.queue = [];
+    console.log(`你好， 我是${name}...`)
+    setTimeout(() => {
+      this.next()
+    }, 0);
+  }
+  sleep(time) {
+    let fn = () => {
+      setTimeout(() => {
+        console.log(`等待了 ${time}秒...`)
+        this.next()
+      },time);
+    }
+    this.queue.push(fn);
+    return this;
+  }
+  sleepFirst(time) {
+    let fn = () => {
+      setTimeout(() => {
+        console.log(`等待了 ${time}秒...`)
+        this.next()
+      },time);
+    }
+    this.queue.unshift(fn);
+    return this
+  }
+  eat(food) {
+    let fn = () => {
+      console.log(`吃了 ${food}...`)
+      this.next()
+    };
+    this.queue.push(fn);
+    return this
+  }
+  next() {
+    let fn = this.queue.shift();
+    fn && fn();
+  }
+}
+
+function LazyWoMan(name) {
+  console.log(`你好，我是${name}`);
+
+  let tmp = {
+    queue: [],
+    sleepFirst: (time) => {
+      return () => {
+        setTimeout(() => {
+          console.log(`等待了 ${time} 秒...`);
+          this.next()
+        }, time)
+      }
+    },
+    sleep: (time) => {
+      return () => {
+        setTimeout(() => {
+          console.log(`等待了 ${time} 秒...`);
+          this.next()
+        }, time)
+      }
+    },
+    next:  () =>  {
+      let fn = this.queue.shift();
+      fn && fn();
+    }
+  }
+
+  let proxy = new Proxy(tmp, {
+    get: function (target, key, receiver) {
+      return function(...rest) {
+        if(key === 'sleepFirst') {
+          target.queue.unshift(target[key](rest))
+        } else {
+          target.queue.push(target[key](rest))
+        }
+        return receiver
+      }
+    }
+  })
+
+  setTimeout(() => {
+    tmp.next();
+  }, 0)
+  return proxy;
+}
+
+function getInset(num1, num2) {
+  let hash = {};
+  let res = []
+  for(let n of num1) {
+    if(hash[n]) {
+      hash[n]++;
+    } else {
+      hash[n] = 1
+    }
+  }
+  for(let k in num2) {
+    if(hash[k]) {                                                                                            
+      res.push(k)
+      hash[key]--
+    }
+  }
+  return res
+}
+
+function binarySearch(arr, target) {
+  let low = 0;
+  let height = arr.length - 1;
+  
+  while(low <= height) {
+    let mid = low + (height - low)>>1
+    if(arr[mid] === target) {
+      return mid
+    } else if(arr[mid] > target) {
+      height = mid - 1
+    } else{
+      low  = mid + 1;
+    }
+  }
+  return -1
+}
+
+function bSearchInter(arr, low, height, val) {
+  if(low > height) return -1
+  let mid = low + ((height - low) >> 1);
+  if(a[mid] === val) {
+    return mid
+  } else if(a[mid] < val) {
+    bSearchInter(arr, mid + 1, height, val)
+  } else {
+    bSearchInter(arr, low, mid - 1, val)
+  }
+}
+
+function erfen(arr, val) {
+  let low = 0, heigh = arr.length - 1;
+  while(low <= heigh) {
+    let mid = low + ((heigh - low)>>1);
+    if(arr[mid] === val) {
+      return mid
+    } else if(arr[mid] < val) {
+      low = mid + 1
+    } else {
+      heigh = mid - 1
+    }
+  }
+}
+
+function erfen(arr, low, heigh, val) {
+  if(low >height) return -1
+  let mid = low + ((heigh - low)>>1);
+  if(arr[mid] === val) {
+    return mid
+  } else if(arr[mid] < val) {
+    erfen(arr, mid + 1, heigh, val)
+  } else {
+    erfen(arr, low, mid - 1, val)
+  }
+}
+
+function bSearch(arr, n, val) {
+  let low = 0, high = n - 1;
+  while(low <= high) {
+    let mid = low + (high - low) >> 1;
+    if(arr[mid] > val) {
+      high = mid - 1;
+    } else if(arr[mid] < val) {
+      low = mid + 1;
+    } else {
+      if(arr[mid] === 0 || arr[mid-1] !== val) {
+        return mid;
+      } else {
+        high = mid - 1;
+      }
+    }
+  }
+  return -1;
+}
+
+function bSearch(arr, n, val) {
+  let low =0, high = n - 1;
+  while(low <= high) {
+    let mid = low + (high - low)>>1;
+    if(arr[mid] < val) {
+      high = mid - 1;
+    } else if(arr[mid] > val) {
+      low = mid + 1;
+    } else {
+      if(mid === n - 1 || arr[mid-1] !== val) {
+        return mid;
+      } else {
+        low = mid - 1;
+      }
+    }
+  }
+  return -1;
+}
+
+function bSear(arr, n, val) {
+  let low = 0;
+  let high = n - 1;
+  while(low <= high) {
+    let mid = low + (high - low) >> 1
+    if(arr[mid] > val) {
+      if(mid === 0 || arr[mid - 1] !== val) {
+        return mid;
+      } else {
+        high = mid - 1;
+      }
+    } else {
+      low = mid + 1;
+    }
+  }
+  return -1;
+}
+
+function bSear(arr, n, val) {
+  let low = 0;
+  let high = n - 1;
+  while(low <= high) {
+    let mid = low + (high - low) >> 1
+    if(arr[mid] > val) {
+      if(mid === 0 || arr[mid - 1] !== val) {
+        return mid;
+      } else {
+        high = mid - 1;
+      }
+      high = mid - 1;
+    } else {
+      if(mid === n-1 || arr[mid + 1] > val) {
+        return mid;
+      } else {
+        low = mid + 1;
+      }
+    }
+  }
+  return -1;
+}
+
+arr.sort(function(a, b) {
+  return a - b
+})
+arr = [...new Set(arr)];
+let result = [];
+arr.forEach(function(val) {
+  let index = parseInt(val/10);
+  if(!result[index]) {
+    result[index] = []
+  }
+  result[index].push(val)
+})
+
+result = result.filter(arr => arr.length > 0);
+console.log(result);
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let initArr = Array.from({length: 10}, (v) => {return getRandomInt(0, 99)})
+
+'AsdfAsFFGDDdsf'.replace(/[a-zA-Z]/g,function(a) {
+  return /[a-z]/.test(a) ? a.toUpperCase() : a.toLowerCase();
+})  
+
+var arr = [1,3,4,5,6,7];
+var k = 3
+while(k > 0) {
+  let tmp = arr.pop()
+  arr.unshift(tmp);
+  k--
+}
+
+let res = [];
+for(let i = 0;i < 10; i++) {
+  res.push(i)
+  res.push(i*11)
+  for(let j=0; j<10; j++) {
+    res.push(1*101 + j*10)
+    res.push(1*1001 + j*110)
+  }
+}
+function moveZero(arr) {
+  let fast = 0;
+  let slow = 0;
+  while(fast <arr.length) {
+    if(arr[i] !==0) {
+      i++;
+    } else if(arr[j] !==0) {
+      [arr[j], arr[i]] = [arr[i], arr[j]];
+      i++;
+    }
+    j++;
+  }
+}
+
+function sub_curry(fn) {
+  var args = [].slice.call(arguments, 1);
+  return function() {
+      return fn.apply(this, args.concat([].slice.call(arguments)));
+  };
+}
+
+function curry(fn, length) {
+  length = length || fn.length;
+  var slice = Array.prototype.slice;
+  return function() {
+      if (arguments.length < length) {
+          var combined = [fn].concat(slice.call(arguments));
+          return curry(sub_curry.apply(this, combined), length - arguments.length);
+      } else {
+          return fn.apply(this, arguments);
+      }
+  };
+}
+
+function sub_curry(fn) {
+  let arg = Array.prototype.slice.call(arguments, 1);
+  return function() {
+    let newArg = arg.concat(Array.prototype.slice.call(arguments));
+    return fn.apply(this, newArg)
+  }
+}
+
+function curry(fn, length) {
+  length = length || fn.length;
+  const slice = Array.prototype.slice;
+  return function() {
+    if(arguments.length < length) {
+      let combined = [fn].concat(slice.call(arguments));
+      return curry(sub_curry.apply(this, combined),length - arguments.length)
+    } else {
+      fn.apply(this,)
+    }
+  }
+}
+
+function sub_curry(fn) {
+  let arg = Array.prototype.slice.call(arguments, 1);
+  return function() {
+    let newArg = [...arg, ...arguments];
+    return fn.apply(this, newArg);
+  }
+}
+
+function curry(fn, length) {
+  length = length || fn.length;
+
+  slice = Array.prototype.slice;
+  return function() {
+    if(arguments.length < length ) {
+      let combined = [fn].concat(slice.call(arguments));
+      return curry(sub_curry(this, combined), length - arguments.length);
+    } else {
+      fn.apply(this, arguments);
+    }
+  }
+}
