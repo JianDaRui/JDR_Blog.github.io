@@ -1,3 +1,134 @@
+## Vue 组件精讲
+
+```js
+// assist.js
+// 由一个组件，向上找到最近的指定组件
+export function findComponentUpward (context, componentName) {
+  let parent = context.$parent;
+  let name = parent.$options.name;
+
+  while (parent && (!name || [componentName].indexOf(name) < 0)) {
+    parent = parent.$parent;
+    if (parent) name = parent.$options.name;
+  }
+  return parent;
+}
+
+
+// assist.js
+// 由一个组件，向上找到所有的指定组件
+export function findComponentsUpward (context, componentName) {
+  let parents = [];
+  const parent = context.$parent;
+
+  if (parent) {
+    if (parent.$options.name === componentName) parents.push(parent);
+    return parents.concat(findComponentsUpward(parent, componentName));
+  } else {
+    return [];
+  }
+}
+
+
+// 由一个组件，向下找到最近的指定组件
+export function findComponentDownward (context, componentName) {
+  const childrens = context.$children;
+  let children = null;
+
+  if (childrens.length) {
+    for (const child of childrens) {
+      const name = child.$options.name;
+
+      if (name === componentName) {
+        children = child;
+        break;
+      } else {
+        children = findComponentDownward(child, componentName);
+        if (children) break;
+      }
+    }
+  }
+  return children;
+}
+
+// 由一个组件，向下找到所有指定的组件
+function findComponentsDownward (context, componentName) {
+    
+  return context.$children.reduce((components, child) => {
+      
+    if (child.$options.name === componentName) components.push(child);
+      
+    const foundChilds = findComponentsDownward(child, componentName);
+      
+    return components.concat(foundChilds);
+      
+  }, []);
+}
+
+// 由一个组件，找到指定组件的兄弟组件
+function findBrothersComponents (context, componentName, exceptMe = true) {
+    
+  let res = context.$parent.$children.filter(item => {
+    return item.$options.name === componentName;
+  });
+    
+  let index = res.findIndex(item => item._uid === context._uid);
+    
+  if (exceptMe) res.splice(index, 1);
+    
+  return res;
+}
+```
+
+```javascript
+function broadcast(componentName, eventName, params) {
+  this.$children.forEach(child => {
+    const name = child.$options.name;
+    // debugger
+    if (name === componentName) {
+      child.$emit.apply(child, [eventName].concat(params));
+    } else {
+      broadcast.apply(child, [componentName, eventName].concat([params]));
+    }
+  });
+}
+
+
+function broad(componentName, eventName, params) {
+  this.$children.forEach(child => {
+    let name = child.$options.name
+    if(name === componentName) {
+      child.$emit.apply(child, [eventName].concat(params))
+    } else {
+      broad.apply(child, [componentName, eventName].concat(params))
+    }
+  })
+}
+export default {
+  methods: {
+    // dispatch(componentName, eventName, params) 
+    dispatch(componentName, eventName, params) {
+      let parent = this.$parent || this.$root;
+      let name = parent.$options.name;
+      while (parent && (!name || name !== componentName)) {
+        parent = parent.$parent;
+        if (parent) {
+          name = parent.$options.name;
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params));
+      }
+    },
+    broadcast(componentName, eventName, params) {
+      broadcast.call(this, componentName, eventName, params);
+    }
+  }
+};
+```
+
+
+
 ## 深入浅出Vue 读书笔记
 
 ### Object的变化侦测

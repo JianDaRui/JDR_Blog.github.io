@@ -2235,3 +2235,80 @@ function rangeDay(day1, day2) {
   return res;
 }  
 
+function generator(cb) {
+  return (function() {
+    var obj = {
+      next: 0,
+      stop: function() {}
+    }
+
+    return {
+      next: function() {
+        var res = cb(obj);
+        if(res === undefined) return {
+          value: undefined,
+          done: true
+        }
+        return {
+          value: res,
+          done: false
+        }
+      }
+    }
+  })()
+}
+
+// JSONP
+
+
+function jsonp(url, jsonpCallBack, success) {
+  let script = document.createElement("script");
+  script.src = url;
+  script.async = true;
+  script.type = "text/javascript";
+  window[jsonpCallBack] = function(data) {
+    success && success(data)
+  }
+  document.body.appendChild(script)
+}
+
+function jsonp(url, jsonpCallBack, success) {
+  let script = document.createElement("script");
+  script.src = url;
+  script.async = true;
+  script.type = "text/javascript";
+  window[jsonpCallBack] = function(data) {
+    success && success(data)
+  }
+  document.body.appendChild(script)
+}
+
+
+function jsonp(url, jsonpCallBack, success) {
+  let script = document.createElement("script");
+  script.src = url;
+  script.type = "text/javascript";
+  script.async = true;
+  window[jsonpCallBack] = function(data) {
+    success && success(data)
+  }
+  document.body.appendChild(script)
+}
+
+function new() {
+  let obj = new Object();
+  let Constructor = [].shift.call(arguments);
+  obj.__proto__ = Constructor.prototype;
+  let res = Constructor.apply(obj, arguments);
+  return typeof result === 'object' ? result : obj;
+}
+
+function new() {
+  let obj = new Object();
+  let Constructor = [].shift.call(arguments); 
+  obj.__proto__ = Constructor.prototype;
+  let res = Constructor.apply(obj, arguments)
+  return typeof result === 'object' ? result : obj;
+}
+
+function instanceof()
