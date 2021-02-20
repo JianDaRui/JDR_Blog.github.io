@@ -2307,7 +2307,7 @@ function new() {
   let obj = new Object();
   let Constructor = [].shift.call(arguments); 
   obj.__proto__ = Constructor.prototype;
-  let res = Constructor.apply(obj, arguments)
+  let res = Constructor.apply(obj, arguments);
   return typeof result === 'object' ? result : obj;
 }
 
