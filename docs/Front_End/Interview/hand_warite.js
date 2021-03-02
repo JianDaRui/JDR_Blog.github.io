@@ -228,58 +228,6 @@ function prototypeObj(child, parent) {
   })
 }
 
-function debounce(func, wait) {
-  let timer;
-  return function () {
-    clearTimeout(timer)
-    timer = setTimeout(func, wait)
-  }
-}
-
-function debounce(func, wait) {
-  let timer;
-  return function () {
-    let context = this
-    clearTimeout(timer)
-    timer = setTimeout(function () {
-      func.apply(context)
-    }, wait)
-  }
-}
-
-function debounce(func, wait) {
-  let timer;
-  return function () {
-    let context = this;
-    let args = arguments;
-    clearTimeout(timer)
-    timer = setTimeout(function () {
-      func.apply(context, args)
-    }, wait)
-  }
-}
-
-function debounce(func, wait, immediate) {
-  let timer;
-  return function () {
-    let context = this;
-    let args = arguments;
-    if (timer) clearTimeout(timer);
-    if (immediate) {
-      // 如果已经执行过，不在执行
-      let callNow = !timer;
-      timer = setTimeout(function () {
-        timer = null
-      }, wait)
-      if (callNow) func.apply(context, args)
-    } else {
-      timer = setTimeout(function () {
-        func.apply(context, args)
-      }, wait)
-    }
-  }
-}
-
 function debounce(func, wait, immediate) {
   let timer, result;
   let debounced = function () {
@@ -311,17 +259,24 @@ function debounce(func, wait, immediate = false) {
   let debounced = function () {
     let context = this;
     let args = arguments;
+
     if (timer) clearTimeout(timer);
+
     if (immediate) {
       let callNow = !timer;
+
       timer = setTimeout(function () {
         timer = null
       }, wait)
+
       if (callNow) result = func.apply(context, args);
+
     } else {
+
       timer = setTimeout(function () {
         result = func.apply(context, args)
       }, wait)
+
     }
     return result
   }
@@ -2216,36 +2171,36 @@ function createIndexOfFinder(dir) {
 
 '100000000000'.replace(/\B(?=(\d{3})) + (?!\d)/g, '.');
 '1000000000000'.replace(/(\d)(?=)/g, '$1.');
-let a = new Set([1,2,3,4,5,6]);
-let b= new Set([1,7,8,4,9,6]);
+let a = new Set([1, 2, 3, 4, 5, 6]);
+let b = new Set([1, 7, 8, 4, 9, 6]);
 let intersect = new Set([...a].filter(x => b.has(x)));
 
 let c = [...intersect]
 
 function rangeDay(day1, day2) {
   const res = [];
-  const dayTime = 24*60*60*1000;
+  const dayTime = 24 * 60 * 60 * 1000;
   const startTime = day1.getTime();
   const range = day2.getTime() - startTime;
   let total = 0;
-  while(total <= range && range > 0) {
+  while (total <= range && range > 0) {
     result.push(new Date(startTime + total).toLocaleDateString().replace(/\//g, '-'));
     total += s
   }
   return res;
-}  
+}
 
 function generator(cb) {
-  return (function() {
+  return (function () {
     var obj = {
       next: 0,
-      stop: function() {}
+      stop: function () {}
     }
 
     return {
-      next: function() {
+      next: function () {
         var res = cb(obj);
-        if(res === undefined) return {
+        if (res === undefined) return {
           value: undefined,
           done: true
         }
@@ -2266,7 +2221,7 @@ function jsonp(url, jsonpCallBack, success) {
   script.src = url;
   script.async = true;
   script.type = "text/javascript";
-  window[jsonpCallBack] = function(data) {
+  window[jsonpCallBack] = function (data) {
     success && success(data)
   }
   document.body.appendChild(script)
@@ -2277,7 +2232,7 @@ function jsonp(url, jsonpCallBack, success) {
   script.src = url;
   script.async = true;
   script.type = "text/javascript";
-  window[jsonpCallBack] = function(data) {
+  window[jsonpCallBack] = function (data) {
     success && success(data)
   }
   document.body.appendChild(script)
@@ -2289,7 +2244,7 @@ function jsonp(url, jsonpCallBack, success) {
   script.src = url;
   script.type = "text/javascript";
   script.async = true;
-  window[jsonpCallBack] = function(data) {
+  window[jsonpCallBack] = function (data) {
     success && success(data)
   }
   document.body.appendChild(script)
@@ -2305,7 +2260,7 @@ function new() {
 
 function new() {
   let obj = new Object();
-  let Constructor = [].shift.call(arguments); 
+  let Constructor = [].shift.call(arguments);
   obj.__proto__ = Constructor.prototype;
   let res = Constructor.apply(obj, arguments);
   return typeof result === 'object' ? result : obj;
@@ -2313,3 +2268,133 @@ function new() {
 
 function instanceof()
 
+// 渲染10000条数据
+
+setTimeout(() => {
+  let total = 10000;
+  let once = 20;
+  let totalCount = total / once;
+  let currCount = 0;
+  let ul = Document.getElementById('ul')
+
+  function add() {
+    let fragment = document.createDocumentFragment();
+    for (let i = 0; i < once; i++) {
+      const li = document.createElement('li');
+      li.innerText = Math.floor(Math.random() * total);
+      fragment.appendChild(li)
+    }
+    ul.appendChild(fragment)
+    currCount += 1;
+    loop()
+  }
+
+  function loop() {
+    if (currCount < totalCount) {
+      window.requestAnimationFrame(add)
+    }
+  }
+  loop()
+}, 0)
+
+function (a) {
+  let j = 0;
+  for (let i = a.length; i >= 0; i--) {
+    j = Math.floor(Math.random() * i);
+    [a[j], a[i - 1]] = [a[i - 1], a[j]]
+  }
+}
+
+// 快速排序
+function quickSort(arr) {
+  if (arr.length === 0) return [];
+  var cIndex = arr.length >> 1;
+  let c = arr.splice(cIndex, 1);
+  let l = [];
+  let r = [];
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] < c ? l.push(arr[i]) : r.push(arr[i])
+  }
+
+  return quickSort(l).concat(c, quickSort(r))
+}
+quickSort([3, 4, 5, 1, 2, 7, 6, 9, 8])
+
+function debounce(fn, wait) {
+  let timer = null;
+  return function () {
+
+  }
+}
+
+function create(proto) {
+  function F() {}
+  F.prototype = proto;
+  return new F()
+}
+
+function jsonStringify(obj) {
+  let type = typeof obj;
+  if (type !== 'object') {
+    if (/string|undefined|function/.test(type)) {
+      obj = '"' + obj + '"'
+      return String(obj)
+    }
+  } else {
+    let json = [];
+    let arr = Array.isArray(obj);
+    for (let k in obj) {
+      let v = obj[k];
+      let type = typeof v;
+      if (/string|undefined|function/.test(type)) {
+        v = '"' + v + '"';
+      } else if (type === "object") {
+        v = jsonStringify(v)
+      }
+      json.push((arr ? "" : ('"' + k + '":')) + String(v))
+    }
+    return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}")
+  }
+}
+
+function jsonStringify(obj) {
+  let type = typeof obj;
+  if (type !== "object") {
+    if (/string|undefined|function/.test(type)) {
+      obj = '"' + obj + '"';
+    }
+    return String(obj);
+  } else {
+    let json = [];
+    for (let k in obj) {
+      let v = obj[k];
+      let type = typeof v;
+      if (/string|undefined|function/.test(type)) {
+        v = '"' + v + '"'
+      } else if (type === "object") {
+        v = jsonStringify(v)
+      }
+      json.push((arr ? "" : '"' + k + '"') + String(v))
+    }
+    return (arr ? "[" : "{" + String(json) + arr ? "]" : "}")
+  }
+}
+
+let json = (new Function('return' + jsonStr))();
+
+function parseParam(url) {
+
+}
+
+function proxy(func) {
+  let instance;
+  let handler = {
+    constructor(target, args) {
+      if (!instance) {
+        instance = Reflect.construct(func, args)
+      }
+      return instance;
+    }
+  }
+  return new Proxy(func, handler)
+}
