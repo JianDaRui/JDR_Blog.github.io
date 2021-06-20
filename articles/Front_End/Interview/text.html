@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+</head>
+<body>
+	<input id="" type="text" />
+</body>
+<script>
+// 防抖
+function debounce(func, wait, immediate) {
+  let timer, result;
+  let debounce = function () {
+    let context = this;
+    let args = arguments;
+    if (timer) clearTimeout(timer);
+    if (immediate) {
+      let callNow = !timer;
+      timer = setTimeout(() => {
+        timer = null
+      }, wait);
+      if (callNow) result = func.apply(context, args)
+    } else {
+      timer = setTimeout(() => {
+        result = func.apply(context, args)
+      }, wait)
+    }
+    return result;
+  }
+  debounce.cancel = function () {
+    clearTimeout(timer);
+    timer = null;
+  }
+  return debounce;
+}
+Vue.component('no-space-input', {
+  props: {
+		value: ""
+  },
+	methods: {
+		trimSpace(event) {
+			let _this = this
+			debounce(function () {
+				// _this.value = event.target.value.replace(/\s+/g, '')
+				_this.$emit("input", event.target.value.replace(/\s+/g, ''))
+			}, 300)
+		}
+	},
+  template: '<input v-bind="value" @input="trimSpace" >'
+})
+</script>
+<style>
+	.box{
+			width: 100%;
+			height: 300px;
+			margin: 20px 0;
+			padding: 50px;
+			border: 20px solid blue;
+			position: relative;
+	}
+	.child {
+		background-color: red;
+		width: 100px;
+		height: 200px;
+		top: 100px;
+		left: 50px;
+		position: absolute;
+	}
+</style>
+
+<body>
+
+
+<div class="box">
+	<div class="child"></div>
+</div>
+	<script>
+		function defineReactive(obj, key, val) {
+
+			Object.defineProperty(obj, key, {
+				enumerable: true,
+				configurable: true,
+				get: function() {
+					return val
+				},
+				set: function(newVal) {
+					if(newVal === val) {
+						return
+					}
+					val = newVal;
+				}
+			})
+			
+		}
+
+	</script>
+</body>
+
+</html>

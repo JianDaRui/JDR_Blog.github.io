@@ -8,11 +8,9 @@ function defineReactive(data, key, val) {
     writable: true,
     get: function () {
       dep.depend()
-
-      if(childOb) {
+      if (childOb) {
         childOb.dep.depend()
       }
-
       return val
     },
     set(newVal) {
@@ -26,16 +24,15 @@ function defineReactive(data, key, val) {
 }
 
 function observe(value, asRootData) {
-  if(!isObject(value)){
-    return 
+  if (!isObject(value)) {
+    return
   }
   let ob;
-  if(hasOwn(value, '__ob__') && value.__ob__ instanceof Observe) {
+  if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observe) {
     ob = value.__ob__
   } else {
-    ob = new Observe()
+    ob = new Observe(value)
   }
-
   return ob
 }
 
@@ -97,10 +94,8 @@ class Observe {
     this.value = value;
     // 数组收集依赖
     this.dep = new Dep();
-
     def(value, '__ob__', this)
-
-    if(Array.isArray(value)) {
+    if (Array.isArray(value)) {
       // value.__proto__ = arrayMethods
       const augment = hasProto ? protoAugment : copyAugment
       augment(value, arrayMethods, arrayKeys)
@@ -108,27 +103,28 @@ class Observe {
     } else {
       this.walk(value)
     }
-    
   }
 
   walk(value) {
     const keys = Object.keys(value);
-    for(let i=0; i<keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i], obj[keys[i]])
     }
   }
 
   observeArray(items) {
-    for(let i = 0; i<items.length; i++) {
-      observe(items[i])
+    for (let i = 0; i < items.length; i++) {
+      observe(`items`[i])
     }
   }
 }
+
 function protoAugment(value, src, keys) {
   value.__proto__ = src;
-} 
+}
+
 function copyAugment(target, src, keys) {
-  for(let i=0; i< keys.length; i++) {
+  for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     def(target, key, src[key])
   }
@@ -152,10 +148,9 @@ function parsePath(path) {
 
 
 // Array
-
 const arrayProto = Array.prototype
-const arrayMethods = Object.create(arrayProto);
-;[
+const arrayMethods = Object.create(arrayProto);;
+[
   'push',
   'pop',
   'shift',
@@ -163,7 +158,7 @@ const arrayMethods = Object.create(arrayProto);
   'splice',
   'sort',
   'reverse'
-].forEach(function(method) {
+].forEach(function (method) {
   const original = arrayProto[method];
   Object.defineProperty(arrayMethods, method, {
     enumerable: false,
@@ -181,12 +176,37 @@ const arrayMethods = Object.create(arrayProto);
           inserted = args.slice(2)
           break;
       }
-      
-      if(inserted) ob.observeArray(inserted) // 侦测新增元素
-
+      if (inserted) ob.observeArray(inserted) // 侦测新增元素
       ob.dep.notify()
-
       return original.apply(this, args)
     }
   })
 })
+
+let arr = Array.from({
+  length: 9
+}, (_, index) => _ = index + 1)
+
+function combinSum(k, n) {
+  let res = []
+  let sum = 0
+  const dfs = (tmp, start) => {
+    if (tmp.length > k || sum > n) {
+      return
+    }
+    if (tmp.length === k && sum === n) {
+      res.push(tmp.slice())
+    }
+    for (let i = start; i < arr.length; i++) {
+      tmp.push(arr[i]);
+      sum += arr[i];
+      dfs(tmp, i + 1);
+      tmp.pop();
+      sum -= arr[i];
+    }
+  }
+  dfs([], 0);
+  return res;
+}
+combinSum(3, 9);
+

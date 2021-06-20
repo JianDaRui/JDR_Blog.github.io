@@ -156,3 +156,5 @@ function bundle (entryPath) {
 
 bundle('./src/entry.js')
 ```
+- https://juejin.cn/post/6844904094281236487
+- https://juejin.cn/post/6844903685407916039#heading-0
