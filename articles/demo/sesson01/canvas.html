@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas width="512" height="512"></canvas>
+  <script>
+    // 获取元素
+    const canvas = document.querySelector('canvas')
+    // 获取上下文
+    const context = canvas.getContext('2d')
+    console.dir(context);
+    const rectSize = [100, 100]
+    // 暂存状态
+    context.save()
+    context.fillStyle = 'green'
+    // 平移
+    context.translate(-0.5 * rectSize[0], -0.5 * rectSize[1])
+    context.beginPath()
+    context.rect(0.5 * canvas.width, 0.5 * canvas.height, ...rectSize)
+    context.fill()
+    // 恢复状态
+    context.restore()
+  </script>
+</body>
+</html>
