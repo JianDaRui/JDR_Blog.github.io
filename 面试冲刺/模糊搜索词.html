@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>auto complete</title>
+</head>
+<style>
+  bdi {
+    color: rgb(0, 136, 255)
+  }
+  li {
+    list-style: none;
+  }
+</style>
+<body>
+  <input type="text" class="inp">
+  <section>
+    <ul class="container"></ul>
+  </section>
+  <script>
+      // 防抖
+  function debounce(func, wait, immediate) {
+    let timeout, result
+    const debounced = function () {
+      const context = this
+      const args = arguments
+      
+      if(timeout) clearSetTimeout(timeout)
+      
+      if(immediate) {
+        const callNow = !timeout
+        
+        let timeout = setTimeout(function() {
+          timeout = null
+        }, wait)
+        if(callNow) result = func.apply(context, args)
+      } else {
+        timeout = setTimeout(function() {
+          func.apply(context, args)
+        }, wait)
+      }
+      return result
+    }
+    debounced.cancel = function () {
+      clearTimeout(timeout)
+      timeout = null
+    }
+    return debounced
+  }
+
+  const data = ["上海野生动物园", "上饶野生动物园", "北京巷子", "上海中心", "上海黄埔江", "迪士尼上海", "陆家嘴上海中心"]
+  const container = document.getElementsByClassName('container')[0]
+
+  function memorize(fn) {
+    const cache = new Map()
+    return (name) => {
+      if (!name) {
+        container.innerHTML = '';
+        return;
+      }
+      if (cache.get(name)) {
+        container.innerHTML = cache.get(name);
+        return;
+      }
+      const res = fn.call(fn, name).join('');
+
+      cache.set(name, res);
+
+      container.innerHTML = res;
+    }
+  }
+
+  function handleInput(value) {
+    const reg = new RegExp(`\(${value}\)`, 'g')
+    const search = data.reduce((res, curr) => {
+      if(reg.test(curr)) {
+        const match = RegExp.$1
+        res.push(res.push(`<li>${cur.replace(match, '<bdi>$&</bdi>')}</li>`))
+      }
+      return res
+    }, [])
+    return search
+  }
+  document.querySelector('.inp').addEventListener('input', debounce(function(e) {
+    memorizeInput(e.target.value)
+  }))
+  </script>
+</body>
+
+</html>

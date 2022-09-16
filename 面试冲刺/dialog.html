@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    class Dialog {
+      instance = null
+      constructor(text) {
+        this.lastX = 0
+        this.lastY = 0
+        this.x
+        this.y
+        this.text = text || ''
+        this.isMoving = false
+        this.dialog
+      }
+      open() {
+        const model = document.createElement('div')
+        model.id='model'
+
+        model.style = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    background-color: rgba(0, 0, 0, 0.3);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;`
+
+        model.addEventListener('click', this.close.bind(this))
+
+        document.body.appendChild(model)
+
+        this.dialog = document.createElement('div')
+        this.dialog.style = `
+          padding: 20px;
+          background-color: white`
+        this.dialog.innerText = this.text
+        this.dialog.addEventListener('click',e=>{e.stopPropagation()})
+        this.dialog.addEventListener('mousedown', this.handleMousedown.bind(this))
+        document.addEventListener('mousemove', this.handleMousemove.bind(this))
+        document.addEventListener('mouseup', this.handleMouseup.bind(this))
+
+        model.appendChild(this.dialog)
+      }
+      close() {
+        this.dialog.removeEventListener('mousedown',this.handleMousedown)
+        document.removeEventListener('mousemove', this.handleMousemove)
+        document.removeEventListener('mouseup',this.handleMouseup)
+        document.body.removeChild(document.querySelector('#model')) 
+      }
+      handleMousedown(e) {
+        this.isMoving = true
+        this.x = e.clientX
+        this.y = e.clientY
+      }
+      handleMousemove(e) {
+        if (this.isMoving) {
+          this.dialog.style.transform = `
+            translate(${ e.clientX - this.x + this.lastX}px, ${e.clientY - this.y + this.lastY }px)
+          `
+        }
+      }
+      handleMouseup(e) {
+        this.lastX = e.clientX - this.x + this.lastX
+        this.lastY = e.clientY - this.y + this.lastY
+        this.isMoving = false
+      }
+    }
+    let dialog = new Dialog('Hello')
+    dialog.open()
+
+
+    class Dialog2 {
+      constructor(text) {
+        this.lastX = 0
+        this.laxtY = 0
+        this.x = null
+        this.y = null
+        this.text = text || 'hello world'
+        this.isMoving = false
+        this.dialog = null
+        this.model = null
+      }
+
+      open() {
+        const model = document.createElement('div')
+        model.style = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background-color:rgba(0, 0, 0, 0.3);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        `
+        document.body.appendChild(model)
+
+        this.dialog = document.createElement('div')
+        this.dialog.style = `
+          padding: 30px;
+          background-color: white;
+        `
+        this.model.appendChild(this.dialog)
+        this.model.addEventListener('click', this.close.bind(this))
+        this.dialog.addEventListener('mousedown', this.mouseDown.bind(this))
+        this.dialog.addEventListener('mousemove', this.mouseMove.bind(this))
+        this.dialog.addEventListener('mouseup', this.mouseUp.bind(this))
+        this.dialog.addEventListener('click', e => e.stopPropagation())
+      }
+      close() {
+        this.dialog.removeEventListener('mousedown',this.handleMousedown)
+        document.removeEventListener('mousemove', this.handleMousemove)
+        document.removeEventListener('mouseup',this.handleMouseup)
+        document.body.removeChild(document.querySelector('#model')) 
+        // this.model.style += 'display: none;'
+      }
+      mouseDown() {
+        this.isMoving = true
+        this.x = e.clientX
+        this.y = e.clientY
+      }
+      mouseMove() {
+        if (this.isMoving) {
+          this.dialog.style.transform = `
+            translate(${e.clientX - this.x + this.lastX}px,${e.clientY - this.y + this.lastY}px)
+          `
+        }
+      }
+      mouseUp() {
+        this.lastX = e.clientX - this.x + this.lastX
+        this.lastY = e.clientY - this.y + this.lastY
+        this.isMoving = false
+      }
+    
+      getInstance(text) {
+        if(instance) {
+          return instance
+        }
+        return instance = new Dialog(text)
+      }
+    }
+  </script>
+</body>
+</html>
