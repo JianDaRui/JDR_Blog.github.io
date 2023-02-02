@@ -235,6 +235,8 @@ function App() {
 
 解决问题：
 
+- 降低父组件 API 复杂度
+- 为用户提供了更高的结构灵活度，UI 更加可控，用户有了更大的 UI 控制权
 - 最底层子组件重复更新的问题
 - 解决多层组件嵌套情况下状态层级传递问题
 
@@ -329,6 +331,10 @@ export default function App() {
 2. 如果用户需要存在很多定制化的需求，比如对某个 Option 选项进行一些高度定制化的处理，会导致使用起来不方便，因为  Select & Option 组件是耦合的。
 
 而当采用复合组件的时候这些问题都被解决了。并且  Select & Option 组件会共享 App 组件的状态与逻辑。
+
+## Control Props Pattern
+
+## Custom Hook Pattern
 
 ## 状态派发组件设计模式
 
@@ -540,3 +546,4 @@ class App extends React.Component() {
 - https://flexiple.com/react/render-props-an-advanced-react-pattern/
 - https://blog.logrocket.com/react-reference-guide-render-props/
 - https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0
+- https://www.zhihu.com/question/531555960/answer/2552310734
