@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>绘制多点</title>
+  <link rel="icon" href="https://img.kaikeba.com/kkb_portal_icon.ico">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #canvas {
+      background-color: antiquewhite;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    const canvas = document.querySelector("#canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // 获取着色器文本
+    const vsSource = `
+      attribute vec4 a_Position;
+      attribute vec4 a_Color;
+      // 声明全局颜色
+      varying vec4 v_Color;
+      void main(){
+          //点位
+          gl_Position=a_Position;
+          //尺寸
+          gl_PointSize=50.0;
+          v_Color = a_Color;
+      }
+    `
+    const fsSource = `
+      precision mediump float;
+      varying vec4 v_Color;
+      void main(){
+        gl_FragColor = v_Color;
+      }
+    `
+
+    //三维画笔
+    const gl = canvas.getContext("webgl");
+
+    //初始化着色器
+    initShaders(gl, vsSource, fsSource);
+    gl.clearColor(0, 0, 0, 1)
+    //如何向 attribute 变量中写入多点，并绘制多点
+    //顶点数据
+    const source = new Float32Array([
+      0, 0.2, 0,      0, 0, 1, 1,
+      -0.2, -0.1, 0,  0, 1, 0, 1,
+      0.2, -0.1, 0,   1, 1, 0, 1,
+    ]);
+    // 元素字节数
+    const elementBytes = source.BYTES_PER_ELEMENT
+    console.log(elementBytes)
+    // 系列尺寸
+    const verticeSize = 3
+    // 颜色系列
+    const colorSize = 4
+    // 类目尺寸
+    // 类目尺寸 = 系列尺寸 + 颜色系列
+    const categorySize = verticeSize + colorSize
+    // 类目字节数
+    const categoryBytes = categorySize * elementBytes
+    console.log(categoryBytes, 'categoryBytes')
+    //系列字节索引位置 一个系列在一个类目中，以字节为单位的索引位置
+    const verticeByteIndex = 0
+    const colorByteIndex = verticeSize * elementBytes
+    console.log(colorByteIndex, 'colorByteIndex')
+
+    const sourceSize = source.length / categorySize
+
+    console.log(sourceSize, 'sourceSize')
+    //缓冲对象
+    const sourceBuffer = gl.createBuffer();
+    //绑定缓冲对象
+    gl.bindBuffer(gl.ARRAY_BUFFER, sourceBuffer);
+    //写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, source, gl.STATIC_DRAW)
+    //获取attribute 变量
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+    //修改attribute 变量
+    gl.vertexAttribPointer(
+      a_Position,
+      verticeSize,
+      gl.FLOAT,
+      false,
+      categoryBytes,
+      verticeByteIndex
+    )
+    //赋能-批处理
+    gl.enableVertexAttribArray(a_Position)
+
+    const a_Color = gl.getAttribLocation(gl.program, 'a_Color')
+    gl.vertexAttribPointer(
+      a_Color,
+      colorSize,
+      gl.FLOAT,
+      false,
+      categoryBytes,
+      colorByteIndex
+    )
+    gl.enableVertexAttribArray(a_Color)
+    //刷底色
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    //绘制顶点
+    gl.drawArrays(gl.TRIANGLES, 0, sourceSize);
+
+    // 初始化着色器
+    function initShaders(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vS)
+      const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fS)
+      // 将着色器装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // 链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对桑
+      gl.useProgram(program)
+      // 将程序对象挂载到 gl 上下文
+      gl.program = program
+
+      return true
+    }
+    function loadShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 将着色器数据传入着色器中
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+
+      return shader
+    }
+  
+  </script>
+</body>
+
+</html>

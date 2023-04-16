@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    import { Color } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js'
+    import Poly from './poly.js'
+
+    const canvas = document.querySelector('#canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const webgl = canvas.getContext('webgl')
+    
+    /** 绘制一个点 **/
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      void main() {
+        gl_Position = a_Position;
+        gl_PointSize = 200.0;
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1, 1, 0, 1);
+      }
+    `
+    
+    if(!initShader(webgl, vertexShader, fragmentShader)){
+      new Error('fail init shader')
+    }
+    
+    webgl.clearColor(0, 0, 0, 1)
+    webgl.clear(webgl.COLOR_BUFFER_BIT)
+
+    const poly = new Poly({
+      gl: webgl,
+      vertices: [0, 0.2],
+      types: ['POINTS', 'LINE_STRIP']
+    })
+
+    poly.draw()
+
+    canvas.addEventListener('mousedown', (event) => {
+      const { x, y } = getMousePosInWebgl(event, canvas)
+      poly.addVertice(x, y)
+      webgl.clear(webgl.COLOR_BUFFER_BIT);
+      poly.draw()
+    })
+    // 初始化着色器
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vS)
+      const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fS)
+      // 将着色器装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // 链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对桑
+      gl.useProgram(program)
+      // 将程序对象挂载到 gl 上下文
+      gl.program = program
+
+      return true
+    }
+    function loadShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 将着色器数据传入着色器中
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+
+      return shader
+    }
+    function getMousePosInWebgl({ clientX, clientY }, canvas) {
+      //鼠标在画布中的css位置
+      const { left, top, width, height } = canvas.getBoundingClientRect();
+      const [cssX, cssY] = [clientX - left, clientY - top];
+      //解决坐标原点位置的差异
+      const [halfWidth, halfHeight] = [width / 2, height / 2];
+      const [xBaseCenter, yBaseCenter] = [
+        cssX - halfWidth,
+        cssY - halfHeight,
+      ];
+      // 解决y 方向的差异
+      const yBaseCenterTop = -yBaseCenter;
+      //解决坐标基底的差异
+      return {
+        x: xBaseCenter / halfWidth,
+        y: yBaseCenterTop / halfHeight
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    import { Matrix4, Vector3 } from 'https://unpkg.com/three/build/three.module.js';
+
+    const canvas = document.querySelector("#canvas")
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    // 获取 webgl 上下文
+    const gl = canvas.getContext('webgl')
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      //列主序
+      uniform mat4 u_ViewMatrix;
+      uniform mat4 u_ModelMatrix;
+      void main(){
+        gl_Position = u_ViewMatrix*u_ModelMatrix*a_Position;
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+      }
+    `
+    initShader(gl, vertexShader, fragmentShader)
+
+    // 创建顶点集合
+    const verticesLib = [
+      1.0, 1.0, 1.0,
+      -1.0, 1.0, 1.0,
+      -1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+      1.0, -1.0, -1.0,
+      1.0, 1.0, -1.0,
+      -1.0, 1.0, -1.0,
+      -1.0, -1.0, -1.0,
+    ];
+    const indices = [
+      0, 1,
+      1, 2,
+      2, 3,
+      3, 0,
+
+      0, 5,
+      1, 6,
+      2, 7,
+      3, 4,
+
+      4, 5,
+      5, 6,
+      6, 7,
+      7, 4
+    ];
+    const arr = []
+    indices.forEach(n => {
+      const i = n * 3
+      arr.push(verticesLib[i] / 10)
+      arr.push(verticesLib[i + 1] / 10)
+      arr.push(verticesLib[i + 2] / 10)
+    })
+    const vertices = new Float32Array(arr)
+    // 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer()
+    // 绑定缓冲区对象
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    // 向缓冲区中写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+    
+    // 获取顶点位置
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+    // 从缓冲区中读取顶点数据
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0)
+    // 激活属性
+    gl.enableVertexAttribArray(a_Position)
+
+    const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix')
+    const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix')
+    const matrix = new Matrix4().lookAt(
+      new Vector3(0.2, 0.5, 1),
+      new Vector3(0, 0, 0),
+      new Vector3(0, 1, 0)
+    )
+
+    const modelMatrix = new Matrix4()
+    modelMatrix.makeRotationY(-0.3)
+    gl.uniformMatrix4fv(u_ViewMatrix, false, matrix.elements)
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements)
+    // 设置清空颜色缓冲时的颜色值。
+    gl.clearColor(0.0, 0.0, 0.0, 1.0)
+    // 使用预设值来清空缓冲。
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    // 从向量数组中绘制图元
+    gl.drawArrays(gl.LINES, 0, indices.length);
+
+    let angle = 0;
+
+    const minY = -0.7
+    const maxY = 0.7
+    let y = maxY
+    let vy = 0
+    const ay = -0.001 // 加速度
+    const bounce = 1
+
+    !(function ani() {
+      angle += 0.02
+
+      vy += ay
+      y += vy
+      // 设置旋转
+      modelMatrix.makeRotationX(angle)
+      // 设置y轴距离
+      modelMatrix.setPosition(0, y, 0)
+
+      /* 
+        [
+          0, 1, 2, 3,
+          4, 5, 6, 7,
+          8, 9, 10,11,
+          12,13,14,15
+        ]
+      */
+      if (modelMatrix.elements[13] < minY) {
+        y = minY
+        vy *= -bounce
+      }
+
+      gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements)
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.LINES, 0, indices.length);
+      requestAnimationFrame(ani)
+    })()
+
+
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loaderShader(gl, gl.VERTEX_SHADER, vS);
+      const fragmentShader = loaderShader(gl, gl.FRAGMENT_SHADER, fS);
+      // 将顶点着色器填装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器填装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // gl 上下文链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对象
+      gl.useProgram(program)
+      gl.program = program;
+      return true
+    }
+    function loaderShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 向着色器中传入数据
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+      return shader
+    }
+  </script>
+</body>
+</html>

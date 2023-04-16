@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    const canvas = document.querySelector("#canvas")
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    // 获取 webgl 上下文
+    const gl = canvas.getContext('webgl')
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      uniform float u_Scale;
+      void main() {
+        // gl_Position.x = a_Position.x*scale;
+        // gl_Position.y = a_Position.y*scale;
+        // gl_Position.z = a_Position.z;
+        // gl_Position.w = 1;
+        gl_Position = vec4(vec3(a_Position)*u_Scale, 1.0);
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+      }
+    `
+    initShader(gl, vertexShader, fragmentShader)
+
+    // 创建顶点集合
+    const vertices = new Float32Array([
+      0.0, 0.1,
+      -0.1, -0.1,
+      0.1, -0.1
+    ])
+    // 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer()
+    // 绑定缓冲区对象
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    // 向缓冲区中写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+    
+    // 获取顶点位置
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+    // 从缓冲区中读取顶点数据
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0)
+    // 激活属性
+    gl.enableVertexAttribArray(a_Position)
+
+    const u_Scale = gl.getUniformLocation(gl.program, 'u_Scale');
+    // 设置缩放变量
+    gl.uniform1f(u_Scale, 1)
+    // 设置清空颜色缓冲时的颜色值。
+    gl.clearColor(0.0, 0.0, 0.0, 1.0)
+    // 使用预设值来清空缓冲。
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    // 从向量数组中绘制图元
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    let scale = 1
+    !(function ani() {
+      scale += 0.05
+      if(scale > 2) {
+        scale = -2
+      }
+      gl.uniform1f(u_Scale, scale)
+      // 使用预设值来清空缓冲。
+      gl.clear(gl.COLOR_BUFFER_BIT)
+      // 从向量数组中绘制图元
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      requestAnimationFrame(ani)
+    })()
+
+
+
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loaderShader(gl, gl.VERTEX_SHADER, vS);
+      const fragmentShader = loaderShader(gl, gl.FRAGMENT_SHADER, fS);
+      // 将顶点着色器填装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器填装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // gl 上下文链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对象
+      gl.useProgram(program)
+      gl.program = program;
+      return true
+    }
+    function loaderShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 向着色器中传入数据
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+      return shader
+    }
+  </script>
+</body>
+</html>

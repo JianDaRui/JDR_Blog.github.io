@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>位移</title>
+  <link rel="icon" href="https://img.kaikeba.com/kkb_portal_icon.ico">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    const canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const gl = canvas.getContext('webgl');
+    /** 绘制一个点 **/
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      vec4 translation = vec4(0,0.5,0,0);
+      void main(){
+        gl_Position = a_Position + translation;
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main(){
+        gl_FragColor=vec4(1.0,1.0,0.0,1.0);
+      }
+    `
+    
+    initShader(gl, vertexShader, fragmentShader);
+
+
+    const vertices = new Float32Array([
+      0.0, 0.1,
+      -0.1, -0.1,
+      0.1, -0.1
+    ])
+
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Position);
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    // 初始化着色器
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vS)
+      const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fS)
+      // 将着色器装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // 链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对桑
+      gl.useProgram(program)
+      // 将程序对象挂载到 gl 上下文
+      gl.program = program
+
+      return true
+    }
+    function loadShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 将着色器数据传入着色器中
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+
+      return shader
+    }
+  
+  </script>
+</body>
+
+</html>

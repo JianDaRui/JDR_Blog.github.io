@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    import { Matrix4, Vector3 } from 'https://unpkg.com/three/build/three.module.js';
+    import Poly from './poly.js'
+
+    const canvas = document.querySelector("#canvas")
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    // 获取 webgl 上下文
+    const gl = canvas.getContext('webgl')
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      //列主序
+      uniform mat4 u_ViewMatrix;
+      void main(){
+        gl_Position = u_ViewMatrix*a_Position;
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+      }
+    `
+    initShader(gl, vertexShader, fragmentShader)
+
+    const viewMatrix = new Matrix4().lookAt(
+      new Vector3(0.2, 0.3, 1),
+      new Vector3(0, 0, 0),
+      new Vector3(0, 1, 0)
+    )
+
+    const [minPosX, maxPosX, minPosZ, maxPosZ] = [
+      -0.8, 0.8, -1, 1
+    ]
+    const wave = new Poly({
+      gl,
+      vertices: crtVertices(),
+      uniforms: {
+        u_ViewMatrix: {
+          type: 'uniformMatrix4fv',
+          value: viewMatrix.elements
+        }
+      }
+    })
+    // 设置清空颜色缓冲时的颜色值。
+    gl.clearColor(0.0, 0.0, 0.0, 1.0)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    wave.draw()
+
+    function crtVertices(offset = 0) {
+      const vertices = []
+      for(let z = minPosZ; z < maxPosZ; z += 0.04) {
+        for(let x = minPosX; x < maxPosX; x += 0.04) {
+          vertices.push(x, 0, z)
+        }
+      }
+      return vertices
+    }
+
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loaderShader(gl, gl.VERTEX_SHADER, vS);
+      const fragmentShader = loaderShader(gl, gl.FRAGMENT_SHADER, fS);
+      // 将顶点着色器填装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器填装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // gl 上下文链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对象
+      gl.useProgram(program)
+      gl.program = program;
+      return true
+    }
+    function loaderShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 向着色器中传入数据
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+      return shader
+    }
+  </script>
+</body>
+</html>

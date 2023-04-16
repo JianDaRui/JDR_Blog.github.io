@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
+<body>
+  <canvas id="canvas"></canvas>
+  <script type="module">
+    import { Matrix4, Vector3 } from 'https://unpkg.com/three/build/three.module.js';
+
+    const canvas = document.querySelector("#canvas")
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    // 获取 webgl 上下文
+    const gl = canvas.getContext('webgl')
+    // 定义顶点着色器
+    const vertexShader = `
+      attribute vec4 a_Position;
+      //列主序
+      uniform mat4 u_Matrix;
+      void main(){
+        gl_Position = u_Matrix*a_Position;
+      }
+    `
+    // 定义片元着色器
+    const fragmentShader = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+      }
+    `
+    initShader(gl, vertexShader, fragmentShader)
+
+    // 创建顶点集合
+    const verticesLib = [
+      1.0, 1.0, 1.0,
+      -1.0, 1.0, 1.0,
+      -1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+      1.0, -1.0, -1.0,
+      1.0, 1.0, -1.0,
+      -1.0, 1.0, -1.0,
+      -1.0, -1.0, -1.0,
+    ];
+    const indices = [
+      0, 1,
+      1, 2,
+      2, 3,
+      3, 0,
+
+      0, 5,
+      1, 6,
+      2, 7,
+      3, 4,
+
+      4, 5,
+      5, 6,
+      6, 7,
+      7, 4
+    ];
+    const arr = []
+    indices.forEach(n => {
+      const i = n * 3
+      arr.push(verticesLib[i] / 5)
+      arr.push(verticesLib[i + 1] / 5)
+      arr.push(verticesLib[i + 2] / 5)
+    })
+    const vertices = new Float32Array(arr)
+    // 创建缓冲区对象
+    const vertexBuffer = gl.createBuffer()
+    // 绑定缓冲区对象
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    // 向缓冲区中写入数据
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+    
+    // 获取顶点位置
+    const a_Position = gl.getAttribLocation(gl.program, 'a_Position')
+    // 从缓冲区中读取顶点数据
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0)
+    // 激活属性
+    gl.enableVertexAttribArray(a_Position)
+
+    const u_Matrix = gl.getUniformLocation(gl.program, 'u_Matrix')
+
+    const matrix = lookAt(
+      new Vector3(-0.2, -0.2, 1),
+      new Vector3(0, 0, 0),
+      new Vector3(0, 1, 0)
+    )
+
+    gl.uniformMatrix4fv(u_Matrix, false, matrix)
+    // 设置清空颜色缓冲时的颜色值。
+    gl.clearColor(0.0, 0.0, 0.0, 1.0)
+    // 使用预设值来清空缓冲。
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    // 从向量数组中绘制图元
+    gl.drawArrays(gl.LINES, 0, indices.length);
+
+    function lookAt(e, t, u) {
+      // 视点到目标点的向量
+      const d = new Vector3().subVectors(e, t)
+      d.normalize()
+      // d 和上方向的垂线
+      const a = new Vector3().crossVectors(u, d)
+      a.normalize()
+      // d 和 a 的垂线
+      const b = new Vector3().crossVectors(d, a)
+      b.normalize()
+
+      const c = new Vector3(-d.x, -d.y, -d.z)
+      return [
+        a.x, b.x, c.x, 0,
+        a.y, b.y, c.y, 0,
+        a.z, b.z, c.z, 0,
+        0, 0, 0, 1
+      ]
+    }
+    function initShader(gl, vS, fS) {
+      // 创建程序对象
+      const program = gl.createProgram();
+      // 创建顶点着色器
+      const vertexShader = loaderShader(gl, gl.VERTEX_SHADER, vS);
+      const fragmentShader = loaderShader(gl, gl.FRAGMENT_SHADER, fS);
+      // 将顶点着色器填装进程序对象
+      gl.attachShader(program, vertexShader)
+      // 将片元着色器填装进程序对象
+      gl.attachShader(program, fragmentShader)
+      // gl 上下文链接程序对象
+      gl.linkProgram(program)
+      // 启动程序对象
+      gl.useProgram(program)
+      gl.program = program;
+      return true
+    }
+    function loaderShader(gl, type, source) {
+      // 创建着色器对象
+      const shader = gl.createShader(type)
+      // 向着色器中传入数据
+      gl.shaderSource(shader, source)
+      // 编译着色器
+      gl.compileShader(shader)
+      return shader
+    }
+  </script>
+</body>
+</html>
