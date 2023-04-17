@@ -1,4 +1,4 @@
-# Typescript
+# Typescript 
 
 Hi guys，我是剑大瑞。
 
@@ -338,7 +338,7 @@ type 变量类型 = {
 
 - unknown
 
-  unknown 类型与 any 类型非常相似，当你不知道某个变量或者参数的具体类型时，就可以使用 unknown 将 变量声明为 unknown 类型。但是， **unknown 类型相较于 any 类型更加安全**。因为你不能访问声明为 unknown 类型的任何属性。
+  unknown 类型与 any 类型非常相似，当你不知道某个变量或者参数的具体类型时，就可以使用 unknown 将 变量声明为 unknown 类型。但是， **unknown 类型相较于 any 类型更加安全**。因为你不能访问声明为 unknown 类型的值的任何属性。
 
   ```typescript
   function f1(a: any) {
@@ -350,13 +350,69 @@ type 变量类型 = {
   }
   ```
 
-  
-
-​	
 
 - never
+
+  never 类型在 ts 中比较特殊。
+
+  
+
 - 联合类型
+
+  ts 允许你基于现有的基础类型或者自定义类型，创建一个联合类型。通过 `|` 符将多个连接起来。比如
+
+  ```typescript
+  function printId(id: number | string) {
+    if (typeof id === "string") {
+      // In this branch, id is of type 'string'
+      console.log(id.toUpperCase());
+    } else {
+      // Here, id is of type 'number'
+      console.log(id);
+    }
+  }
+  // OK
+  printId(101);
+  // OK
+  printId("202");
+  // Error
+  printId({ myID: 22342 });
+  ```
+
+  上面的 id 可以是数字类型或者字符串类型，但是如果需要访问值得具体属性，需要先进行[类型收缩](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)，否则会报错。
+
 - 类型别名
+
+  类型别名的最大作用就是实现类型的复用，让你在项目中可以整合基础类型、联合类型、对象类型。例如：
+
+  ```typescript
+  type Point = {
+    x: number;
+    y: number;
+  };
+   
+  // Exactly the same as the earlier example
+  function printCoord(pt: Point) {
+    console.log("The coordinate's x value is " + pt.x);
+    console.log("The coordinate's y value is " + pt.y);
+  }
+   
+  printCoord({ x: 100, y: 100 });
+  // 命名联合类型
+  type ID = number | string;
+  function printId(id: ID) {
+    if (typeof id === "string") {
+      // In this branch, id is of type 'string'
+      console.log(id.toUpperCase());
+    } else {
+      // Here, id is of type 'number'
+      console.log(id);
+    }
+  }
+  ```
+
+  通过上面的示例不难看出，类型别名就是通过 type 关键字，对原有的类型进行重新命名。
+
 - 接口
 - 枚举
 - 抽象类
@@ -365,6 +421,8 @@ type 变量类型 = {
 
 - REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 - ts-node:  https://github.com/TypeStrong/ts-node
+- never：https://www.zhihu.com/question/354601204
+- 类型收缩：https://www.typescriptlang.org/docs/handbook/2/narrowing.html
 
 
 
