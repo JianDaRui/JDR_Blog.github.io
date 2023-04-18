@@ -429,12 +429,124 @@ type 变量类型 = {
     console.log(`name: ${person.age}`)
     console.log(`name: ${person.email}`)
   }
+  fn({
+    name: 'darui',
+    age: 18,
+    email: 'xxxx@gmail.com'
+  })
   ```
-
   
+  当你调用 fn 传参时，ts 会校验参数结构，如果参数结构不符合接口定义，则会标红提示。
+  
+  结合上面我们说的类型别名 type，可以发现 type 与 interface 的功能非常相似，其实多数情况下，两者都可以实现互换。
+  
+  两者的关键区别在于 interface 可以实现继承和重载。例如
+  
+  ```ts
+  interface Animal {
+    name: string
+  }
+  // Bear 继承了 Animal 的结构
+  interface Bear extends Animal {
+    honey: boolean
+  }
+  
+  const bear = getBear() 
+  bear.name
+  bear.honey
+  
+  // 使用类型别名
+  type Animal = {
+    name: string
+  }
+  // 只能通过 & 符 通过交叉类型创建一个新的类型
+  type Bear = Animal & { 
+    honey: boolean 
+  }
+  
+  const bear = getBear();
+  bear.name;
+  bear.honey;
+          
+  ```
+  
+  重载：
+  
+  ```typescript
+  interface Person {
+    name: string
+  }
+  // 可以再次声明 Person 接口，向 Person 接口添加属性
+  interface Person {
+    age: 18
+  }
+  
+  const person: Person = {
+    name: 'amos',
+    age: 18
+  }
+  
+  // 如果使用 type 则会提示：Duplicate identifier 'Person'
+  type Person = {
+    name: string
+  }
+  type Person = {
+    age: 18
+  }
+  
+  const person: Person = {
+    name: 'amos',
+    age: 18
+  }
+  ```
+  
+  经过两次声明，Person 最终有了 name、age 两个属性。而 type 不允许出现类型名称重复的情况。
 
 
 - 枚举
+
+  枚举类型经常用于常量管理。它的特点在于在使用枚举的时候，你已经知道值可以出现的所有类型。比如：
+
+  ```typescript
+  enum Status {
+    Success = 0,
+    Failed = 1,
+    None = -1
+  }
+  
+  const a: Status = Status.Success
+  ```
+
+  可以基于上面示例，可以想象下，如果项目中大量需要基于 1 或者 0 来判断某个数据的状况，相较于项目中大量的去直接写 1 或者 0 ，使用枚举来做状态的管理的映射要更直观，更方便项目的维护。
+
+  另外枚举可以有多种类型：
+
+  - 字符串枚举
+
+    ```typescript
+    enum Direction {
+      Up = "UP",
+      Down = "DOWN",
+      Left = "LEFT",
+      Right = "RIGHT",
+    }
+    ```
+
+  - 数字枚举
+
+    ```typescript
+    enum Direction {
+      Up,
+      Down,
+      Left,
+      Right,
+    }
+    ```
+
+    - 如果不给枚举值赋值的话，它们默认从 0 开始递增，Up = 0，Down = 1，Left = 2，Right = 3
+    - 如果给枚举类型赋值，比如令 Up = 1，则 Down 、Left、Right 默认会在 Up 的基础上递增。
+
+
 - 抽象类
 
 
