@@ -900,7 +900,97 @@ console.log(preOrder<Node_2>(tree_2))
 
 #### 函数类型进阶
 
+通过上面的学习，我们已经对 ts 中的各种类型和函数的基本形态有了了解，现在可以借此更深入的学习下。
 
+##### 构造函数类型声明
+
+我们知道在 js 中 函数是可以通过 new 方法调用，去创建一个对象，实现面向对象编程的。在 ts 中，你可以在函数调用签名前面通过加 `new` 关键字的形式，实现一个构造函数的声明：
+
+```typescript
+type SomeConstructor = {
+  new (s: string): SomeObject;
+};
+
+function fn(ctor: SomeConstructor) {
+  return new ctor("hello");
+}
+```
+
+##### 函数重载
+
+函数重载主要在解决 **当相同逻辑的函数需要重构为一个函数时，需要面对不同参数或者返回类型的冲突问题**。为此你可以在一个被多次重载的函数上，做出不同逻辑的处理。例如：
+
+```typescript
+function makeDate(timestamp: number): Date;
+function makeDate(m: number, d: number, y: number): Date;
+function makeDate(mOrTimestamp: number, d?: number, y?: number): Date {
+  if (d !== undefined && y !== undefined) {
+    return new Date(y, mOrTimestamp, d);
+  } else {
+    return new Date(mOrTimestamp);
+  }
+}
+const d1 = makeDate(12345678);
+const d2 = makeDate(5, 5, 5);
+const d3 = makeDate(1, 3); // No
+```
+
+在上面函数中我们进行了两次重载，第一次是接受一个参数，第二次是接受三个参数。
+
+这里需要注意的是我们在第三次声明函数时，已经选择了可选传参的方式：
+
+ `function makeDate(mOrTimestamp: number, d?: number, y?: number): Date`
+
+但是在执行 `const d3 = makeDate(1, 3)` 的时候，发生了报错。
+
+这是因为 **函数重载签名** 并不同于 **函数实现签名**。而最后一次声明是函数实现签名。在 ts 中函数实现签名并不能被外部看到。例如
+
+```ts
+function fn(x: boolean): void;
+// Argument type isn't right
+function fn(x: string): void;
+//Error: This overload signature is not compatible with its implementation signature.
+function fn(x: boolean) {}
+```
+
+上面的代码会提示错误，正确的写法应该是在实现签名上做下联合声明处理：
+
+```typescript
+// 函数重载签名
+function fn(x: boolean): void;
+function fn(x: string): void;
+// 函数实现签名
+function fn(x: boolean | string): void {
+  // ...
+}
+```
+
+所以当使用函数重载的时候，最少应该在**函数实现签名**上有两个或两个以上的**函数重载签名**。
+
+当然从上面的示例可以看出使用联合类型做到和函数重载一样的问题，例如：
+
+```typescript
+// 重载
+function reverse(x: number): number;
+function reverse(x: string): string;
+function reverse(x: number | string): number | string | void {
+    if (typeof x === 'number') {
+        return Number(x.toString().split('').reverse().join(''));
+    } else if (typeof x === 'string') {
+        return x.split('').reverse().join('');
+    }
+}
+// 使用联合类型
+function reverse(x: number | string): number | string | void {
+    if (typeof x === 'number') {
+        return Number(x.toString().split('').reverse().join(''));
+    } else if (typeof x === 'string') {
+        return x.split('').reverse().join('');
+    }
+}
+```
+
+但是上面使用联合类型的时候会导致返回值的类型出现不确定性。而函数重载可以很好的解决这个问题。
 
 ### Typescript 特点
 
