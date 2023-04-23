@@ -20,7 +20,7 @@ Hi guys，我是剑大瑞。
 
 上面说了 TS 是一种静态类型编译语言，因此我们所写的 ts 文件，必须讲过 tsc 的编译才能在浏览器或者 node.js 中运行。
 
-**方案一：**
+### **方案一：**
 
 安装 TypeScript：
 
@@ -41,7 +41,7 @@ tsc demo.ts
 node demo.js
 ```
 
-**方案二**
+### **方案二**
 
 如果感觉上面过程比较繁琐，可以使用 ts-node 来直接运行 ts 文件。
 
@@ -92,7 +92,7 @@ ts-node-cwd script.ts
 ts-node-esm script.ts
 ```
 
-**方案三：**
+### **方案三：**
 
 如果还嫌麻烦，IDE 都不想打开，就是想体验下 ts，可以使用 TS 官网提供的 Playground:
 
@@ -108,47 +108,51 @@ Playground: https://www.typescriptlang.org/play
 
 ts 是 js 的超集，所以 js 所支持的几种数据类型，在 ts 中都会支持，比如：boolean、number、string、null、undefined、bigint、symbol。
 
-**变量声明抽象公式：**
+#### **变量声明抽象公式：**
 
 ```ts
 [变量声明关键字] [变量名]: [变量类型] = [值]
 ```
 
-- boolean 类型：
+#### boolean 类型：
 
 ```ts
 let isMan: boolean = true
 ```
 
-- number 类型：
+#### number 类型：
 
 ```ts
 let age: number = 18
 ```
 
-- string 类型：
+#### string 类型：
 
 ```ts
 let name: string = '大瑞'
 ```
 
-- null 类型：
+#### null 类型：
 
 ```ts
 let obj: null = null
 ```
 
-- undefined 类型：
+#### undefined 类型：
 
 ```ts
 let height: undefined = undefined
 ```
 
+原始类型被编译后：
+
+![](images/%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B.png)
+
 你可以自己在 [Playground]( https://www.typescriptlang.org/play) 上试试 bigint & symbol 类型。
 
-- 数组类型。
+#### 数组类型
 
-  对于数组类型，数组类似于一个容器，我们可以在数组中存储其他类型。可以抽象为：
+对于数组类型，数组类似于一个容器，我们可以在数组中存储其他类型。可以抽象为：
 
 ```text
 [变量声明关键字] [变量名]: [变量类型][] = [值]
@@ -167,9 +171,9 @@ const list: string[] = ['a', 'b']
 const numbers: Array<number> = [1, 2]
 ```
 
-- 对象类型
+#### 对象类型
 
-  通常在面向对象编程过程中，会使用类型类型来描述一个变量。
+通常在面向对象编程过程中，会使用类型类型来描述一个变量。
 
 ```typescript
 const person: {
@@ -182,6 +186,37 @@ const person: {
   gender: 'man'
 }
 ```
+
+对象类型可选参数：
+
+```typescript
+let person: {
+  name: string;
+  age: number;
+  gender?: string;
+}
+
+person  = {
+  name: '大瑞',
+  age: 18,
+}
+
+function printName(obj: {
+  name: string;
+  age: number;
+  gender?: string;
+}) {
+  // ...
+}
+// No
+printName({ name: "darui" });
+// Ok
+printName({ name: "darui", age: 18 });
+```
+
+引用类型编译结果：
+
+![](images/%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B.png)
 
 但是通常我们不会这么写，在实际的项目中我们会使用 type(类型别名) 或者 interface(接口)  去定义一个对象的类型约束。比如：
 
@@ -223,337 +258,667 @@ type 变量类型 = {
 [变量声明关键字] [变量名]: [变量类型] = [值]
 ```
 
-- 函数类型
+类型别名和接口的编译结果：
 
-  对于函数类型可能比较复杂些。因为函数的定义包括通过 function 关键定义、使用函数表达式的方式定义、通过箭头函数定义、甚至通过 new Function 构造函数定义。这里我们先看下常用的前三种定义方式。
+![](images/type_interface.png)
 
-  1. function 关键字定义:
+#### 函数类型
 
-  ```typescript
-  function greet(name: string): string {
-    return ("Hello, " + name.toUpperCase() + "!!");
+对于函数类型可能比较复杂些。因为函数的定义包括通过 function 关键定义、使用函数表达式的方式定义、通过箭头函数定义、甚至通过 new Function 构造函数定义。这里我们先看下常用的前三种定义方式。
+
+1. function 关键字定义:
+
+```typescript
+function greet(name: string): string {
+  return ("Hello, " + name.toUpperCase() + "!!");
+}
+
+function create(name: string, age: number): {
+  name: string;
+  age: number;
+} {
+  return {
+    name: name,
+    age: age,
   }
-  
-  function create(name: string, age: number): {
-    name: string;
-    age: number;
-  } {
-    return {
-      name: number,
-      age: age,
-    }
+}
+```
+
+可以抽象为：
+
+```typescript
+function [函数名] ([参数]: [参数类型]): [返回类型] {
+  	// 内部逻辑...
+}
+```
+
+2. 使用函数表达式的方式定义
+
+```typescript
+const greet: (name: string) => string = function (name: string): string {
+  return ("Hello, " + name.toUpperCase() + "!!");
+}
+
+const create: (name: strting, age: number) => {
+  name: string;
+  age: number;
+} = function (name: string, age: number): {
+  name: string;
+  age: number;
+} {
+  return {
+    name: name,
+    age: age,
   }
-  ```
+}
+```
 
-  可以抽象为：
+3. 使用箭头函数定义：
 
-  ```typescript
-  function [函数名] ([参数]: [参数类型]): [返回类型] {
-    	// 内部逻辑...
+```typescript
+const greet: (name: string) => string = (name: string): string => {
+  return ("Hello, " + name.toUpperCase() + "!!");
+}
+
+const create: (name: strting, age: number) => {
+  name: string;
+  age: number;
+} = (name: string, age: number): {
+  name: string;
+  age: number;
+} => {
+  return {
+    name: name,
+    age: age,
   }
-  ```
+}
+```
 
-  2. 使用函数表达式的方式定义
+上面的代码逻辑虽然简单，但是我们发现整个代码量看下来也是非常繁琐冗余。后面可以使用 type & interface 来简化整个函数的定义过程。
 
-  ```typescript
-  const greet: (name: string) => string = function (name: string): string {
-    return ("Hello, " + name.toUpperCase() + "!!");
-  }
-  
-  const create: (name: strting, age: number) => {
-    name: string;
-    age: number;
-  } = function (name: string, age: number): {
-    name: string;
-    age: number;
-  } {
+5. 可选参数
+
+```typescript
+function create(name: string, age?: number): {
+  name: string;
+  age?: number;
+} {
+  if(age) {
     return {
       name: name,
       age: age,
     }
   }
-  ```
-
-  3. 使用箭头函数定义：
-
-  ```typescript
-  const greet: (name: string) => string = (name: string): string => {
-    return ("Hello, " + name.toUpperCase() + "!!");
-  }
   
-  const create: (name: strting, age: number) => {
-    name: string;
-    age: number;
-  } = (name: string, age: number): {
-    name: string;
-    age: number;
-  } => {
-    return {
-      name: name,
-      age: age,
-    }
+  return {
+    name: name,
   }
-  ```
+}
+const person = create('darui')
+const person2 = create('darui', 12)
+```
 
-  上面的代码逻辑虽然简单，但是我们发现整个代码量看下来也是非常繁琐冗余。后面可以使用 type & interface 来简化整个函数的定义过程。
+### 简单练习
 
-  5. 可选参数
+- 使用 ts 写个二分法：
 
-  ```typescript
-  function create(name: string, age?: number): {
-    name: string;
-    age?: number;
-  } {
-    if(age) {
-      return {
-        name: name,
-        age: age,
-      }
+```typescript
+function search(nums: number[], target: number): number {
+    let left: number = 0;
+    let right: number = nums.length - 1;
+    while (left <= right) {
+        let mid: number = left + ((right - left) >> 1);
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] > target) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
     }
-    
-    return {
-      name: number,
-    }
-  }
-  const person = create({ name: 'darui' })
-  const person2 = create({ name: 'darui', age: 12 })
-  ```
+    return -1;
+}
+```
 
 ### TypeScript 独有的类型
 
-- any
+#### any
 
-  `any` 可以说是在 ts 静态类型检测中，为你提供了一条类型检测的逃生通道，ts 将会把声明为 any 类型的变量的静态检查关闭。在类型系统里 `any` 能够兼容所有的类型（包括它自己）。因此，所有类型都能被赋值给它，它也能被赋值给其他任何类型。并且你可以调用声明为 any 类型的变量任何属性，甚至这个属性可能并不存在于变量上~，以下有一个证明例子：
+`any` 可以说是在 ts 静态类型检测中，为你提供了一条类型检测的逃生通道，ts 将会把声明为 any 类型的变量的静态检查关闭。在类型系统里 `any` 能够兼容所有的类型（包括它自己）。因此，所有类型都能被赋值给它，它也能被赋值给其他任何类型。并且你可以调用声明为 any 类型的变量任何属性，甚至这个属性可能并不存在于变量上~，以下有一个证明例子：
+
+```typescript
+let a: any
+a = 3
+console.log(++a)
+a = 'darui'
+console.log(a.split(''))
+a.foo()
+```
+
+有上面示例可以看出，当你将变量声明为 any 类型时，相当于关闭了 ts 对此变量的类型检测。如果在项目中大量使用，相当于让 ts 的类型规范失去了意义，极不安全，基本等于在写屎山代码。
+
+#### unknown
+
+unknown 类型与 any 类型非常相似，当你不知道某个变量或者参数的具体类型时，就可以使用 unknown 将 变量声明为 unknown 类型。但是， **unknown 类型相较于 any 类型更加安全**。因为你不能访问声明为 unknown 类型的值的任何属性。
+
+```typescript
+function f1(a: any) {
+  a.b(); // OK
+}
+function f2(a: unknown) {
+  a.b();
+  // error: 'a' is of type 'unknown'.
+}
+```
+
+#### 类型别名
+
+类型别名的最大作用就是实现类型的复用，让你在项目中可以整合基础类型、联合类型、对象类型。例如：
+
+```typescript
+type Point = {
+  x: number;
+  y: number;
+};
+ 
+// Exactly the same as the earlier example
+function printCoord(pt: Point) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+ 
+printCoord({ x: 100, y: 100 });
+// 命名联合类型
+type ID = number | string;
+function printId(id: ID) {
+  if (typeof id === "string") {
+    // In this branch, id is of type 'string'
+    console.log(id.toUpperCase());
+  } else {
+    // Here, id is of type 'number'
+    console.log(id);
+  }
+}
+```
+
+通过上面的示例不难看出，类型别名就是通过 type 关键字，对原有的类型进行重新命名。
+
+#### 接口 interface 
+
+接口通常是用于描述对象类型。例如：
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+  email: string;
+}
+
+function fn(person: Person) {
+	console.log(`name: ${person.name}`)
+  console.log(`name: ${person.age}`)
+  console.log(`name: ${person.email}`)
+}
+fn({
+  name: 'darui',
+  age: 18,
+  email: 'xxxx@gmail.com'
+})
+```
+
+当你调用 fn 传参时，ts 会校验参数结构，如果参数结构不符合接口定义，则会标红提示。
+
+结合上面我们说的类型别名 type，可以发现 type 与 interface 的功能非常相似，其实多数情况下，两者都可以实现互换。
+
+两者的关键区别在于 interface 可以实现继承和重载。例如
+
+```ts
+interface Animal {
+  name: string
+}
+// Bear 继承了 Animal 的结构
+interface Bear extends Animal {
+  honey: boolean
+}
+
+function getBear(): Bear {
+  return {
+    name: 'bear',
+    honey: true
+  }
+}
+
+const bear = getBear() 
+bear.name
+bear.honey
+
+// 使用类型别名
+type Animal = {
+  name: string
+}
+// 只能通过 & 符 通过交叉类型创建一个新的类型
+type Bear = Animal & { 
+  honey: boolean 
+}
+
+const bear = getBear();
+bear.name;
+bear.honey;
+        
+```
+
+重复声明：
+
+```typescript
+interface Person {
+  name: string
+}
+// 可以再次声明 Person 接口，向 Person 接口添加属性
+interface Person {
+  age: 18
+}
+
+const person: Person = {
+  name: 'amos',
+  age: 18
+}
+
+// 如果使用 type 则会提示：Duplicate identifier 'Person'
+type Person = {
+  name: string
+}
+type Person = {
+  age: 18
+}
+
+const person: Person = {
+  name: 'amos',
+  age: 18
+}
+```
+
+经过两次声明，Person 最终有了 name、age 两个属性。而 type 不允许出现类型名称重复的情况。
+
+#### 联合类型
+
+ts 允许你基于现有的基础类型或者自定义类型，创建一个联合类型。通过 `|` 符将多个连接起来。比如
+
+```typescript
+function printId(id: number | string) {
+  if (typeof id === "string") {
+    // In this branch, id is of type 'string'
+    console.log(id.toUpperCase());
+  } else {
+    // Here, id is of type 'number'
+    console.log(id);
+  }
+}
+// OK
+printId(101);
+// OK
+printId("202");
+// Error
+printId({ myID: 22342 });
+```
+
+上面的 id 可以是数字类型或者字符串类型，但是如果需要访问值得具体属性，需要先进行[类型收缩](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)，否则会报错。
+
+#### 交叉类型
+
+
+
+```typescript
+```
+
+
+
+#### 简单练习
+
+- N 叉树的前序遍历
+
+```typescript
+type Node = {
+  val: number,
+  children: Node[]
+}
+
+function preOrder(root: Node): number[] {
+  if(root === null) return []
+  const result: number = []
+  const stack: Node[] = [root]
+  while(stack.length) {
+      let node = stack.pop()
+      result.push(node.val)
+      for(let i: number = node.children.length - 1; i >= 0; i--) {
+          stack.push(node.children[i])
+      }
+  }
+  return result
+}
+```
+
+#### 枚举
+
+枚举类型经常用于常量管理。它的特点在于在使用枚举的时候，你已经知道值可以出现的所有类型。比如：
+
+```typescript
+enum Status {
+  Success = 0,
+  Failed = 1,
+  None = -1
+}
+
+const a: Status = Status.Success
+```
+
+可以基于上面示例，可以想象下，如果项目中大量需要基于 1 或者 0 来判断某个数据的状况，相较于项目中大量的去直接写 1 或者 0 ，使用枚举来做状态的管理的映射要更直观，更方便项目的维护。
+
+枚举类型编译结果：
+
+![](images/%E6%9E%9A%E4%B8%BE.png)
+
+另外枚举可以有多种类型：
+
+- 字符串枚举
 
   ```typescript
-  let a: any
-  a = 3
-  console.log(++a)
-  a = 'darui'
-  console.log(a.split(''))
-  a.foo()
+  enum Direction {
+    Up = "UP",
+    Down = "DOWN",
+    Left = "LEFT",
+    Right = "RIGHT",
+  }
   ```
 
-  有上面示例可以看出，当你将变量声明为 any 类型时，相当于关闭了 ts 对此变量的类型检测。如果在项目中大量使用，相当于让 ts 的类型规范失去了意义，极不安全，基本等于在写屎山代码。
+  ![](images/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%9E%9A%E4%B8%BE.png)
 
-- unknown
-
-  unknown 类型与 any 类型非常相似，当你不知道某个变量或者参数的具体类型时，就可以使用 unknown 将 变量声明为 unknown 类型。但是， **unknown 类型相较于 any 类型更加安全**。因为你不能访问声明为 unknown 类型的值的任何属性。
+- 数字枚举
 
   ```typescript
-  function f1(a: any) {
-    a.b(); // OK
-  }
-  function f2(a: unknown) {
-    a.b();
-    // error: 'a' is of type 'unknown'.
+  enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
   }
   ```
 
+  - 如果不给枚举值赋值的话，它们默认从 0 开始递增，Up = 0，Down = 1，Left = 2，Right = 3
 
-- never
+  ![](images/%E6%9E%9A%E4%B8%BE%E9%80%92%E5%A2%9E.png)
 
-  never 类型在 ts 中比较特殊。
+  - 如果给枚举类型赋值，比如令 Up = 1，则 Down 、Left、Right 默认会在 Up 的基础上递增。
 
-  
+  ![](images/%E6%9E%9A%E4%B8%BE%E8%B5%8B%E5%80%BC.png)
 
-- 联合类型
+观察上图可以发现，当枚举中的赋值不符合递增的时候，编译后的 ts 会出现不同的 key 对应相同 value 的情况。
 
-  ts 允许你基于现有的基础类型或者自定义类型，创建一个联合类型。通过 `|` 符将多个连接起来。比如
+#### 元组
 
-  ```typescript
-  function printId(id: number | string) {
-    if (typeof id === "string") {
-      // In this branch, id is of type 'string'
-      console.log(id.toUpperCase());
-    } else {
-      // Here, id is of type 'number'
-      console.log(id);
+在 ts 中 元组和数组非常相似，但是通常数组是一系列相同类型值的集合，而元组中可以存在不同类型的值，类似于混合数组。元组可以像数组一样被结构。
+
+```typescript
+let tuple: [number, string, boolean] = [7, "hello", true];
+let [a, b, c] = tuple; // a: number, b: string, c: boolean
+
+```
+
+
+
+
+
+#### 泛型
+
+泛型是实现类型复用和实现灵活编程的重要基础。已函数为例：
+
+```typescript
+function add(a: number, b: number): number {
+  return a + b
+}
+add(1, 2)
+```
+
+add 函数可以实现两数相加，但是我们知道在 ts 中，我们也可以通过 `+` 操作进行字符串拼接。如果我们需要实现一个字符串拼接的函数，如果没有泛型的话，我们需要再写一个函数：
+
+```typescript
+function addStr(a: string, b: string): string {
+  return a + b
+}
+add('da', 'rui')
+```
+
+这样会使代码变得冗余。
+
+如果使用泛型的解决方式：
+
+```typescript
+function add<T>(a: T, b: T): T {
+  return a + b
+}
+
+// Ok
+let res = add<number>(1, 2) // number
+let str = add<string>('da', 'rui') // string
+```
+
+- 通过上面的代码示例可以知道，泛型其实就是在定义函数的参数和返回值类型时，先通过一个类型变量，进行参数和返回值的类型占位，在具体调用函数的时候在确定具体类型。
+- ts 会在调用的时候捕获传入的泛型和参数类型，进行类型检测。
+- 在 add 函数中，我们通过 T 在作为泛型，add\<T\> 用于类型占位。当调用的时候在根据需求确定具体类型。
+- 这种方式完美解决了两个函数逻辑重复的问题。
+
+##### 在类型别名中使用泛型
+
+```typescript
+type obj<T> = {
+  a: T,
+  b: number
+}
+// Ok
+const obj: Obj<string> = {
+  a: 'a',
+  b: 12
+}
+```
+
+##### 在接口中使用泛型
+
+```typescript
+interface obj<T> {
+  a: T,
+  b: number
+}
+// Ok
+const obj: Obj<string> = {
+  a: 'a',
+  b: 12
+}
+```
+
+##### 使用泛型&接口定义函数
+
+```typescript
+interface Add<Type> {
+  <Type>(a: Type, b: Type): Type
+}
+
+function add<T>(a: T, b: T): T {
+  return a + b
+}
+
+const myAdd: Add = add
+
+myAdd<number>(1, 2)
+myAdd<string>('da', 'rio')
+
+```
+
+##### 泛型约束
+
+在使用泛型函数时，可能会访问你认为参数上已经存在的属性。但是由于是 泛型函数，ts 在静态检测时并不能基于泛型变量确定值上是否有要访问的属性，这种情况下就会抛出警告。
+
+为了避免此类情况的发生，可以使用 extends 关键词对泛型进行约束。
+
+以官网的代码为示例：
+
+```typescript
+function loggingIdentity<Type>(arg: Type): Type {
+  console.log(arg.length); // error: Property 'length' does not exist on type 'Type'.
+  return arg;
+}
+```
+
+定义一个约束类型：
+
+```typescript
+interface LengthProperty {
+  length: number
+}
+
+function loggingIdentity<Type extends LengthProperty>(arg: Type): Type {
+  console.log(arg.length); // error: Property 'length' does not exist on type 'Type'.
+  return arg;
+}
+
+// OK
+let a: string[] = ['a', 'b', 'c']
+loggingIdentity<string[]>(a)
+
+// OK 
+loggingIdentity<string>('abcd')
+
+type Distance = {
+  length: number
+  x: number
+  y: number
+}
+let b: Distance = {
+  length: 100,
+  x: 0,
+  y: 100
+}
+// OK
+loggingIdentity<Distance>(b)
+```
+
+通过上面代码示例，泛型约束其实就是通过 interface ，定义一个约束类型，这个 接口 上需要定义好被约束的泛型必须存在的属性。再通过 extends 关键字对泛型进行约束即可。
+
+> 注意这里不可以使用 type 类型别名来定义约束类型，因为 type 类型不可以被 extends 。
+
+#### 简单练习
+
+目前到这里我们已经对 ts 中的常用类型的特点已经有了基本的了解。这里我们对上面的 N 叉树的前置遍历函数，让其可以支持 N 叉树 或 二叉树：
+
+```typescript
+interface NodeConstraints {
+	val: number
+  children?: NodeConstraints[]
+  left?: NodeConstraints
+  right?: NodeConstraints
+}
+
+type Node_1 = {
+  val: number,
+  children?: Node_1[]
+}
+
+const tree_1: Node_1 = {
+  val: 1,
+  children: [
+    {
+      val: 2,
+      children: [{ val: 3, children: [{ val: 4 }]}]
+    },
+    {
+      val: 5,
+      children: [{ val: 6, children: [{ val: 7 }]}]
+    },
+    {
+      val: 8,
+      children: [{ val: 9, children: [{ val: 10 }]}]
     }
+  ]
+}
+
+
+type Node_2 = {
+  val: number,
+  left?: Node_2,
+  right?: Node_2
+}
+
+const tree_2: Node_2 = {
+  val: 1,
+  left: {
+    val: 2,
+    left: {
+      val: 4,
+      right: {
+        val: 5,
+      },
+    },
+    right: {
+      val: 6,
+    },
+  },
+  right: {
+    val: 3,
+    left: {
+      val: 8,
+    },
+    right: {
+      val: 7,
+    },
   }
-  // OK
-  printId(101);
-  // OK
-  printId("202");
-  // Error
-  printId({ myID: 22342 });
-  ```
+}
 
-  上面的 id 可以是数字类型或者字符串类型，但是如果需要访问值得具体属性，需要先进行[类型收缩](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)，否则会报错。
-
-- 类型别名
-
-  类型别名的最大作用就是实现类型的复用，让你在项目中可以整合基础类型、联合类型、对象类型。例如：
-
-  ```typescript
-  type Point = {
-    x: number;
-    y: number;
-  };
-   
-  // Exactly the same as the earlier example
-  function printCoord(pt: Point) {
-    console.log("The coordinate's x value is " + pt.x);
-    console.log("The coordinate's y value is " + pt.y);
-  }
-   
-  printCoord({ x: 100, y: 100 });
-  // 命名联合类型
-  type ID = number | string;
-  function printId(id: ID) {
-    if (typeof id === "string") {
-      // In this branch, id is of type 'string'
-      console.log(id.toUpperCase());
-    } else {
-      // Here, id is of type 'number'
-      console.log(id);
-    }
-  }
-  ```
-
-  通过上面的示例不难看出，类型别名就是通过 type 关键字，对原有的类型进行重新命名。
-
-- 接口 interface 
-
-  接口通常是用于描述对象类型。例如：
-
-  ```typescript
-  interface Person {
-    name: string;
-    age: number;
-    email: string;
+function preOrder<T extends NodeConstraints>(root: T): number[] {
+  if(root === null) return []
+  
+  const result: number[] = []
+  const stack: NodeConstraints[] = [root]
+  
+  while(stack.length) {
+    
+      let node = stack.pop()
+      node && result.push(node.val)
+    
+      if(node && 'children' in node) {
+        for (let i: number = node?.children!.length - 1; i >= 0; i--) {
+            node?.children && stack.push(node.children[i])
+        }
+      } else {
+        node?.left && stack.push(node.left)
+        node?.right && stack.push(node.right)
+      }
   }
   
-  function fn(person: Person) {
-  	console.log(`name: ${person.name}`)
-    console.log(`name: ${person.age}`)
-    console.log(`name: ${person.email}`)
-  }
-  fn({
-    name: 'darui',
-    age: 18,
-    email: 'xxxx@gmail.com'
-  })
-  ```
-  
-  当你调用 fn 传参时，ts 会校验参数结构，如果参数结构不符合接口定义，则会标红提示。
-  
-  结合上面我们说的类型别名 type，可以发现 type 与 interface 的功能非常相似，其实多数情况下，两者都可以实现互换。
-  
-  两者的关键区别在于 interface 可以实现继承和重载。例如
-  
-  ```ts
-  interface Animal {
-    name: string
-  }
-  // Bear 继承了 Animal 的结构
-  interface Bear extends Animal {
-    honey: boolean
-  }
-  
-  const bear = getBear() 
-  bear.name
-  bear.honey
-  
-  // 使用类型别名
-  type Animal = {
-    name: string
-  }
-  // 只能通过 & 符 通过交叉类型创建一个新的类型
-  type Bear = Animal & { 
-    honey: boolean 
-  }
-  
-  const bear = getBear();
-  bear.name;
-  bear.honey;
-          
-  ```
-  
-  重载：
-  
-  ```typescript
-  interface Person {
-    name: string
-  }
-  // 可以再次声明 Person 接口，向 Person 接口添加属性
-  interface Person {
-    age: 18
-  }
-  
-  const person: Person = {
-    name: 'amos',
-    age: 18
-  }
-  
-  // 如果使用 type 则会提示：Duplicate identifier 'Person'
-  type Person = {
-    name: string
-  }
-  type Person = {
-    age: 18
-  }
-  
-  const person: Person = {
-    name: 'amos',
-    age: 18
-  }
-  ```
-  
-  经过两次声明，Person 最终有了 name、age 两个属性。而 type 不允许出现类型名称重复的情况。
+  return result
+}
+// Ok
+console.log(preOrder<Node_1>(tree_1));
+console.log(preOrder<Node_2>(tree_2))
+```
+
+#### 函数类型进阶
 
 
-- 枚举
 
-  枚举类型经常用于常量管理。它的特点在于在使用枚举的时候，你已经知道值可以出现的所有类型。比如：
+### Typescript 特点
 
-  ```typescript
-  enum Status {
-    Success = 0,
-    Failed = 1,
-    None = -1
-  }
-  
-  const a: Status = Status.Success
-  ```
+#### 类型推断
 
-  可以基于上面示例，可以想象下，如果项目中大量需要基于 1 或者 0 来判断某个数据的状况，相较于项目中大量的去直接写 1 或者 0 ，使用枚举来做状态的管理的映射要更直观，更方便项目的维护。
+#### 类型断言
 
-  另外枚举可以有多种类型：
+#### 类型收窄
 
-  - 字符串枚举
-
-    ```typescript
-    enum Direction {
-      Up = "UP",
-      Down = "DOWN",
-      Left = "LEFT",
-      Right = "RIGHT",
-    }
-    ```
-
-  - 数字枚举
-
-    ```typescript
-    enum Direction {
-      Up,
-      Down,
-      Left,
-      Right,
-    }
-    ```
-
-    - 如果不给枚举值赋值的话，它们默认从 0 开始递增，Up = 0，Down = 1，Left = 2，Right = 3
-    - 如果给枚举类型赋值，比如令 Up = 1，则 Down 、Left、Right 默认会在 Up 的基础上递增。
-
-
-- 抽象类
-
-
+- typeof 类型收窄
+- 真值收窄
+- 全等收窄
+- `in` 操作收窄
+- Instanceof 操作收窄
+- 
 
 - REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 - ts-node:  https://github.com/TypeStrong/ts-node
-- never：https://www.zhihu.com/question/354601204
 - 类型收缩：https://www.typescriptlang.org/docs/handbook/2/narrowing.html
 
 
