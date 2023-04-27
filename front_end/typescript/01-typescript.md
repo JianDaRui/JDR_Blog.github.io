@@ -886,8 +886,8 @@ function preOrder<T extends NodeConstraints>(root: T): number[] {
             node?.children && stack.push(node.children[i])
         }
       } else {
-        node?.left && stack.push(node.left)
         node?.right && stack.push(node.right)
+        node?.left && stack.push(node.left)
       }
   }
   
@@ -996,12 +996,80 @@ function reverse(x: number | string): number | string | void {
 
 #### 类型推断
 
+如果在声明值的时候没有指定类型，那么 ts 会根据值得类型推断一个类型。所以说在 ts 中你通常可以写 js 代码。
+
+```typescript
+let a = 12
+
+a = 19 // Ok
+
+a = 'darui' // Error
+```
+
+变量 a 在声明时被断言为了 number 类型，所以在进行 `a = 'darui'` 操作时会报错，一个 string 类型的值不能赋值给 number 类型。
+
 #### 类型断言
+
+当你想访问值的某一个具体的属性时，ts 可能并不知道这个值上是否存在这个属性，会抛出一个错误，这个时候你可以使用 `as` 关键字对值手动指定类型，例如：
+
+```typescript
+type Value = string | number;
+
+const a: Value = 'darui';
+
+(a as string).split('')
+```
+
+- 在 ts 中类型断言经常被用于将一个值断言为更具体或者更模糊的值。
+  - 将一个联合类型断言为更具体的值
+  - 将一个父类断言为一个更具体子类
+  - 将任何一个类型断言为 any
+  - 将 any 断言为更具体的类型
+- 注意类型断言虽然可以让你手动去更改一个值的类型，但是这种行为非常危险，虽然类型断言可以让你避免编译时的错误，但是在编译结果中会去除类型断言。它的安全性要小于类型收窄。
 
 #### 类型收窄
 
+类型收窄又称类型守卫，可以让你在条件判断时收缩值的类型范围。
+
 - typeof 类型收窄
+
+```typescript
+function padLeft(padding: number | string, input: string) {
+  return " ".repeat(padding) + input;
+}
+```
+
+上面代码会抛出错误，因为 repeat 方法仅接受 number 类型的值。更正为：
+
+```typescript
+function padLeft(padding: number | string, input: string) {
+  if (typeof padding === "number") {
+    return " ".repeat(padding) + input;
+  }
+  return padding + input;
+}
+```
+
+![](images/%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84.png)
+
+在意这个例子为例，这里如果你使用了 类型断言 也可以解决报错：
+
+```typescript
+function padLeft(padding: number | string, input: string) {
+  return " ".repeat(padding as number) + input;
+}
+```
+
+![](images/%E7%B1%BB%E5%9E%8B%E6%96%AD%E8%A8%80.png)
+
+对比两个编译结果，可以看出类型收窄要比类型断言安全很多。
+
 - 真值收窄
+
+要知道在 js 中有是由类型转换的，在布尔转换中，其中 0、''、null、undefined、NaN、0n 在进行判断操作或者 || 、&& 操作时都会转为 false。
+
+
+
 - 全等收窄
 - `in` 操作收窄
 - Instanceof 操作收窄
