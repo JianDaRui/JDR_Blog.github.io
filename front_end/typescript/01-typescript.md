@@ -2,19 +2,19 @@
 
 Hi guys，我是剑大瑞。
 
-## 当学一门新的计算机语言时，我们学的是什么？
-
-这里插一段题外话，提出这个问题的原因是希望我们能从更高抽象上去快速的掌握并理解一门计算机语言。我本人除了 JavaScript 之外，还学习了 Python 、Java。最近开始在项目中使用 TypeScript ，但没有像当初学习 Js 一样系统学习过，一直处于模仿写的过程，这段时间正在系统学习。
-
-我一直认为，计算机本质上就是一个指令执行机器。我们通过计算机语言将抽象逻辑描述为具体的执行指令，交个计算机去执行任务即可。就像汉语、英语或者日语一样，都是我们描述这个世界的一个工具。比如，在汉语中我们会通过 你、我、他做人称代词，英语中则对应的是 you、me、he。
-
-如果细想一下不难发现，其实人类语言之间的区别就是通过一套自己体系内的变量，在特定的发音与语法规则下，组织成一个单词或者句子，让我们去表达自己的感情、想法、描述周边的事物。
-
-计算机语言也是一样的，就像我所学过的 JS、Python、Java 及正在学习的 Ts，都会有几种不同的变量类型如：数字、字符串、布尔、对象、函数等。再辅以变量声明、逻辑运算符与循环、控制语句，就组成了我们可以将抽象逻辑描述为计算机可以理解的具体指令。然后按照我们的指令执行任务就好了。
-
-当然具体到细节，每种语言之间就有所不同了。比如 JS 是一种动态类型、弱类型的解释型语言，而 TS 是一种静态类型、弱类型的编译型语言。如果具体到各个细节，它们或许相同、相似或者完全不同。
-
-所以当我们通过一门新的语言与计算机交流时，为了实现高效准确表达自己的逻辑。我们需要学习的是这门语言的特点、规则、细节、各种声明、控制或循环语句。
+> 当学一门新的计算机语言时，我们学的是什么？
+>
+> 这里插一段题外话，提出这个问题的原因是希望我们能从更高抽象上去快速的掌握并理解一门计算机语言。
+>
+> 我一直认为，计算机本质上就是一个指令执行机器。我们通过计算机语言将抽象逻辑描述为具体的执行指令，交个计算机去执行任务即可。就像汉语、英语或者日语一样，都是我们描述这个世界的一个工具。比如，在汉语中我们会通过 你、我、他做人称代词，英语中则对应的是 you、me、he。
+>
+> 如果细想一下不难发现，其实人类语言之间的区别就是通过一套自己体系内的变量，在特定的发音与语法规则下，组织成一个单词或者句子，让我们去表达自己的感情、想法、描述周边的事物。
+>
+> 计算机语言也是一样的，就像我所学过的 JS、Python、Java 、 Ts，都会有几种不同的变量类型如：数字、字符串、布尔、对象、函数等。再辅以变量声明、逻辑运算符与循环、控制语句，就组成了我们可以将抽象逻辑描述为计算机可以理解的具体指令。然后按照我们的指令执行任务就好了。
+>
+> 当然具体到细节，每种语言之间就有所不同了。比如 JS 是一种动态类型、弱类型的解释型语言，而 TS 是一种静态类型、弱类型的编译型语言。如果具体到各个细节，它们或许相同、相似或者完全不同。
+>
+> 所以当我们通过一门新的语言与计算机交流时，为了实现高效准确表达自己的逻辑。我们需要学习的是这门语言的设计思想、规则、细节、各种声明、控制或循环语句。
 
 ## 安装 TypeScript
 
@@ -313,6 +313,13 @@ const create: (name: strting, age: number) => {
 }
 ```
 
+可以抽象为：
+
+```
+const [函数名]: [函数类型] = function (param) [函数体]
+```
+
+
 3. 使用箭头函数定义：
 
 ```typescript
@@ -377,6 +384,38 @@ function search(nums: number[], target: number): number {
     }
     return -1;
 }
+// 箭头函数方式
+const search: (nums: number[], target: number) => number = function (nums: number[], target: number): number {
+    let left: number = 0;
+    let right: number = nums.length - 1;
+    while (left <= right) {
+        let mid: number = left + ((right - left) >> 1);
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] > target) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return -1;
+}
+// 还可以这样，声明一个函数类型别名
+type BinarySearch = (nums: number[], target: number) => number
+
+const search: BinarySearch = function (nums: number[], target: number): number {
+    let left: number = 0;
+    let right: number = nums.length - 1;
+    while (left <= right) {
+        let mid: number = left + ((right - left) >> 1);
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] > target) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return -1;
+}
 ```
 
 ### TypeScript 独有的类型
@@ -410,6 +449,10 @@ function f2(a: unknown) {
 }
 ```
 
+#### never 
+
+在 never 类型主要是为了做出**绝对安全的类型判断**出现的，
+
 #### 类型别名
 
 类型别名的最大作用就是实现类型的复用，让你在项目中可以整合基础类型、联合类型、对象类型。例如：
@@ -442,6 +485,37 @@ function printId(id: ID) {
 
 通过上面的示例不难看出，类型别名就是通过 type 关键字，对原有的类型进行重新命名。
 
+**声明一个函数类型别名:**
+
+```typescript
+type DescribableFunction = {
+  description: string;
+  (someArg: number): boolean;
+};
+function doSomething(fn: DescribableFunction) {
+  console.log(fn.description + " returned " + fn(6));
+}
+ 
+function myFunc(someArg: number) {
+  return someArg > 3;
+}
+myFunc.description = "default description";
+ 
+doSomething(myFunc);
+```
+
+**声明一个构造函数类型别名：**
+
+```typescript
+type SomeConstructor = {
+  new (s: string): SomeObject;
+};
+
+function fn(ctor: SomeConstructor) {
+  return new ctor("hello");
+}
+```
+
 #### 接口 interface 
 
 接口通常是用于描述对象类型。例如：
@@ -469,7 +543,7 @@ fn({
 
 结合上面我们说的类型别名 type，可以发现 type 与 interface 的功能非常相似，其实多数情况下，两者都可以实现互换。
 
-两者的关键区别在于 interface 可以实现继承和重载。例如
+两者的**关键区别在于 interface 可以实现继承和重载**。例如
 
 ```ts
 interface Animal {
@@ -506,7 +580,7 @@ bear.honey;
         
 ```
 
-重复声明：
+**重复声明：**
 
 ```typescript
 interface Person {
@@ -538,9 +612,28 @@ const person: Person = {
 
 经过两次声明，Person 最终有了 name、age 两个属性。而 type 不允许出现类型名称重复的情况。
 
+**声明函数类型接口：**
+
+```typescript
+interface DescribableFunction {
+  description: string;
+  (someArg: number): boolean;
+};
+function doSomething(fn: DescribableFunction) {
+  console.log(fn.description + " returned " + fn(6));
+}
+ 
+function myFunc(someArg: number) {
+  return someArg > 3;
+}
+myFunc.description = "default description";
+ 
+doSomething(myFunc);
+```
+
 #### 联合类型
 
-ts 允许你基于现有的基础类型或者自定义类型，创建一个联合类型。通过 `|` 符将多个连接起来。比如
+ts 允许你基于现有的基础类型或者自定义类型，创建一个联合类型，通过 `|` 符将多个连接起来。声明为联合类型的值，其值类型可以是联合类型中的任何一种情况。比如
 
 ```typescript
 function printId(id: number | string) {
@@ -564,12 +657,27 @@ printId({ myID: 22342 });
 
 #### 交叉类型
 
-
+ts 允许你基于现有的基础类型或者自定义类型，创建一个交叉类型，通过 `&` 符将多个连接起来。声明为交叉类型的值，其值属性类型**必须**与交叉类型相同。
 
 ```typescript
+type CrossType = {
+  name: string
+} & {
+	age: number
+}
+function printObj(obj: CrossType) {
+  console.log(obj)
+}
+// Error
+printObj({
+  name: 'darui'
+});
+// OK
+printObj({
+  name: 'darui'
+  age: 18
+});
 ```
-
-
 
 #### 简单练习
 
@@ -654,17 +762,13 @@ const a: Status = Status.Success
 
 #### 元组
 
-在 ts 中 元组和数组非常相似，但是通常数组是一系列相同类型值的集合，而元组中可以存在不同类型的值，类似于混合数组。元组可以像数组一样被结构。
+在 ts 中 元组和数组非常相似，但是通常数组是一系列相同类型值的集合，而元组中可以存在不同类型的值，类似于混合数组。元组可以像数组一样被解构。
 
 ```typescript
 let tuple: [number, string, boolean] = [7, "hello", true];
 let [a, b, c] = tuple; // a: number, b: string, c: boolean
 
 ```
-
-
-
-
 
 #### 泛型
 
