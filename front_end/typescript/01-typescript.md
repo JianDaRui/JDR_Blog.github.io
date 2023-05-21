@@ -1,7 +1,5 @@
 # Typescript 
 
-Hi guys，我是剑大瑞。
-
 > 当学一门新的计算机语言时，我们学的是什么？
 >
 > 这里插一段题外话，提出这个问题的原因是希望我们能从更高抽象上去快速的掌握并理解一门计算机语言。
@@ -10,9 +8,9 @@ Hi guys，我是剑大瑞。
 >
 > 如果细想一下不难发现，其实人类语言之间的区别就是通过一套自己体系内的变量，在特定的发音与语法规则下，组织成一个单词或者句子，让我们去表达自己的感情、想法、描述周边的事物。
 >
-> 计算机语言也是一样的，就像我所学过的 JS、Python、Java 、 Ts，都会有几种不同的变量类型如：数字、字符串、布尔、对象、函数等。再辅以变量声明、逻辑运算符与循环、控制语句，就组成了我们可以将抽象逻辑描述为计算机可以理解的具体指令。然后按照我们的指令执行任务就好了。
+> 计算机语言也是一样的，就像 JS、Python、Java 、 Ts，都会有几种不同的变量类型如：数字、字符串、布尔、对象、函数等。再辅以变量声明、逻辑运算符与循环、控制语句，就组成了我们可以将抽象逻辑描述为计算机可以理解的具体指令。然后按照我们的指令执行任务就好了。
 >
-> 当然具体到细节，每种语言之间就有所不同了。比如 JS 是一种动态类型、弱类型的解释型语言，而 TS 是一种静态类型、弱类型的编译型语言。如果具体到各个细节，它们或许相同、相似或者完全不同。
+> 当然具体到细节、特征，每种语言之间就有所不同了。比如 JS 是一种动态类型、弱类型的解释型语言，而 TS 是一种静态类型、弱类型的编译型语言。如果具体到各个细节，它们或许相同、相似或者完全不同。
 >
 > 所以当我们通过一门新的语言与计算机交流时，为了实现高效准确表达自己的逻辑。我们需要学习的是这门语言的设计思想、规则、细节、各种声明、控制或循环语句。
 
@@ -451,7 +449,63 @@ function f2(a: unknown) {
 
 #### never 
 
-在 never 类型主要是为了做出**绝对安全的类型判断**出现的，
+在 never 类型属于 ts 中的 bottom type。主要是为了做出**绝对安全的类型判断**，经常需要出现在判断语句中。比如 if else、 switch、三元运算符、错误判断、try catch 中。
+
+比如：
+
+```ts
+type ListLength<T> = T extends Array ? T : never
+```
+
+条件判断
+
+```typescript
+function fn(x: string | number) {
+  if (typeof x === "string") {
+    // do something
+  } else if (typeof x === "number") {
+    // do something else
+  } else {
+    x; // has type 'never'!
+  }
+}
+```
+
+上面的函数 x 是 string | number 的联合类型，当需要通过条件语句进行类型收窄的时候。else 最终返回的就是 never 类型，相较于仅判断 x 是 string 类型，要更加安全。
+
+在 switch 语句中穷尽检查：
+
+```typescript
+type Shape = Circle | Square;
+ 
+function getArea(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2;
+    case "square":
+      return shape.sideLength ** 2;
+    default:
+      const _exhaustiveCheck: never = shape;
+      return _exhaustiveCheck;
+  }
+}
+```
+
+
+
+- 在类型运算中 never 类型是所有类型的子类型，never 类型可以赋值给任意类型，而其他类型则不能赋值给 never 类型（除了 never 本身）。比如
+
+```typescript
+type CheckType<T> = never extends T ? true : false
+```
+
+ CheckType<T> 永远为 true。
+
+- 两个不相交的类型的交叉类型是 never 类型
+
+``` typescript
+type Cross = 1 & 'a'
+```
 
 #### 类型别名
 
@@ -1020,6 +1074,38 @@ function fn(ctor: SomeConstructor) {
 }
 ```
 
+##### 使用类型别名定义函数类型
+
+```typescript
+type MyFn = {
+  (a: number, b: number): number
+}
+const fn: MyFn = (a: number, b: number) => a + b
+
+// 可选参数
+type MyFn = {
+  (a: number, b?: number): number
+}
+const fn: MyFn = (a: number, b?: number) => // do something 
+```
+
+##### 使用接口定义函数类型
+
+```typescript
+interface MyFn {
+  (a: number, b: number): number
+}
+const fn: MyFn = (a: number, b: number) => a + b
+```
+
+##### 泛型函数
+
+```typescript
+function fn<T>(params: T): T {
+  // do something 
+}
+```
+
 ##### 函数重载
 
 函数重载主要在解决 **当相同逻辑的函数需要重构为一个函数时，需要面对不同参数或者返回类型的冲突问题**。为此你可以在一个被多次重载的函数上，做出不同逻辑的处理。例如：
@@ -1135,7 +1221,7 @@ const a: Value = 'darui';
 
 类型收窄又称类型守卫，可以让你在条件判断时收缩值的类型范围。
 
-- typeof 类型收窄
+- typeof 类型收窄。在 ts 中可以通过 typeof 将值收窄为预期的类型。
 
 ```typescript
 function padLeft(padding: number | string, input: string) {
@@ -1168,16 +1254,80 @@ function padLeft(padding: number | string, input: string) {
 
 对比两个编译结果，可以看出类型收窄要比类型断言安全很多。
 
-- 真值收窄
+- 真值收窄。要知道在 js 中有是存在类型转换的，在布尔转换中， 0、''、null、undefined、NaN、0n 在进行判断操作或者 || 、&& 操作时都会转为 false。
 
-要知道在 js 中有是由类型转换的，在布尔转换中，其中 0、''、null、undefined、NaN、0n 在进行判断操作或者 || 、&& 操作时都会转为 false。
+```typescript
+type Person = {
+  name: string
+  age?: number
+}
+const Ross = {
+  name: 'Ross'
+}
+
+function printName (person: Person) {
+  if(person.age) {
+    console.log(person.age)
+  }
+}
+```
+
+- 上面 person.age 在条件判断中会转为 布尔值。
+
+对于其他布尔转换也是同样的道理。
+
+- 全等收窄，在两个值的类型判断的过程中，如果两个值类型匹配，则会收窄为同一类型。在 ts 中使用 switch 语句和 ===、!==、==、!= 可以做类型收窄。
+
+```typescript
+function print (a: string | number[], b: number[] | string[]) {
+  if(a === b) {
+    console.log(a)
+  } else {
+    // ...
+  }
+}
+```
+
+当 if 条件为 true 的时候， a、b 被收窄为 `number[]`。
+
+- `in` 操作收窄。在 js 中，我们可能经常会使用 in 操作符判断一个对象上是否存在某个属性。在 ts 中，则可以通过 in 操作符判断一个类型上是否存在某个属性来实现类型收窄。
+
+```typescript
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+ 
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    return animal.swim();
+  }
+ 
+  return animal.fly();
+}
+
+```
+
+当 if 判断为 true 的时候，animal 被收窄为 Fish 类型。
+
+- Instanceof 操作收窄。在 js 中可以通过 instanceof 操作符判断一个值是否是一个类的实例。则 ts 中可以通过 instanceof 收窄值得类型范围。
+
+```typescript
+function logValue(x: Date | string) {
+  // x 被收窄为 Date 类型
+  if (x instanceof Date) {
+    console.log(x.toUTCString());
+               
+(parameter) x: Date
+  } else {
+    console.log(x.toUpperCase());
+               
+(parameter) x: string
+  }
+}
+```
 
 
 
-- 全等收窄
-- `in` 操作收窄
-- Instanceof 操作收窄
-- 
+参考：
 
 - REPL: https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
 - ts-node:  https://github.com/TypeStrong/ts-node
