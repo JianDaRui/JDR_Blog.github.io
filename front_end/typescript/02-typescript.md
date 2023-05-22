@@ -4,7 +4,9 @@ Typescript 的类型系统非常强大，它可以让你通过**类型操作符*
 
 ## 泛型
 
-泛型主要是为了解决类型复用的问题。可以说泛型给了你在使用 ts 类型检测的体验时，又提供了很好的类型扩展性、可维护性。在使用泛型类型时，可以将泛型视为参数传给类型对象。在 ts 中 Array 就是一个非常常见的泛型类型。
+泛型主要是为了解决类型复用的问题。可以说泛型给了你在使用 ts 类型检测的体验同时，又提供了很好的类型扩展性、可维护性。
+
+在使用泛型类型时，可以将泛型视为参数传给类型对象。在 ts 中 Array 就是一个非常常见的泛型类型。
 
 声明一个字符串数组：
 
@@ -331,10 +333,6 @@ createInstance(Lion).keeper.nametag;
 createInstance(Bee).keeper.hasMask;
 ```
 
-### 给泛型参数设置默认值
-
-
-
 
 
 ## Keyof 操作符
@@ -508,6 +506,37 @@ type ValueType = Person[keyof Person] // string | number | boolean
 ## 条件类型
 
 在 ts 在可以通过 extends 关键字，判断一个类型是否继承于另一个类型，并基于此判断去返回一个新的类型。
+
+```typescript
+interface Animal {
+  live(): void;
+}
+interface Dog extends Animal {
+  woof(): void;
+}
+ 
+type Example1 = Dog extends Animal ? number : string;
+        
+type Example1 = number
+ 
+type Example2 = RegExp extends Animal ? number : string;
+```
+
+可以抽象为：
+
+```typescript
+type ResultType = SomeType extends OtherType ? TrueType : FalseType
+```
+
+
+
+条件类型的存在实现了可以根据输入类型的情况动态的进行类型判断。
+
+```typescript
+function fn<T, T extends Animal ? number : string>(a: T, b: T) {
+  //...
+}
+```
 
 
 
