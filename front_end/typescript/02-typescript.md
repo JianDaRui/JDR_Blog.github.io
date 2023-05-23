@@ -335,7 +335,7 @@ createInstance(Bee).keeper.hasMask;
 
 
 
-## Keyof 操作符
+## keyof 操作符
 
 使用 keyof 操作符可以获取一个对象类型的所有 key 或 数字字面量组合的联合类型。比如
 
@@ -380,9 +380,9 @@ console.log(person['gender'])
 
 Person 类型并不存在 gender 属性。
 
-在已经声明 Person 类型的情况下，直接使用  keyof 生成 Keys 对动态 key 进行类型约束会更加高效简洁。
+在已经声明 Person 类型的情况下，直接使用  keyof 生成 Keys 对动态 key 进行类型约束会更加安全。
 
-## Typeof 操作符
+## typeof 操作符
 
 在 js 中我们可以通过 typeof 判断一个值的类型：
 
@@ -393,7 +393,7 @@ typeof 'darui' // string
 ts 中也添加了 typeof，主要用于对类型上下文进行判断，可以使用 typeof 创建一个新的类型：
 
 ```typescript
-const name = 'darui'
+const name: string = 'darui'
 const name2: typeof name = 'person2' // 相当于 const name2: string = 'person2'
 
 const person = {
@@ -528,14 +528,169 @@ type Example2 = RegExp extends Animal ? number : string;
 type ResultType = SomeType extends OtherType ? TrueType : FalseType
 ```
 
-
-
-条件类型的存在实现了可以根据输入类型的情况动态的进行类型判断。
+条件类型结合泛型可以实现根据输入类型的情况动态的进行类型判断。
 
 ```typescript
 function fn<T, T extends Animal ? number : string>(a: T, b: T) {
   //...
 }
+```
+
+以 createLabel 函数为例
+
+```typescript
+interface IdLabel {
+  id: number /* some fields */;
+}
+interface NameLabel {
+  name: string /* other fields */;
+}
+ 
+function createLabel(id: number): IdLabel;
+function createLabel(name: string): NameLabel;
+function createLabel(nameOrId: string | number): IdLabel | NameLabel;
+function createLabel(nameOrId: string | number): IdLabel | NameLabel {
+  throw "unimplemented";
+}
+```
+
+上面对 createLabel 函数进行了重载，createLabel 函数重载的主要目的是可以根据输入的参数类型，返回对应的 Label 类型。上面的重载处理思路可能会有以下问题：
+
+- 在这里 createLabel 函数已经重载了三次，如果 createLabel 函数需要再处理一种新增类型，按这个思路还需再次增加重载声明。
+
+如果使用条件类型 & 泛型实现，思路：需要根据执行函数 createLable 时传入的类型判断其是否是 number 类型，如果是 number 类型则输出类型为 IdLabel，否则为 NameLabel。
+
+手写写一个可以根据泛型获取返回类型的类型。
+
+```typescript
+typeof NameOrId<T> = T extends number ? IdLabel : NameLabel
+```
+
+上面的判断还有些安全问题。
+
+其实 createLabel 函数需要处理的只有 number、string 类型，这意味着在给 NameOrId 传入泛型的时候就需要对其进行约束处理。
+
+```typescript
+type NumOrStr = number | string
+
+typeof NameOrId<T extends NumOrStr> = T extends number ? IdLabel : NameLabel
+```
+
+改写 createLabel 函数为泛型函数：
+
+```typescript
+function createLabel<T extends NumOrStr>(nameOrId: T): NameOrId<T> {
+  throw "unimplemented";
+}
+```
+
+### **约束条件类型**
+
+通常，通过类型检测我们可以知道一个类型上已有的信息，向我们常见的一些类型守卫可以做到类型收窄，让我们获取到的类型更加具体。在条件类型中，也可以通过为 true 的分支进一步帮我们做到类型收窄。
+
+我想写一个 Message 类型，Message 可以接受一个泛型，其主要作用是从泛型上读取泛型的 "message" 属性的类型。
+
+你可能这么写：
+
+```typescript
+type Message<T> = T['message']
+```
+
+但是这种情况会导致 ts 报错。这时可以通过泛型约束解决这个问题：
+
+```typescript
+type Message<T extends { message: unknown }> = T['message']
+```
+
+然而我们的预期是 Message 类型可以接受任意类型的泛型信息，当泛型上没有 message 属性时，则返回 never。我们可以将约束条件移动到条件判断中：
+
+```typescript
+type Message<T> = T extends { message: unknown } ? T['message'] : never
+
+type Person = { 
+	message: string
+}
+type Dog = {
+  woofo: string
+}
+// 使用
+type PersonMessage = Message<Person> // string
+type DogMessage = Message<Dog> // never
+```
+
+当  `T extends { message: unknown }` 为 true 时，ts 可以明确判断到 T 上存在 message 属性。
+
+我们再以一个  Flattern 类型为例，Flattern 类型可以获取数组类型的元素类型，并对于非数组类型的直接返回其本身。
+
+```typescript
+type Flatten<T> = T extends any[] ? T[number] : T;
+ 
+// Extracts out the element type.
+type Str = Flatten<string[]>; // string
+     
+// Leaves the type alone.
+type Num = Flatten<number>; // number
+```
+
+在上面代码示例中，通过给 Flatten 一个数组类型，它使用 number 索引来获取 string[] 的元素类型。否则对于其他类型，它只返回其本身。
+
+### 在条件类型中使用 infer 关键字进行类型推断操作
+
+在上面的示例中我们通过 T[number] 的形式，直接手动的通过索引去访问元素类型。
+
+在 ts 中，提供了 infer 关键字，支持你显示的声明一个泛型类型变量，可以代替上面手动访问的方式，可以避免我们必须去了解目标类型的结构。
+
+```typescript
+type Flatten<T> = T extends Array<infer Item> ? Item : T;
+```
+
+使用 infer 获取函数的返回类型：
+
+```typescript
+type GetReturnType<T> = T extends (...args: never[]) => infer Return ? Return : never 
+
+type Num = GetReturnType<() => number> // string
+
+type Str = GetReturnType<(x: string) => string> // string
+
+type Bools = GetReturnType<(a: boolean, b: boolean) => boolean[]> // boolean[]
+```
+
+Infer 关键字在针对多次声明的类型签名时，比如函数重载，总是会按照最全面的情况进行推断。
+
+```typescript
+declare function stringOrNum(x: string): number;
+declare function stringOrNum(x: number): string;
+declare function stringOrNum(x: string | number): string | number;
+ 
+type T1 = ReturnType<typeof stringOrNum>;
+```
+
+### 条件类型的分配问题
+
+条件类型和泛型一起使用的时候，当给定的泛型是一个联合类型，则会发生类型分配。我们声明这么一个类型，可以将传入的泛型类型转为数组类型。
+
+```typescript
+type ToArray<T> = T extends any ? T[] : never
+
+type NumberArray = ToArray<number> // number[]
+type StringArray = ToArray<string> // string[]
+```
+
+如果我们给 ToArray 传入一个联合类型的时候:
+
+```typescript
+type StrArrOrNumArr = ToArray<number | string> // string[] | number[]
+```
+
+返回的 StrArrOrNumArr 是 `string[] | number[]` 类型。本质上相当于，我们传递给 ToArray 的 `number | string 的执行操作是： `ToArray<number>  |  ToArray<string>`，最总返回给我们的结果自然是 `string[] | number[]`
+
+如果想要避免分配操作，获取 `(string | number) []`。需要使用方括号将 extends 关键字两端的类型包裹起来:
+
+```typescript
+type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
+
+type StrArrOrNumArr = ToArrayNonDist<string | number>; //  (string | number)[]
 ```
 
 
