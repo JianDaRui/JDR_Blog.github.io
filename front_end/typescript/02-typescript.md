@@ -358,7 +358,7 @@ function print(obj: Person, key: Keys) {
 }
 ```
 
-对于对象类型 key 是 数字或者字符串的情况，keyof 会返回下面的情况：
+对于对象类型 key 是 数字或者字符串的情况，`keyof` 会返回下面的情况：
 
 ```typescript
 type Arrayish = { [n: number]: unknown };
@@ -368,9 +368,9 @@ type Mapish = { [k: string]: boolean };
 type M = keyof Mapish; // type M = string | number
 ```
 
-为什么会有 keyof ?
+为什么会有 `keyof` ?
 
-在 js 中我们经常需要通过 obj[key] 的形式去动态访问对象的某个属性。这个时候如果没有对象上并不存在某个 key，并且没有对 key 做类型约束，很可能导致 bug 的产生。
+在 js 中我们经常需要通过 `obj[key]` 的形式去动态访问对象的某个属性。这个时候如果没有对象上并不存在某个 key，并且没有对 key 做类型约束，很可能导致 bug 的产生。
 
 比如：
 
@@ -384,13 +384,13 @@ Person 类型并不存在 gender 属性。
 
 ## typeof 操作符
 
-在 js 中我们可以通过 typeof 判断一个值的类型：
+在 js 中我们可以通过 `typeof` 判断一个值的类型：
 
 ```javascript
 typeof 'darui' // string
 ```
 
-ts 中也添加了 typeof，主要用于对类型上下文进行判断，可以使用 typeof 创建一个新的类型：
+ts 中也添加了 `typeof`，主要用于对类型上下文进行判断，可以使用 `typeof` 创建一个新的类型：
 
 ```typescript
 const name: string = 'darui'
@@ -410,7 +410,7 @@ const person2: Person = {
 
 ```
 
-上面我们使用 typeof 创建了一个新的类型 Person。Person 类型相当于：
+上面我们使用 `typeof` 创建了一个新的类型 Person。Person 类型相当于：
 
 ```typescript
 type Person = {
@@ -419,7 +419,7 @@ type Person = {
 }
 ```
 
-从上面示例来看，typeof 的操作和 keyof 的操作都非常简单。但是当你将这两个结合起来或者与其他工具类型结合起来时，可以产生很多种模式。
+从上面示例来看，`typeof` 的操作和 `keyof` 的操作都非常简单。但是当你将这两个结合起来或者与其他工具类型结合起来时，可以产生很多种模式。
 
 获取 person 的 key 的联合类型：
 
@@ -455,7 +455,7 @@ function f() {
 type Fn = typeof f // 相当于 () => { x: number; y: number; }
 ```
 
-注意在 ts 中并不支持直接通过 typeof 去推测一个函数的返回类型：
+注意在 ts 中并不支持直接通过 `typeof` 去推测一个函数的返回类型：
 
 ```typescript
 function f() {
@@ -506,7 +506,7 @@ type ValueType = Person[keyof Person] // string | number | boolean
 
 ## 条件类型
 
-在 ts 在可以通过 extends 关键字，判断一个类型是否继承于另一个类型，并基于此判断去返回一个新的类型。
+在 ts 在可以通过 `extends` 关键字，判断一个类型是否继承于另一个类型，并基于此判断去返回一个新的类型。
 
 ```typescript
 interface Animal {
@@ -555,7 +555,7 @@ function createLabel(nameOrId: string | number): IdLabel | NameLabel {
 }
 ```
 
-上面对 createLabel 函数进行了重载，createLabel 函数重载的主要目的是可以根据输入的参数类型，返回对应的 Label 类型。上面的重载处理思路可能会有以下问题：
+上面对 createLabel 函数进行了重载，createLabel 函数重载的主要目的是*可以根据输入的参数类型，返回对应的 Label 类型*。上面的重载处理思路可能会有以下问题：
 
 - 在这里 createLabel 函数已经重载了三次，如果 createLabel 函数需要再处理一种新增类型，按这个思路还需再次增加重载声明。
 
@@ -639,7 +639,7 @@ type Num = Flatten<number>; // number
 
 在上面的示例中我们通过 T[number] 的形式，直接手动的通过索引去访问元素类型。
 
-在 ts 中，提供了 infer 关键字，支持你显示的声明一个泛型类型变量，可以代替上面手动访问的方式，可以避免我们必须去了解目标类型的结构。
+在 ts 中，提供了 infer 关键字，支持显示声明一个泛型类型变量，可以代替上面手动访问的方式，可以避免我们必须去了解目标类型的结构。
 
 ```typescript
 type Flatten<T> = T extends Array<infer Item> ? Item : T;
@@ -1164,8 +1164,6 @@ type UncomfortableGreeting = "hELLO WORLD"
 
 
 完！
-
-
 
 参考：
 
