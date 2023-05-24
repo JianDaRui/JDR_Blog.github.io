@@ -401,6 +401,7 @@ const person = {
   age: 18
 }
 type Person = typeof person
+
 const person2: Person = {
   name: name2,
   age: 18
@@ -693,11 +694,476 @@ type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
 type StrArrOrNumArr = ToArrayNonDist<string | number>; //  (string | number)[]
 ```
 
-
-
 ## 映射类型
 
-## 模板类型
+映射类型可以在声明类型时，避免进行一些重复性工作。
+
+```typescript
+type OnlyBoolean = {
+  [key: string]: boolean
+}
+
+const Authority: OnlyBoolean = {
+  home: true,
+  preview: false,
+  detail: true
+}
+```
+
+示例代码通过类型的下标签名声明了一个 key 为字符串，值为 boolean 的类型。避免了需要声明所有 Authority 对象属性都为 boolean 的情况。
+
+- 结合泛型，实现一个可以将一个类型的所有 key 转为 boolean 类型的工具类型：
+
+```typescript
+type TurnBoolean<T> = {
+  [Key in keyof T]: boolean
+}
+
+type Person = {
+  name: string;
+  age: number;
+  heigh: number;
+}
+
+type PersonToBoolean = TurnBoolean<Person>
+
+// 相当于
+type PersonToBoolean =  {
+  name: boolean;
+  age: boolean;
+  heigh: boolean;
+}
+```
+
+- keyof 关键字可以获取类型所有属性的联合类型，以 Person 为例 `keyof T` 操作，得到的是 `name | age | heigh`。
+- 在下标签名中，通过显示的声明一个泛型 `Key` 并结合 `in` 操作符，对上面获取的属性联合类型进行遍历迭代，从而获取到目标类型。
+- 从上面的过程其实可以看出，映射类型其实是一种泛型，它基于获取到的所有属性的联合类型，进行遍历操作，从而实现创建新的类型
+
+```typescript
+type Features = {
+  darkMode: () => void;
+  newUserProfile: () => void;
+};
+type FeaturesToBoolean = TurnBoolean<Features>
+// 相当于
+type FeatureOptions = {
+    darkMode: boolean;
+    newUserProfile: boolean;
+}
+```
+
+### 通过映射修饰符修改原类型
+
+首先要知道:
+
+- `readonly` 修饰符关键字，可以设置类型属性为只读。
+- `?` 修饰符，可以设置类型属性是否可选
+
+```typescript
+type Person = {
+  id: string
+  readonly name: string
+  readonly age: number
+  heigh?: number
+}
+
+const person: Person = {
+  id: '001',
+  name: 'Joy',
+  age: 18,
+}
+
+const person2: Person = { // Error Property 'id' is missing in type 
+  name: 'Joy',
+  age: 18,
+}
+
+person.name = 'joey' // Error Cannot assign to 'name' because it is a read-only property.
+```
+
+- 在属性修饰符前添加 `-` 或者 `+` 前缀，再结合映射类型，可以实现对类型属性修饰符的修改操作。
+- `-` 操作符可以移除属性修饰符、`+` 操作符可以实现添加属性修饰符操作
+
+下面实现一个 CreateMutable 类型，可以移除泛型的所有属性的 `readonly` 修饰符
+
+```typescript
+type CreateMutable<T> = {
+  -readonly [Property in keyof T]: T[Property];
+};
+ 
+type LockedAccount = {
+  readonly id: string;
+  readonly name: string;
+};
+ 
+type UnlockedAccount = CreateMutable<LockedAccount>;
+
+// 相当于
+type UnlockedAccount = {
+    id: string;
+    name: string;
+}
+```
+
+- 示例代码通过在工具类型 `CreateMutable` 的映射类型下标签名的 `readonly` 关键字前添加前缀 `-`，实现了移除泛型所有属性的只读修饰。
+
+实现移除所有属性可选修饰符的类型 Concrete ：
+
+```typescript
+type Concrete<T> = {
+  [Property in keyof T]-?: T[Property];
+};
+ 
+type MaybeUser = {
+  id: string;
+  name?: string;
+  age?: number;
+};
+ 
+type User = Concrete<MaybeUser>;
+// 相当于
+type User = {
+    id: string;
+    name: string;
+    age: number;
+}
+```
+
+- 示例代码通过在工具类型 `Concrete` 的映射类型下标签名的 `?`修饰符前添加前缀 `-`，实现了移除泛型所有属性的可选性。
+
+### 映射类型结合 `as` 关键字实现对属性重命名
+
+通过上面的代码示例，可以知道：
+
+- 在映射类型的属性签名中通过 `in` 关键字和 `keyof` 关键字，可以实现对泛型属性的遍历操作。
+
+所以试想一下我们能否通过遍历操作，对属性进行重命名？
+
+在 ts 4.1 版本之后就提供了对这一特定的支持。我们可以在映射类型的属性签名中使用 `as` 关键字实现对属性的重命名。
+
+```typescript
+type MappedTypeWithNewProperties<T> = {
+    [Properties in keyof T as NewKeyType]: T[Properties]
+}
+```
+
+上面示例代码，`MappedTypeWithNewProperties` 对传出的泛型进行处理后，产生的新的类型所有属性都会以 `NewKeyType` 进行命名。
+
+这里结合模板字符串，基于泛型的先前属性名创建新的属性名：
+
+```typescript
+type GettersPrefix<T> = {
+    [Property in keyof T as `get_${string & Property}`]: () => T[Property]
+};
+ 
+interface Person {
+    name: string;
+    age: number;
+    location: string;
+}
+ 
+type LazyPerson = GettersPrefix<Person>;
+// 相当于
+type LazyPerson = {
+    get_name: () => string;
+    get_age: () => number;
+    get_location: () => string;
+}
+```
+
+### 映射类型结合条件类型操作符
+
+映射类型可以结合条件类型实现一些更高阶的操作。下面 `ExtractPII` 实现了通过条件类型，更改特定属性值类型的操作：
+
+```typescript
+type ExtractPII<Type> = {
+  [Property in keyof Type]: Type[Property] extends { pii: true } ? true : false;
+};
+ 
+type DBFields = {
+  id: { format: "incrementing" };
+  name: { type: string; pii: true };
+};
+ 
+type ObjectsNeedingGDPRDeletion = ExtractPII<DBFields>;
+```
+
+## 模板字符串类型
+
+在 ts 中可以使用模板字符串声明类型。在使用模板字符串时，可以通过在字符串的插值位置插入其他类型，创建出其他类型。
+
+我们声明一个 Group 类型，它的所有属性键都是 group + number 的形式：
+
+```typescript
+type Group = {
+  group1: string;
+  group2: string;
+  group3: string;
+}
+```
+
+如果说 Group 中的属性值可能会出现 `group1 => group100+` 的情况。显然我们直接在写 group1 到 group100 是不现实的。
+
+这里我们可以使用模板字符串类型解决这个问题：
+
+```typescript
+type groupKey = `group${number}`
+
+type Group = {
+  [key: groupKey]: string;
+}
+
+const group: Group = { // Ok
+  group1: '1',
+  group2: '1',
+  group3: '1',
+  group4: '1',
+  group5: '1',
+  group6: '1'
+}
+```
+
+示例代码中，在模板类型的插值括号中插入了 number 类型，从而实现了一个属性键 group 逐渐递增的类型对象。
+
+### 在插值位置传入一个联合类型
+
+当在插值位置传入一个联合类型的时候，可以获得一个经过拼接后的联合类型：
+
+```typescript
+type EmailLocaleIDs = "welcome_email" | "email_heading";
+type FooterLocaleIDs = "footer_title" | "footer_sendoff";
+ 
+type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id`;
+// 相当于
+type AllLocaleIDs = "welcome_email_id" | "email_heading_id" | "footer_title_id" | "footer_sendoff_id"
+```
+
+`AllLocaleIDs` 类型是插值位置传入的两个联合类型的所有可能出现的字符串字面量集合。
+
+当存在多个插值位置，每个位置都有联合类型的时候，产生的模板类型将是所有联合类型的交叉联合类型。
+
+```typescript
+type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id`;
+type Lang = "en" | "ja" | "pt";
+ 
+type LocaleMessageIDs = `${Lang}_${AllLocaleIDs}`;
+// 相当于
+type LocaleMessageIDs = "en_welcome_email_id" | "en_email_heading_id" | "en_footer_title_id" | "en_footer_sendoff_id" | "ja_welcome_email_id" | "ja_email_heading_id" | "ja_footer_title_id" | "ja_footer_sendoff_id" | "pt_welcome_email_id" | "pt_email_heading_id" | "pt_footer_title_id" | "pt_footer_sendoff_id"
+```
+
+### 在类型中使用字符串模板
+
+当需要基于原有类型的内部信息重新定义一个新的字符串的时候，才能体会到模板字符串的强大之处。
+
+考虑这么一种需求，有个 `makeWatchedObject` 函数可以给传入的对象添加 `on()` 函数的情况。使用时只需调用 `makeWatchedObject(baseObject)` 即可。
+
+```typescript
+const baseObject = {
+  firstName: "Saoirse",
+  lastName: "Ronan",
+  age: 26,
+}
+```
+
+`on` 函数可以接受两个参数：
+
+- 一个是 string 类型的 eventName，`eventName` 的形式应该是 baseObject 的属性 key + "Changed"，例如，`firstNameChange` 从 baseObject 中的属性 firstName + "Changed" 派生而来。
+
+- 一个是可以做逻辑处理的 callback function。
+
+  - callback 函数接受的参数应该与 baseObject 的属性值类型相对应。例如，当触发 `firstNameChange` 时，
+
+    应该传 string 类型。当触发 `ageChange` 时，应该传 number 类型
+
+  - callback 返回 void 类型
+
+正常情况下 `on()` 函数签名应该是：
+
+```typescript
+on(eventName: string, callback: (newValue: any) => void)
+```
+
+但是我们上面明确需要对 eventName 和 callback 接受的参数进行类型约束。期望最终的实现满足：
+
+```typescript
+const person = makeWatchedObject({
+  firstName: "Saoirse",
+  lastName: "Ronan",
+  age: 26,
+});
+ 
+// makeWatchedObject has added `on` to the anonymous Object
+person.on("firstNameChanged", (newValue) => {
+  console.log(`firstName was changed to ${newValue}!`);
+});
+```
+
+过程分析：
+
+- 首先 `makeWatchedObject` 函数接受一个类型，并在保留这个类型所有类型属性的前提下添加了一个新的属性 `on`
+
+  `on` 是一个函数，返回 void 类型，不考虑约束的情况下，格式是 `(eventName: string, callback: (value: any) => void) => void`
+
+```typescript
+// 接受的类型
+type BaseType = {
+  firstName: string;
+  lastName: string;
+  age: number
+}
+
+// makeWatchedObject 返回的类型
+type FinalType = {
+  firstName: string;
+  lastName: string;
+  age: number;
+  on: (eventName: string, callback: (value: any) => void) => void
+}
+```
+
+我们可以声明一个带有 on 的类型，使用 `&` 交叉类型来创建返回的新类型：
+
+```typescript
+type PropEventSource<T> = {
+  on(EventName: string, callback: (value: any) => void): void
+}
+
+type FinalType<T> = BaseType & PropEventSource<T>
+```
+
+`makeWatchedObject` 返回的就是 `FinalType<T>` 类型
+
+- `PropEventSource<T>` 还需要进行类型约束。我们需要对 `on()` 函数的第一个参数和回调函数进行约束。使用模板字符串类型改写 on 函数参数类型：
+
+```typescript
+type PropEventSource<T> = {
+  on(EventName: `${keyof T}Changed`, callback: (value: any) => void): void
+}
+```
+
+发现上面 `${keyof T}Changed` 报错，这是因为 `keyof T ` 可能获取到任意类型，比如 `symbol`，`symbol`类型是不能被用于模板字符串的。需要将 `keyof T` 转为 string 类型。
+
+```typescript
+type ToString = string & (string | number | boolean | symbol | bigint | never | null | undefined) // string
+
+type PropEventSource<T> = {
+  on(EventName: `${string & keyof T}Changed`, callback: (value: any) => void): void
+}
+```
+
+> 上面是对 `&` 交叉类型的补充。两个不相交的类型使用 `&` 为 `never`，never 为所有类型子类型；相同的两个类型使用 `&` 不变。所以上面，最终会保留下 string 类型。
+
+- 完善 callback 类型约束。上面对 `callback` 参数 `value` 的类型使用的 `any` ，与需求不符。我们最终期望的是，当监听 `firstNameChange` 事件时，`callback` 接受的参数是 `string` 类型；当监听 `ageChange` 事件时，`callback` 接受的参数是 `number` 类型。
+  - 这意味着 on 函数是一个泛型函数：`on<Key>(EventName: `${string & keyof T}Changed`, callback: (value: T[Key]) => void): void`
+  - 但是我们需要对泛型 `Key` 进行约束， `Key` 必须存在于泛型 `T` 的所有属性集合中。
+  - 因此可以使用 `keyof T` 获取所有泛型 `T` 的属性集合。
+  - 使用 `extends`，对泛型 `Key` 进行约束：` Key extends <string & keyof T>`
+- 改写类型 `PropEventSource` :
+
+```typescript
+type PropEventSource<T> = {
+    on<Key extends string & keyof T>
+        (eventName: `${Key}Changed`, callback: (newValue: T[Key]) => void): void;
+};
+```
+
+最终代码：
+
+```typescript
+type PropEventSource<Type> = {
+    on<Key extends string & keyof Type>
+        (eventName: `${Key}Changed`, callback: (newValue: Type[Key]) => void): void;
+};
+ 
+type FinalType<T> = BaseType & PropEventSource<T>
+
+declare function makeWatchedObject<Type>(obj: Type): FinalType<T>;
+ 
+const person = makeWatchedObject({
+  firstName: "Saoirse",
+  lastName: "Ronan",
+  age: 26
+});
+ 
+person.on("firstNameChanged", newName => {
+    console.log(`new name is ${newName.toUpperCase()}`);
+}); // Ok
+ 
+person.on("ageChanged", newAge => {
+    if (newAge < 0) {
+        console.warn("warning! negative age");
+    }
+}) // Ok
+
+// Prevent easy human error (using the key instead of the event name)
+person.on("firstName", (value: string) => {}); // Error
+
+// It's typo-resistant
+person.on("firstNameChanged", () => {}); // Error
+
+person.on("ageChanged", (newAge: boolean) => { 
+    if (newAge < 0) {
+        console.warn("warning! negative age");
+    }
+}) // Error
+```
+
+至此，我们完成了一个满足需求的类型 `FinalType`。
+
+相信到这里你对模板字符串类型的强大功能又有了更深的理解。
+
+### Ts 内置的模板字符串操作类型
+
+Ts 内置了几种常见的字符串操作工具类型：
+
+- Uppercase<StringType>：将字符串中的每个字母转大写格式
+
+```typescript
+type Greeting = "Hello, world"
+type ShoutyGreeting = Uppercase<Greeting>
+// 相当于
+type ShoutyGreeting = "HELLO, WORLD"
+
+type ASCIICacheKey<Str extends string> = `ID-${Uppercase<Str>}`
+type MainID = ASCIICacheKey<"my_app">
+// 相当于      
+type MainID = "ID-MY_APP"
+```
+
+- Lowercase<StringType>：将字符串中的每个字母转为小写格式
+
+```typescript
+type QuietGreeting = Lowercase<ShoutyGreeting>
+// 相当于
+type QuietGreeting = "hello, world"
+ 
+type ASCIICacheKey<Str extends string> = `id-${Lowercase<Str>}`
+type MainID = ASCIICacheKey<"MY_APP">
+// 相当于
+type MainID = "id-my_app"
+```
+
+- Capitalize<StringType>：将字符串首字母转为大写格式
+
+```typescript
+type LowercaseGreeting = "hello, world";
+type Greeting = Capitalize<LowercaseGreeting>;
+// 相当于
+type Greeting = "Hello, world"
+```
+
+- Uncapitalize<StringType>：将字符串首字母转为小写格式
+
+```typescript
+type UppercaseGreeting = "HELLO WORLD";
+type UncomfortableGreeting = Uncapitalize<UppercaseGreeting>;
+// 相当于
+type UncomfortableGreeting = "hELLO WORLD"
+```
+
+
+
+完！
 
 
 
