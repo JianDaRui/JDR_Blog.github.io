@@ -141,7 +141,7 @@
   - 获取git配置选项
 - `git config --list`
   - 获取本地git配置信息
-- `git config --global user.name "John Doe"`
+- `git config --global user.name "剑大瑞"`
   - 配置提交作者名称
 - `git config --global user.email johndoe@example.com`
   - 配置提交作者邮箱
