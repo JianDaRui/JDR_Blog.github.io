@@ -2,5 +2,6 @@
 title: {{ title }}
 date: {{ date }}
 author: 剑大瑞
-tags:
+category:
+tag:
 ---

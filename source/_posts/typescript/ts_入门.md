@@ -3,7 +3,7 @@ title: TypeScript 入门
 author: 剑大瑞
 post: typescript
 category: TypeScript
-tag: 
+tag:
   - typescript
 date: 2023-05-27 16:51:16
 ---
