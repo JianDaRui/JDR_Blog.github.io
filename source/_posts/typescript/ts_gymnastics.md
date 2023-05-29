@@ -444,8 +444,252 @@ type Omit<T, Keys extends string | number | symbol> = {
 
 ### 功能：
 
-实例代码
+通过从 `Type` 中移除 `null` 和 `undefined` 来构造一个新的类型对象。
+
+示例代码：
+
+```typescript
+type T0 = NonNullable<string | number | undefined>; // T0 = string | number
+
+type T1 = NonNullable<string[] | null | undefined>; // T1 = string[]
+```
 
 ### 基本体操动作
 
+- 泛型
+- 交叉类型
+
 ### 实现
+
+```typescript
+type MyNonNullable<T> = T & {}
+```
+
+## `Parameters<Type>`
+
+### 功能
+
+通过函数类型 Type 的形参类型构造一个元组类型。
+
+代码示例: 
+
+```typescript
+declare function f1(arg: { a: number; b: string }): void;
+ 
+type T0 = Parameters<() => string>; // T0 = []
+type T1 = Parameters<(s: string) => void>; // T1 = [s: string]
+type T2 = Parameters<<T>(arg: T) => T>; // T2 = [arg: unknown]
+type T3 = Parameters<typeof f1>;
+// 相当于
+// type T3 = [arg: {
+//    a: number;
+//     b: string;
+// }]
+type T4 = Parameters<any>; // T4 = unknown[]
+type T5 = Parameters<never>; // T5 = never
+type T6 = Parameters<string>; // Error: Type 'string' does not satisfy the constraint '(...args: any) => any'.  T6 = never
+```
+
+### 基本体操动作
+
+- 泛型
+
+- `extends` 关键字，通过 extends 对泛型参数 `T` 进行类型约束，并进行条件类型判断
+
+- `infer` 关键字，使用 `infer` 关键字声明函数的参数类型 `P` ，并在真条件分支中返回
+
+  - `infer` 关键字，可以在 `extends` 条件语句中声明待推断的类型变量。例如：
+
+    `type ArrayElementType<T> = T extends (infer E) [] ? E : T;` 可以显示对数组元素的推导。
+
+  - 哪些是待推断的类型？其实这取决与约束条件，如果是对象类型，基本都可以转为待推断的，比如函数的参数、函数的返回值、数组的内部元素类型、泛型对象类型的泛型参数。
+
+### 实现 `MyParameters<T>`
+
+- `MyParameters<T>` 的泛型参数尽可以推断函数类型的参数类型。
+- 需要将 T 约束为函数类型：`T extends (...args: any) => any`
+- 这里使用 any 的原因是，any 是所有类型的父类型，它可以覆盖 T 的所有情况
+- 使用 `extends` 关键字对 `T` 进行约束，并使用 `infer` 关键字对参数类型进行推导声明
+
+```typescript
+type MyParameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never
+
+type T0 = MyParameters<() => string>; // T0 = []
+type T1 = MyParameters<(s: string) => void>; // T1 = [s: string]
+type T2 = MyParameters<<T>(arg: T) => T>; // T2 = [arg: unknown]
+type T3 = MyParameters<typeof f1>;
+// 相当于
+// type T3 = [arg: {
+//    a: number;
+//     b: string;
+// }]
+type T4 = MyParameters<any>; // T4 = unknown[]
+type T5 = MyParameters<never>; // T5 = never
+type T6 = MyParameters<string>; // Error
+```
+
+趁热打铁，接下来实现 `ReturnType<Type>`
+
+## `ReturnType<Type>`
+
+### 功能：
+
+通过函数类型 Type 的返回值类型来构造一个新的类型。
+
+代码示例：
+
+```typescript
+declare function f1(): { a: number; b: string };
+ 
+type T0 = ReturnType<() => string>; // type T0 = string
+type T1 = ReturnType<(s: string) => void>; // type T1 = void
+type T2 = ReturnType<<T>() => T>; // type T2 = unknown
+type T3 = ReturnType<<T extends U, U extends number[]>() => T>; // type T3 = number[]
+type T4 = ReturnType<typeof f1>;
+// 相当于 
+type T4 = {
+    a: number;
+    b: string;
+}
+type T5 = ReturnType<any>; // type T5 = any
+type T6 = ReturnType<never>; // type T6 = never
+type T7 = ReturnType<string>; // Error
+```
+
+### 基本体操动作
+
+- 与 `Parameters<T>` 一致
+
+### 实现 `MyReturnType<T>`
+
+思路与 `Parameters<T>` 一样，需要注意 `infer` 关键字的推导位置
+
+```typescript
+type MyReturnType<T extends (...args: any) => any> = T extends (...arg: any) => infer R ? R : never
+
+type T0 = MyReturnType<() => string>; // type T0 = string
+type T1 = MyReturnType<(s: string) => void>; // type T1 = void
+type T2 = MyReturnType<<T>() => T>; // type T2 = unknown
+type T3 = MyReturnType<<T extends U, U extends number[]>() => T>; // type T3 = number[]
+type T4 = MyReturnType<typeof f1>;
+
+type T5 = MyReturnType<any>; // type T5 = any
+type T6 = MyReturnType<never>; // type T6 = never
+type T7 = MyReturnType<string>; // Error
+```
+
+## `ConstructorParameters<Type>`
+
+### 功能：
+
+与 `Parameters<T>` 类似，不同之处在于可以通过从构造函数类型 Type 的参数类型构造一个元组或者数组类型，如果 Type 不是函数类型，则返回 `never` 类型。
+
+代码示例：
+
+```typescript
+type T0 = ConstructorParameters<ErrorConstructor>; // type T0 = [message?: string]
+type T1 = ConstructorParameters<FunctionConstructor> // type T1 = string[]
+type T2 = ConstructorParameters<RegExpConstructor>; // type T2 = [pattern: string | RegExp, flags?: string]
+class C {
+  constructor(a: number, b: string) {}
+}
+type T3 = ConstructorParameters<typeof C>; // type T3 = [a: number, b: string]
+type T4 = ConstructorParameters<any>; // type T4 = unknown[]
+
+type T5 = ConstructorParameters<Function>; // Error type T5 = never
+```
+
+### 基本体操动作：
+
+- 与 `Parameters<T>` 不同的是需要对 `T` 的约束类型不是一个函数，而是一个抽象的构造函数。
+- 声明构造函数类型：`abstract new (...args: any) => any` 。
+
+### 实现 `MyConstructorParameters<T>`
+
+```typescript
+type MyConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never
+
+type T0 = MyConstructorParameters<ErrorConstructor>; // type T0 = [message?: string]
+type T1 = MyConstructorParameters<FunctionConstructor> // type T1 = string[]
+type T2 = MyConstructorParameters<RegExpConstructor>; // type T2 = [pattern: string | RegExp, flags?: string]
+class C {
+  constructor(a: number, b: string) {}
+}
+type T3 = MyConstructorParameters<typeof C>; // type T3 = [a: number, b: string]
+type T4 = MyConstructorParameters<any>; // type T4 = unknown[]
+
+type T5 = MyConstructorParameters<Function>; // Error type T5 = never
+```
+
+## `InstanceType<Type>`
+
+### 功能：
+
+构造一个由构造函数 Type 的实例类型组成的类型。相当与 `ReturnType<T>`。
+
+InstanceType<Type> 相对于 `ConstructorParameters<Type>` 的关系，相当与  `ReturnType<T>` 相对于 `Parameters<Type>` 的关系。
+
+示例：
+
+```typescript
+class C {
+  x = 0;
+  y = 0;
+}
+
+type T0 = InstanceType<typeof C>; // type T0 = C
+type T1 = InstanceType<any>; // type T1 = any
+type T2 = InstanceType<never>; // type T2 = never
+type T3 = InstanceType<string>; // Type 'string' does not satisfy the constraint 'abstract new (...args: any) => any'. type T3 = any
+type T4 = InstanceType<Function>; // type T4 = any
+```
+
+### 基本体操动作：
+
+- 与 `ConstructorParameters<Type>` 相同
+
+### 实现 `MyInstanceType<Type>`:
+
+```typescript
+type MyInstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer P ? P : never
+
+type T0 = MyInstanceType<typeof C>; // type T0 = C
+type T1 = MyInstanceType<any>; // type T1 = any
+type T2 = MyInstanceType<never>; // type T2 = never
+type T3 = MyInstanceType<string>; // Type 'string' does not satisfy the constraint 'abstract new (...args: any) => any'. type T3 = any
+type T4 = MyInstanceType<Function>; // type T4 = any
+```
+
+## `Awaited<Type>`
+
+### 功能：
+
+该类型用于模拟 `async` 函数中的 `await` 操作，或者 `promise` 上的 `.then()` 方法，独特之处在于，它们通过递归展开 `promise` 的方式获取异步返回的结果。
+
+```typescript
+type A = Awaited<Promise<string>>; // type A = string
+type B = Awaited<Promise<Promise<number>>>; // type B = number
+type C = Awaited<boolean | Promise<number>>; // type C = number | boolean
+```
+
+### 基本体操动作：
+
+- 泛型，通过泛型接受异步函数
+- `extends` 关键字，通过 `extends` 关键字进行条件类型判断，条件类型中并不支持 if else 语句，需要重复使用 `extends`  进行判断。
+- `infer` 关键字，通过 `infer` 关键字，推断 `.then(onfulfilled: infer F)` 的参数 onfulfilled 函数类型和该函数返回值的类型。
+- 鸭子辨型，通过鸭子辨型判断是否是包含 `.then` 的异步对象。
+
+### 实现 `MyAwaited<T>`:
+
+
+
+```typescript
+type MyAwaited<T> = T extends null | undefined ? T : T extends object & {
+    then(onfulfilled: infer F): any;
+} ? F extends (value: infer V) => any ? Awaited<V> : never : T
+
+type A = MyAwaited<Promise<string>>; // type A = string
+type B = MyAwaited<Promise<Promise<number>>>; // type B = number
+type C = MyAwaited<boolean | Promise<number>>; // type C = number | boolean
+```
+
