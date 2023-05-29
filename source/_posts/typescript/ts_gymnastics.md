@@ -1,12 +1,11 @@
 ---
-title: TypeScript 类型体操
+title: 十三套 TypeScript 类型体操练习
 author: 剑大瑞
-category: TypeScript
+category: TypeScriptgit
 tag: 
   - typescript
 date: 2023-05-28 08:46:31
 ---
-
 
 
 ## `Exclude<UniType, ExcludeMembers>`
@@ -677,11 +676,12 @@ type C = Awaited<boolean | Promise<number>>; // type C = number | boolean
 - 泛型，通过泛型接受异步函数
 - `extends` 关键字，通过 `extends` 关键字进行条件类型判断，条件类型中并不支持 if else 语句，需要重复使用 `extends`  进行判断。
 - `infer` 关键字，通过 `infer` 关键字，推断 `.then(onfulfilled: infer F)` 的参数 onfulfilled 函数类型和该函数返回值的类型。
-- 鸭子辨型，通过鸭子辨型判断是否是包含 `.then` 的异步对象。
+- 鸭子辨型，通过鸭子辨型判断是否是异步对象。
 
 ### 实现 `MyAwaited<T>`:
 
-
+- 鸭子辨型判断 T 泛型结构：`T extends object & { then(onfulfilled: infer F): any; } ? TrueBranchType : FalseBranchType`
+- 如果 推断的类型 F 仍未函数类型，则继续递归 `F extends (value: infer V) => any ? Awaited<V> : never`
 
 ```typescript
 type MyAwaited<T> = T extends null | undefined ? T : T extends object & {
