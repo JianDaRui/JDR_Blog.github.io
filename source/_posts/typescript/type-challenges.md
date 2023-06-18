@@ -266,8 +266,134 @@ type LengthOfString<
   : T['length'];
 ```
 
+- Flatten
 
+In this challenge, you would need to write a type that takes an array and emitted the flatten array type.
 
+For example:
 
+```typescript
+type flatten = Flatten<[1, 2, [3, 4], [[[5]]]]> // [1, 2, 3, 4, 5]
+```
+
+```typescript
+type Flatten<S extends any[], T extends any[] = []> =  S extends [infer X, ...infer Y] ? 
+  X extends any[] ?
+   Flatten<[...X, ...Y], T> : Flatten<[...Y], [...T, X]> 
+  : T
+```
+
+- Append To object
+
+Implement a type that adds a new field to the interface. The type takes the three arguments. The output should be an object with the new field.
+
+For example
+
+```
+type Test = { id: '1' }
+type Result = AppendToObject<Test, 'value', 4> // expected to be { id: '1', value: 4 }
+```
+
+```typescript
+type AppendToObject<T, U extends keyof any, V> = {
+  [K in keyof T | U]: K extends keyof T ? T[K] : V;
+};
+```
+
+- Absolute
+
+Implement the `Absolute` type. A type that take string, number or bigint. The output should be a positive number string
+
+For example
+
+```
+type Test = -100;
+type Result = Absolute<Test>; // expected to be "100"
+```
+
+```typescript
+type Absolute<T extends number | string | bigint> = `${T}` extends `-${infer U}` ? U : `${T}`
+```
+
+- String to Union
+
+Implement the String to Union type. Type take string argument. The output should be a union of input letters
+
+For example
+
+```typescript
+type Test = '123';
+type Result = StringToUnion<Test>; // expected to be "1" | "2" | "3"
+```
+
+```typescript
+type StrintToUnion<T extends string> = T extends `${infer Letter}${infer Rest}`
+  ? Letter | StrintToUnion<Rest>
+  : never;
+```
+
+- Merge
+
+Merge two types into a new type. Keys of the second type overrides keys of the first type.
+
+For example
+
+```
+type foo = {
+  name: string;
+  age: string;
+}
+type coo = {
+  age: number;
+  sex: string
+}
+
+type Result = Merge<foo,coo>;  // expected to be {name: string, age: number, sex: string}
+```
+
+```typescript
+type Merge<W, V> = {
+  [k in keyof W | keyof V]: k extends keyof W ? W[k] : k extends keyof V ? V[k] : never
+}
+```
+
+- KebabCase
+
+Replace the `camelCase` or `PascalCase` string with `kebab-case`.
+
+```
+FooBarBaz` -> `foo-bar-baz
+```
+
+For example
+
+```
+type FooBarBaz = KebabCase<"FooBarBaz">;
+const foobarbaz: FooBarBaz = "foo-bar-baz";
+
+type DoNothing = KebabCase<"do-nothing">;
+const doNothing: DoNothing = "do-nothing";
+```
+
+```typescript
+type KebabCase<T extends string> = T extends `${infer F}${infer R}` ? R extends Uncapitalize<R> ?  `${Uncapitalize<F>}${KebabCase<R>}`
+  : `${Uncapitalize<F>}-${KebabCase<R>}`
+  : T;
+
+```
+
+- Diff 
+
+Get an `Object` that is the difference between `O` & `O1`
+
+```typescript
+type Diff<O, O1> = Omit<O & O1, keyof (O | O1)>
+```
+
+- Anyof
+
+```typescript
+type AnyOf<T> = 
+```
 
 ## Hard
