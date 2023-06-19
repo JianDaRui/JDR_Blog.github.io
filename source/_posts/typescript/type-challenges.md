@@ -393,7 +393,75 @@ type Diff<O, O1> = Omit<O & O1, keyof (O | O1)>
 - Anyof
 
 ```typescript
-type AnyOf<T> = 
+type AnyOf<T> = T[number] extends 0 | '' | 'false' | [] | {{key: string}: never} ? false : true
 ```
+
+- IsNever
+
+```typescript
+type IsNever<T> = Equal<T, never>
+```
+
+- ReplaceKeys
+
+```typescript
+type ReplaceKeys<U, T, Y> = {
+  [K in keyof U]: K extends T ? K extends keyof Y ? Y[K] : never : U[K] 
+}
+```
+
+- RemoveIndexSignature
+
+```typescript
+type RemoveIndexSignature<T> = {
+  [k in keyof T as string extends k ? never : number extends k? never : symbol extends k ? never : k]: T[k]
+}
+
+```
+
+- PercentageParser
+
+```typescript
+type CheckPrefix<T> = T extends '+' | '-' ? T : never;
+type CheckSuffix<T> =  T extends `${infer P}%` ? [P, '%'] : [T, ''];
+type PercentageParser<A extends string> = A extends `${CheckPrefix<infer L>}${infer R}` ? [L, ...CheckSuffix<R>] : ['', ...CheckSuffix<A>];
+```
+
+- DropChar
+
+```typescript
+type DropChar<S, C extends string> = S extends `${infer L}${C}${infer R}` ? DropChar<`${L}${R}`, C> : S;
+```
+
+- MinusOne
+
+```typescript
+```
+
+- PickByType
+
+```typescript
+type PickByType<T, U> = { [P in keyof T as T[P] extends U ? P : never]: T[P] }
+```
+
+- StartWith
+
+```typescript
+type StartsWith<T extends string, U extends string> = T extends `${U}${string}`?true:false
+```
+
+- EndWith
+
+```typescript
+type EndsWith<T,U extends string> = T extends `${infer f}${U}`? true : false
+```
+
+- PartialByKeys
+
+```typescript
+
+```
+
+
 
 ## Hard
