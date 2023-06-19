@@ -104,7 +104,7 @@ ts-node-esm script.ts
 
 Playground: https://www.typescriptlang.org/play
 
-![Playground](images/playground.png)
+![Playground](/images/typescript/playground.png)
 
 不仅可以体验 ts 的类型提示，还可以直观的看到 ts 编译后的代码。
 
@@ -152,7 +152,7 @@ let height: undefined = undefined
 
 原始类型被编译后：
 
-![](images/%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B.png)
+![](/images/typescript/%E5%8E%9F%E5%A7%8B%E7%B1%BB%E5%9E%8B.png)
 
 你可以自己在 [Playground]( https://www.typescriptlang.org/play) 上试试 bigint & symbol 类型。
 
@@ -222,7 +222,7 @@ printName({ name: "darui", age: 18 });
 
 引用类型编译结果：
 
-![](images/%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B.png)
+![](/images/typescript/%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B.png)
 
 但是通常我们不会这么写，在实际的项目中我们会使用 type(类型别名) 或者 interface(接口)  去定义一个对象的类型约束。比如：
 
@@ -266,7 +266,7 @@ type 变量类型 = {
 
 类型别名和接口的编译结果：
 
-![](images/type_interface.png)
+![](/images/typescript/type_interface.png)
 
 #### 函数类型
 
@@ -784,7 +784,7 @@ const a: Status = Status.Success
 
 枚举类型编译结果：
 
-![](images/%E6%9E%9A%E4%B8%BE.png)
+![](/images/typescript/%E6%9E%9A%E4%B8%BE.png)
 
 另外枚举可以有多种类型：
 
@@ -799,7 +799,7 @@ const a: Status = Status.Success
   }
   ```
 
-  ![](images/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%9E%9A%E4%B8%BE.png)
+  ![](/images/typescript/%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%9E%9A%E4%B8%BE.png)
 
 - 数字枚举
 
@@ -814,11 +814,11 @@ const a: Status = Status.Success
 
   - 如果不给枚举值赋值的话，它们默认从 0 开始递增，Up = 0，Down = 1，Left = 2，Right = 3
 
-  ![](images/%E6%9E%9A%E4%B8%BE%E9%80%92%E5%A2%9E.png)
+  ![](/images/typescript/%E6%9E%9A%E4%B8%BE%E9%80%92%E5%A2%9E.png)
 
   - 如果给枚举类型赋值，比如令 Up = 1，则 Down 、Left、Right 默认会在 Up 的基础上递增。
 
-  ![](images/%E6%9E%9A%E4%B8%BE%E8%B5%8B%E5%80%BC.png)
+  ![](/images/typescript/%E6%9E%9A%E4%B8%BE%E8%B5%8B%E5%80%BC.png)
 
 观察上图可以发现，当枚举中的赋值不符合递增的时候，编译后的 ts 会出现不同的 key 对应相同 value 的情况。
 
@@ -1248,7 +1248,7 @@ function padLeft(padding: number | string, input: string) {
 }
 ```
 
-![](images/%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84.png)
+![](/images/typescript/%E7%B1%BB%E5%9E%8B%E6%94%B6%E7%AA%84.png)
 
 在意这个例子为例，这里如果你使用了 类型断言 也可以解决报错：
 
@@ -1258,7 +1258,7 @@ function padLeft(padding: number | string, input: string) {
 }
 ```
 
-![](images/%E7%B1%BB%E5%9E%8B%E6%96%AD%E8%A8%80.png)
+![](/images/typescript/%E7%B1%BB%E5%9E%8B%E6%96%AD%E8%A8%80.png)
 
 对比两个编译结果，可以看出类型收窄要比类型断言安全很多。
 
