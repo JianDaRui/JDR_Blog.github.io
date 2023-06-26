@@ -103,4 +103,6 @@ theme: chic
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: git
+  repository: git@47.93.123.106:/home/www/blog.git
+  branch: master
