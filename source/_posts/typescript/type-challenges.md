@@ -459,7 +459,73 @@ type EndsWith<T,U extends string> = T extends `${infer f}${U}`? true : false
 - PartialByKeys
 
 ```typescript
+type IntersectionToObj<T> = {
+  [K in keyof T]: T[K]
+}
 
+type PartialByKeys<T , K = any> = IntersectionToObj<{
+  [P in keyof T as P extends K ? P : never]?: T[P]
+} & {
+  [P in Exclude<keyof T, K>]: T[P]
+}>
+```
+
+- RequiredByKeys
+
+```typescript
+type RequiredByKeys<T, K extends keyof T> = Omit<T & Required<Pick<T, K & keyof T>>, never>
+```
+
+- Mutable
+
+```typescript
+type Mutable<T> = {
+  -readonly [K in keyof T]: T[K]
+}
+```
+
+- OmitByType
+
+```typescript
+type OmitByType<T, R> = {
+  [K in keyof T as T[K] extends U ? never : K]: T[K]
+}
+```
+
+- ObjectEntries
+
+```typescript
+type ObjectEntries<T, U = Required<T>> = {
+  [K in keyof U]: [K, U[K] extends never ? undefined : U[K]]
+}[keyof U]
+
+// 方法2
+type RemoveUndefined<T> = [T] extends [undefined] ? T : Exclude<T, undefined>
+
+type ObjectEntries<T> = RemoveUndefined<{
+  [K in keyof T]: {} extends Pick<T, K> ? [K, RemoveUndefined<T[K]>] : [K, T[K]]
+}[keyof T]>
+
+// 方法3
+type RemoveUndefined<T> = [T] extends [undefined] ? T : Exclude<T, undefined>
+type ObjectEntries<T> = {
+  [K in keyof T]-?: [K, RemoveUndefined<T[K]>]
+}[keyof T]
+```
+
+- Shift
+
+```typescript
+type  Shift<T extends unknow[]> = T extends [any, ...infer R] ? [...R] : T;
+```
+
+- TupleToNestedObject
+
+```typescript
+type TupleToNestedObject<T extends unknown[], U> = T extends [infer F,...infer R] ?
+  {
+    [K in F & string]: TupleToNestedObject<R, U>
+  } : U
 ```
 
 
