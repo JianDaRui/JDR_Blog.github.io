@@ -1,4 +1,12 @@
-# React 组件设计模式
+---
+title: React 组件设计模式
+author: 剑大瑞
+post: react
+category: react
+tag:
+  - react
+date: 2022-05-27 16:51:16
+---
 
 在 React 中组件是实现代码复用的最小单元。
 

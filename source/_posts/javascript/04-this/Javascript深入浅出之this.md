@@ -1,4 +1,12 @@
-#  Javascript深入浅出之this
+---
+title: Javascript深入浅出之this
+author: 剑大瑞
+post: javascript
+category: javascript
+tag:
+  - javascript
+date: 2021-05-27 16:51:16
+---
 
 在JavaScript中this为开发者提供了函数调用非常简洁的表达方式，但是关于Javascript中的this指向问题，我们经常听到的回答就是**谁调用就指向谁**。但是在实际的面试中的面试题中你试试看能领的清**谁是谁**吗？
 

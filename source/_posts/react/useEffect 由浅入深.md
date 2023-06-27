@@ -1,4 +1,12 @@
-# React Hooks ——  useEffect 由浅入深🔥🔥🔥
+---
+  title: React Hooks ——  useEffect 由浅入深🔥🔥🔥
+  author: 剑大瑞
+  post: react
+  category: react
+  tag:
+    - react
+  date: 2022-05-27 16:51:16
+---
 
 本文会带你由浅入深系统的学习下 `useEffect` 钩子的使用。通过本文，你可以学会：如何使用 `useEffect`、`Effects` 的生命周期、如何进行 `effct` 与 事件函数的分离、如何移除不必要的 `useEffect`、如何移除不必要的依赖。相信通过学习本文，可以让你在实际开发中避免很多坑。另外本篇并不会深入到源码部分进行分享。
 

@@ -1,4 +1,12 @@
-- ![我老婆](https://imgkr.cn-bj.ufileos.com/ae6286a9-fcd3-406e-8333-d1ac8a7d6cc7.jpg)
+---
+title: javascript 闭包
+author: 剑大瑞
+post: javascript
+category: javascript
+tag:
+  - javascript
+date: 2021-05-27 16:51:16
+---
 
   在面试过程中，各位童鞋经常会被问道这样的问题："请描述下你对闭包的理解"，或者在面试烤卷中会有关于闭包的选择、填空题。如果是前者，大可一句带过："闭包就是一个函数有权访问另一个函数作用域中的变量"。如果是后者，那我们拿起笔的那只小爪爪可能会有一丝颤抖~~~（我对闭包真的熟悉吗？）。
   > PS: 面试中的闭包相关知识点总是喜欢结合Javascript作用域、声明提前、事件循环、this一起进行！

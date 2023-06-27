@@ -1,4 +1,12 @@
-# `Git` 学习笔记
+---
+title: Git 学习笔记
+author: 剑大瑞
+post: git
+category: git
+tag:
+  - git
+date: 2020-04-27 16:51:16
+---
 
 ## `Git`基本概念
 

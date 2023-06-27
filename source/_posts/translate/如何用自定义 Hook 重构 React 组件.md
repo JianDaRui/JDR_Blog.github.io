@@ -1,4 +1,12 @@
-# 如何用自定义 Hook 重构 React 组件(译)
+---
+title: 如何用自定义 Hook 重构 React 组件(译)
+author: 剑大瑞
+post: react
+category: translate
+tag:
+  - react
+date: 2022-05-27 16:51:16
+---
 
 有的人可能会说，随着 React 函数组件的引入，函数自然会变得更大更复杂。毕竟这些组件是通过函数实现的，因此代码层面肯定又有些膨胀。React 文档中提到：
 

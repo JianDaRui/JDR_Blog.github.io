@@ -1,5 +1,12 @@
-# useCallback & useMemo  & memo
-
+---
+title: React Hooks: useCallback & useMemo  & memo
+author: 剑大瑞
+post: react
+category: react
+tag:
+  - react
+date: 2022-05-27 16:51:16
+---
 本来这篇文章主要是想分享下 `useCallback` & `useMemo` 这两个钩子的在 `React` 性能优化中使用，但是自己在学习的过程中，发现讨论这两个钩子离不开 `React.memo`。所以就一起聊聊吧。通过本篇文章你会可以了解到：
 
 - `React.memo` 的使用，及如何解决 `React.memo` 穿透的问题

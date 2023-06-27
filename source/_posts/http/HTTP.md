@@ -1,3 +1,12 @@
+---
+title: Http
+author: 剑大瑞
+post: http
+category: http
+tag:
+  - http
+date: 2020-05-27 16:51:16
+---
 
 ​		`HTTP协议`（HyperText Transfer Protocol，*超文本传输协议*）是因特网上应用最为广泛的一种网络传输协议，所有的WWW文件都必须遵守这个标准，可以说Web是建立在HTTP协议上通信的。
 

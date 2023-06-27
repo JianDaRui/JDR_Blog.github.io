@@ -1,4 +1,12 @@
-# JavaScript 深入浅出之类型转换
+---
+title: JavaScript 深入浅出之类型转换
+author: 剑大瑞
+post: javascript
+category: javascript
+tag:
+  - javascript
+date: 2021-05-27 16:51:16
+---
 
 在日常开发过程或者面试中我们都会遇到有关与`Javascript`类型转换的问题。而且说到类型转换，`Javascript`的类型转换总是让人感觉挺“暧昧”，让我们一度搞不清楚是true是false，甚至《`Javascript`语言精粹》的作者Douglas Crockford 直接将`Javascript`中的类型转换归为糟粕、鸡肋（PS：据说作者在日常开发中也经常使用到`Javascript`这一特性，看来万事逃不过真香定律啊）。今天就让我们一起彻底搞清楚`Javascript`中的类型转换问题，结束这种“暧昧”关系。
 

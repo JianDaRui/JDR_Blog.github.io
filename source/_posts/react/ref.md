@@ -1,8 +1,12 @@
 ---
-highlight: a11y-dark
-theme: smartblue
+    title: React Hooks —— 逃生舱
+    author: 剑大瑞
+    post: react
+    category: react
+    tag:
+    - react
+    date: 2022-05-27 16:51:16
 ---
-
 <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25ef2471859e471a9e750d4486b0bbdf~tplv-k3u1fbpfcp-watermark.image?" alt="useRef.png" width="100%" />
 
 使用 `useState`、`useReducer`、`useContext` 创建的状态，都是**可读不可变**的，一旦更新就会触发组件的重新渲染。但是实际开发过程中你经常需要一些不希望引起组件重新渲染的状态、并且希望在组件的生命周期中，该状态能被一直保持在 `React` 中。
