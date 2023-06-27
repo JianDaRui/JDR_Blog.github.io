@@ -1,7 +1,7 @@
 ---
 title: 十三套 TypeScript 类型体操练习
 author: 剑大瑞
-category: TypeScriptgit
+category: TypeScript
 tag: 
   - typescript
 date: 2023-05-28 08:46:31
