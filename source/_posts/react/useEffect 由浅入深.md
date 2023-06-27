@@ -1,5 +1,5 @@
 ---
-  title: React Hooks ——  useEffect 由浅入深🔥🔥🔥
+  title: React Hooks ——  useEffect 由浅入深
   author: 剑大瑞
   post: react
   category: react
