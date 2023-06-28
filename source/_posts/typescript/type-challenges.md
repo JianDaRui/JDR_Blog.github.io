@@ -598,6 +598,190 @@ type Fibonacci<T extends number, CurrentIndex extends any[] = [1], Prev extends 
   : Fibonacci<T, [...CurrentIndex, 1], Current, [...Prev, ...Current]>
 ```
 
+- AllCombinations
+
+```typescript
+// 解答をここに記入
+type String2Union<S extends string> =
+  S extends `${infer C}${infer REST}`
+  ? C | String2Union<REST>
+  : never;
+
+type AllCombinations<
+  STR extends string,
+  S extends string = String2Union<STR>,
+> = [S] extends [never]
+  ? ''
+  : '' | {[K in S]: `${K}${AllCombinations<never, Exclude<S, K>>}`}[S];
+
+type AllCombinationsTest = AllCombinations<'abcdefgh'>;
+// -> type AllCombinationsTest = "" | "abcdefgh" | "a" | "bcdefgh" | "b" | "cdefgh" | "c" | "defgh" | "d" | "efgh" | "e" |
+//    "fgh" | "f" | "gh" | "g" | "h" | "hg" | "fg" | "fh" | "fhg" | "hf" | "gf" | "gfh" | "ghf" | "hfg" | ... 109575 more
+//    ... | "hgfedcba"
+```
+
+- Greater Than 
+
+```typescript
+type ArrayWithLength<T extends number, U extends any[] = []> = U['length'] extends T ? U : ArrayWithLength<T, [true, ...U]>;
+type GreaterThan<T extends number, U extends number> = ArrayWithLength<U> extends [...ArrayWithLength<T>, ...infer _] ? false : true;
+```
+
+- Zip
+
+```typescript
+type Zip<A extends any[], B extends any[], L extends any[] = []> = L['length'] extends A['length'] | B['length']
+  ? L
+  : Zip<A, B, [...L, [A[L['length']], B[L['length']]]]>
+```
+
+- IsTuple
+
+```typescript
+type IsTuple<T> = T extends readonly any[] ? number extends T['length'] ? false : true : false
+```
+
+- [Chunk](https://github.com/type-challenges/type-challenges/blob/main/questions/04499-medium-chunk/README.md)
+
+```typescript
+type Chunk<T extends any[], N extends number, Swap extends any[] = []> =
+Swap['length'] extends N
+  ? [Swap, ...Chunk<T, N>]
+  : T extends [infer K, ...infer L]
+    ? Chunk<L, N, [...Swap, K]>
+    : Swap extends [] ? Swap : [Swap]
+```
+
+- [Fill](https://github.com/type-challenges/type-challenges/blob/main/questions/04518-medium-fill/README.md)
+
+```typescript
+type Fill<
+  T extends unknown[],
+  N,
+  Start extends number = 0,
+  End extends number = T['length'],
+  Count extends any[] = [],
+  Flag extends boolean = Count['length'] extends Start ? true : false
+> = Count['length'] extends End
+  ? T
+  : T extends [infer R, ...infer U]
+    ? Flag extends false
+      ? [R, ...Fill<U, N, Start, End, [...Count, 0]>]
+      : [N, ...Fill<U, N, Start, End, [...Count, 0], Flag>]
+    : T
+```
+
+- [Trim Right](https://github.com/type-challenges/type-challenges/blob/main/questions/04803-medium-trim-right/README.md)
+
+```typescript
+type TrimRight<S extends string> =
+  S extends `${infer Left}${' ' | '\n' | '\t'}` ? (
+    TrimRight<Left>
+  ) : S
+```
+
+- [Without](https://github.com/type-challenges/type-challenges/blob/main/questions/05117-medium-without/README.md)
+
+```typescript
+// 答案
+type ToUnion<T> = T extends any[] ? T[number] : T
+type Without<T, U> = 
+  T extends [infer R, ...infer F]
+    ? R extends ToUnion<U>
+      ? Without<F, U>
+      : [R, ...Without<F, U>]
+    : T
+```
+
+- [Trunc](https://github.com/type-challenges/type-challenges/blob/main/questions/05140-medium-trunc/README.md) 
+
+```typescript
+type Trunc<T extends number | string> = `${T}` extends `${infer N}.${any}` ? N : `${T}`
+```
+
+- [IndexOf](https://github.com/type-challenges/type-challenges/blob/main/questions/05153-medium-indexof/README.md)
+
+```typescript
+type IndexOf<T extends unknown[], U extends unknown, Count extends 1[] = []> =
+  T extends [infer First, ...infer Rest] ? (
+    (<V>() => V extends First ? 1 : 0) extends
+    (<V>() => V extends U ? 1 : 0) ? (
+      Count['length']
+    ) : IndexOf<Rest, U, [...Count, 1]>
+  ) : -1
+```
+
+- [Join](https://github.com/type-challenges/type-challenges/blob/main/questions/05310-medium-join/README.md)
+
+```typescript
+type Join<T extends any[], U extends string | number> = T extends [infer F, ...infer R]
+  ? R['length'] extends 0
+    ? `${F & string}`
+    : `${F & string}${U}${Join<R, U>}`
+  : never
+```
+
+- [LastIndexOf](https://github.com/type-challenges/type-challenges/blob/main/questions/05317-medium-lastindexof/README.md)
+
+```typescript
+type LastIndexOf<T extends any[], U> = T extends [...infer I, infer L] ? L extends U ?I['length']: LastIndexOf<I, U> : -1;
+```
+
+- [Unique](https://github.com/type-challenges/type-challenges/blob/main/questions/05360-medium-unique/README.md)
+
+```typescript
+// 答案
+type Includes<T, U> = U extends [infer F, ...infer Rest] 
+  ? Equal<F, T> extends true 
+    ? true 
+    : Includes<T, Rest> 
+  : false;
+
+type Unique<T, U extends any[] = []> = 
+  T extends [infer R, ...infer F]
+    ? Includes<R, U> extends true
+      ? Unique<F, [...U]>
+      : Unique<F, [...U, R]>
+    : U
+```
+
+- [MapTypes](https://github.com/type-challenges/type-challenges/blob/main/questions/05821-medium-maptypes/README.md)
+
+```typescript
+type MapTypes<T, R extends { mapFrom: any; mapTo: any }> = {
+  [K in keyof T]: T[K] extends R['mapFrom']
+  ? R extends { mapFrom: T[K] }
+    ? R['mapTo']
+    : never
+  : T[K]
+}
+```
+
+- [Construct Tuple](https://github.com/type-challenges/type-challenges/blob/main/questions/07544-medium-construct-tuple/README.md)
+
+```typescript
+```
+
+- [Number Range](https://github.com/type-challenges/type-challenges/blob/main/questions/08640-medium-number-range/README.md)
+
+```typescript
+type Utils<L, C extends any[] = [], R = L> = 
+  C['length'] extends L
+      ? R
+      : Utils<L, [...C, 0], C['length'] | R>
+
+type NumberRange<L, H> = L | Exclude<Utils<H>, Utils<L>>
+```
+
+- [Combination](https://github.com/type-challenges/type-challenges/blob/main/questions/08767-medium-combination/README.md)
+
+```typescript
+type Combination<T extends string[], All = T[number], Item = All>
+  = Item extends string
+    ? Item | `${Item} ${Combination<[], Exclude<All, Item>>}`
+    : never
+```
+
 
 
 ## Hard
