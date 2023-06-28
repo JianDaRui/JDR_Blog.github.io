@@ -528,6 +528,76 @@ type TupleToNestedObject<T extends unknown[], U> = T extends [infer F,...infer R
   } : U
 ```
 
+- Reverse
+
+```typescript
+type Reverse<T extends any[]> = T extends [infer F, ...infer Rest] ? [...Reverse<Rest>, F] : T;
+```
+
+- Flip Arguments
+
+```typescript
+type Reverse<T extends unknown[]> = T extends [infer F, ...infer R] ? [...Reverse<R>, F] : [];
+
+type FlipArguments<T extends (...args: any[]) => any> = T extends (...args: infer P) => infer U 
+? (...args: Reverse<P>) => U
+: never;
+```
+
+- [FlattenDepth](https://github.com/type-challenges/type-challenges/issues/15373)
+
+```typescript
+type FlattenDepth<
+  T extends any[],
+  S extends number = 1,
+  U extends any[] = []
+> = U['length'] extends S
+  ? T
+  : T extends [infer F, ...infer R]
+  ? F extends any[]
+    ? [...FlattenDepth<F, S, [...U, 1]>, ...FlattenDepth<R, S, U>]
+    : [F, ...FlattenDepth<R, S, U>]
+  : T
+```
+
+- BEM
+
+```typescript
+type IsNever<T> = [T] extends [never] ? true : false
+type IsUnion<U> = IsNever<U> extends true ? "" : U
+type BEM<B extends string, E extends string[], M extends string[]> = `${B}${IsUnion<`__${E[number]}`>}${IsUnion<`--${M[number]}`>}`
+```
+
+- InorderTraversal
+
+```typescript
+interface TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+}
+
+type InorderTraversal<T extends TreeNode | null, NT extends TreeNode = NonNullable<T>> = T extends null
+  ? []
+  : [...InorderTraversal<NT['left']>, NT['val'], ...InorderTraversal<NT['right']>]
+```
+
+- Flip
+
+```typescript
+type Flip<T extends Record<string, string | number | boolean>> = {
+  [P in keyof T as `${T[P]}`]: P
+}
+```
+
+- Fibonacci
+
+```typescript
+type Fibonacci<T extends number, CurrentIndex extends any[] = [1], Prev extends any[] = [], Current extends any[] = [1]> = CurrentIndex['length'] extends T
+  ? Current['length']
+  : Fibonacci<T, [...CurrentIndex, 1], Current, [...Prev, ...Current]>
+```
+
 
 
 ## Hard
