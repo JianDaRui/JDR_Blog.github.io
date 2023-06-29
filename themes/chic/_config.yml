@@ -15,7 +15,7 @@ favicon: /favicon.ico
 nickname: 剑大瑞
 
 ### this variable is MarkDown form.
-description: Hi, 我是**剑大瑞**, 欢迎关注我的公众号 **Coder 狂想曲**。 <br> 记录学习点点滴滴，分享生活柴米油盐，总结工作搬砖经验。
+description: Hi, 我是 *剑大瑞*, 欢迎关注我的公众号 *`Coder` 狂想曲*。 <br>保持对生活的热爱、保持对世界的好奇心、保持对技术的探索。
 avatar: /image/avatar.jpg
 
 # main menu navigation
