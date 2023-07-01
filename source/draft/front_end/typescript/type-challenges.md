@@ -277,10 +277,7 @@ type flatten = Flatten<[1, 2, [3, 4], [[[5]]]]> // [1, 2, 3, 4, 5]
 ```
 
 ```typescript
-type Flatten<S extends any[], T extends any[] = []> =  S extends [infer X, ...infer Y] ? 
-  X extends any[] ?
-   Flatten<[...X, ...Y], T> : Flatten<[...Y], [...T, X]> 
-  : T
+ 
 ```
 
 - Append To object
@@ -781,6 +778,46 @@ type Combination<T extends string[], All = T[number], Item = All>
     ? Item | `${Item} ${Combination<[], Exclude<All, Item>>}`
     : never
 ```
+
+- [Subsequence](https://github.com/type-challenges/type-challenges/blob/main/questions/08987-medium-subsequence/README.md)
+
+```typescript
+type Subsequence<T extends any[],Prefix extends any[] = []> = T extends [infer F,...infer R]? Subsequence<R,Prefix | [...Prefix,F]>:Prefix
+```
+
+- [CheckRepeatedChars](https://github.com/type-challenges/type-challenges/blob/main/questions/09142-medium-checkrepeatedchars/README.md) 
+
+```typescript
+```
+
+- GetMiddleElement 
+
+```typescript
+type GetMiddleElement<T extends any[]> = 
+  T['length'] extends 0 | 1 | 2?
+    T:
+    T extends [any,...infer M,any]?
+      GetMiddleElement<M>:never
+```
+
+- [FirstUniqueCharIndex](https://github.com/type-challenges/type-challenges/blob/main/questions/09286-medium-firstuniquecharindex/README.md)
+
+```typescript
+type FirstUniqueCharIndex<
+  T extends string,
+  _Acc extends string[] = []
+> = T extends ''
+  ? -1
+  : T extends `${infer Head}${infer Rest}`
+  ? Head extends _Acc[number]
+    ? FirstUniqueCharIndex<Rest, [..._Acc, Head]>
+    : Rest extends `${string}${Head}${string}`
+    ? FirstUniqueCharIndex<Rest, [..._Acc, Head]>
+    : _Acc['length']
+  : never
+```
+
+
 
 
 
