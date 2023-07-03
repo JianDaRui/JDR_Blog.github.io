@@ -2,8 +2,8 @@
 title: Typescript IIMT 模式
 author: 剑大瑞
 date: 2023-07-02 17:36:29
-category: typescript
-tag: typescript
+category: TypeScript
+tag: TypeScript
 ---
 
 今天学习 TypeScript 的一种新的转换类型操作：索引映射类型——`IIMT(Immediately Indexed Mapped Type)`。

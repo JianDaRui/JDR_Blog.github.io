@@ -3,7 +3,7 @@ title: TypeScript infer 关键字
 author: 剑大瑞
 category: TypeScript
 tag: 
-  - typescript
+  - TypeScript
 date: 2023-07-01 12:46:31
 ---
 今天我们介绍一个 `TypeScript` 非常强大的关键字 infer。
