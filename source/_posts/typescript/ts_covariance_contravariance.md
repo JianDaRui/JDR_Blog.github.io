@@ -9,7 +9,7 @@ tag:
 最近在搬砖的时候，遇到一个场景，需要根据已存在的联合类型，将其转为交叉类型。就像这样：
 
 ```typescript
-type Preson = {
+type Preson = {  
   name: string
 } | {
   age: number
@@ -23,9 +23,11 @@ type Result = Uinon2Intersection<Preson>
 期望通过 `Uinon2Intersection` 转换后，是这样：
 
 ```typescript
-type Result = {
-  name: string,
-  age: number,
+type Result = {  
+  name: string
+} & {
+  age: number
+} & {
   needMoney: boolean
 }
 ```
@@ -52,9 +54,9 @@ type Result = U2I<{
 }>
 ```
 
-MD，这完全不是我期望的样子啊，然后又想了想基础四件套，感觉遇到坑了，好像仅靠四件套并不能解决啊。
+Mmm，这完全不是我期望的样子啊，然后又想了想基础四件套，感觉遇到坑了，好像仅靠四件套并不能解决啊。
 
-先说下，查文档后，得知上面这种情况是因为**[对于联合类型，在遍历操作或者进行条件类型判断的时候，会发生类型分配](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types)**。就像下面：
+先说下，上面这种情况是因为**[对于联合类型，在遍历操作或者进行条件类型判断的时候，会发生类型分配](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types)**。就像下面：
 
 ```typescript
 type ToArray<Type> = Type extends any ? Type[] : never;
@@ -73,6 +75,8 @@ type StrArrOrNumArr = string[] | number[]
 ```typescript
 type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
 ```
+
+
 
 ## 协变
 
