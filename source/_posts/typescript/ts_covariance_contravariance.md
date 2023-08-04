@@ -20,7 +20,7 @@ type Preson = {
 type Result = Uinon2Intersection<Preson>
 ```
 
-期望通过 `Uinon2Intersection` 转换后，是这样：
+期望通过 `Uinon2Intersection` 转换后，得到的 Result 是这样：
 
 ```typescript
 type Result = {  
@@ -32,7 +32,7 @@ type Result = {
 }
 ```
 
-刚开始感觉很简单啊。我想已经会了[类型体操基本动作四件套](https://zhuanlan.zhihu.com/p/640499290)了，刚开始我是这么想的：遍历联合类型，然后遍历的时候通过 key 读取属性值就行了啊，我啪啪啪就写出来了，就像这样：
+刚开始感觉很简单啊。我想已经会了[类型体操基本动作四件套](https://zhuanlan.zhihu.com/p/640499290)了。通过遍历联合类型，然后遍历的时候通过 key 读取属性值就行了啊，我啪啪啪就写出来了，就像这样：
 
 ```typescript
 type U2I<T> = {
@@ -76,20 +76,191 @@ type StrArrOrNumArr = string[] | number[]
 type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
 ```
 
+回到正文，如果说我们想通过一个工具类型实现联合类型到交叉类型的转换，那需要了解一下下面几个概念：协变、逆变、双向协变、不变性。
 
+## 类型兼容与可替代性
+
+Typescript 的类型系统是可以做到类型兼容的。TypeScript 结构类型系统的基本规则是：**如果 y 类型至少有与 x 类型相同的成员，则 x 类型与 y 类型兼容**。例如，设想一个名为 Pet 的接口的代码，该接口有一个 name 属性；一个名为 Dog 的接口，该接口有 name、breed 属性。像下面这样：
+
+```typescript
+interface Pet {
+  name: string;
+}
+interface Dog {
+  name: string;
+  breed: string
+}
+
+let pet: Pet;
+// dog's inferred type is { name: string; owner: string; }
+let dog: Dog = { name: "大哥", breed: "罗威纳" };
+pet = dog;
+```
+
+dog 对象中存在 Pet 接口中最基本的属性成员 name。则 dog 可以赋值给 pet 变量。
+
+这是因为 Dog 属性中纯在与 Pet 相同的属性。
+
+我们写一个 IsSubTyping 工具类型，用于判断类型之间的继承关系：
+
+```typescript
+type IsSubTyping<T, U> = T extends U ? true : false
+
+type R0 = IsSubTyping<Dog, Pet> // true
+```
+
+通过上面代码，我们得到的 `R = true`。这说明，虽然我们没有显示的声明 `Dog  extends Pet`，但是 ts 内部判断这两个接口是兼容且继承的。
+
+其实更符合规范的就是显示声明**继承**。
+
+```typescript
+interface Pet {
+  name: string;
+}
+
+interface Dog extends Pet {
+  breed: string;
+}
+
+let pet: Pet = { name: "宠物" };
+let dog: Dog = { name: "大哥", breed: "罗威纳" };
+
+pet = dog; // Ok
+dog = pet; // Error
+// Property 'breed' is missing in type 'Animal' but required in type 'Dog'.
+```
+
+当 dog 赋值给 animal 是可以的，但是反过来不行。这是因为 Dog 是 Pet 的子类型。
+
+继承就是实现多态性的一种方式。两个类型是继承关系，那么其子类型的变量，则与其父类型的变量存在可替代性关系，就像上面的 pet 与 dog 一样。
+
+pet 变量可以接受 dog 变量。
+
+这个特性在函数传参时非常便利：
+
+```typescript
+function logName(pet: Pet) {
+  console.log(pet.name)
+}
+
+logName(pet) // Ok
+logName(dog) // Ok
+```
+
+logName 函数的参数为 Pet 类型，则其也可以接受 Pet 的子类型。这就是类型的可替代性。
+
+```typescript
+type T1 = IsSubTyping<'hello', string>; // true
+type T2 = IsSubTyping<42, number>; // true
+type T3 = IsSubTyping<Map<string, string>, Object>; // true
+```
+
+> 这里我们引入一个符号 `<:`。如果 A 是 B 的子类型，则我们可以使用 `A <: B` 来表示。
 
 ## 协变
 
+所谓的协变是什么？
+
+在类型编程中，我们经常会将一个类型以泛型的形式传给另一个类型。
+
+比如说我们现在声明 PetList 与 DogList：
+
+```typescript
+type PetList = Array<Pet>
+type DogList = Array<Dog>
+
+type T4 = IsSubTyping<DogList, PetList> // true
+```
+
+这里发生一个非常有意思的现象：
+
+当 Dog <: Pet，则 DogList <: PetList 也是成立的。
+
+为此我们这样定义协变：
+
+**如果某个类型 T 可以保留其他类型之间的关系，那么它就是可协变的。即如果 `A <: B`，则 `T<A> <: T<B>`。**
+
+在 ts 中常见的一些可协变类型：
+
+- Promise
+
+```typescript
+type T5 = IsSubTyping<Promise<Dog>, Promise<Pet>> // true
+```
+
+- Record
+
+```typescript
+type T6 = IsSubTyping<Record<string, Dog>, Record<string, Pet>> // true
+```
+
+- Map
+
+```typescript
+type T7 = IsSubTyping<Map<string, Dog>, Map<string, Pet>> // true
+```
+
 ## 逆变
 
+逆变与协变相反，它可以反转两个类型之间的关系。
+
+**如果某种类型 T 可以反转其他类型之间的关系，那么它就是逆变的。即如果 `A <: B`，则 `T<A> :> T<B>`。**
+
+我们定义一个泛型函数类型:
+
+```typescript
+type Func<Param> = (param: Param) => void
+```
+
+我们知道 Dog <: Pet 。则当我们将这两个接口传给 Func 类型后，获取的类型关系时，是怎样的？
+
+让我们试一试：
+
+```typescript
+type PetFunc = Func<Pet>
+type DogFunc = Func<Dog>
+
+type T8 = IsSubTyping<DogFunc, PetFunc> // false
+
+type T9 = IsSubTyping<PetFunc, DogFunc> // true
+```
+
+IsSubTyping<PetFunc, DogFunc> 返回 true。意味着 PetFunc 是 DogFunc 的子类型。
+
+Dog 与 Pet 两个类型在经过 Func 处理后，关系发生了反转，我们就说 Func 是可逆变的。
+
+**通常函数类型在处理参数的时候都会发生逆变。**函数类型的父子类型关系与参数类型的父子关系相反。
+
+```typescript
+type FuncPet = (pet: Pet) => void
+type FuncDog = (dog: Dog) => void
+
+type T10 = IsSubTyping<Dog, Pet> // true
+type T11 = IsSubTyping<PetFunc, DogFunc> // true
+```
+
+
+
+
+
 ## 双向协变
+
+双向协变与 **[strictFunctionTypes](https://www.typescriptlang.org/tsconfig#strictFunctionTypes)** 配置项的开启相关。当  **[strictFunctionTypes](https://www.typescriptlang.org/tsconfig#strictFunctionTypes)**  没有开启时，特性的类型 T 可能使其他类型之间及产生协变又产生逆变的关系，这种情况下，我们称之为双向协变。
 
 ## 不变性
 
 ## 请解答
 
+```typescript
+type U2I<U> =
+  (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+```
+
+
+
 
 参考： 
+- https://www.typescriptlang.org/docs/handbook/type-compatibility.html
 - https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
 - https://dmitripavlutin.com/typescript-covariance-contravariance/
 - https://stackoverflow.com/questions/66410115/difference-between-variance-covariance-contravariance-and-bivariance-in-typesc
