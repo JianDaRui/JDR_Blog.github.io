@@ -136,6 +136,8 @@ dog = pet; // Error
 
 当 `dog` 赋值给 `animal` 是可以的，但是反过来不行。这是因为 `Dog` 是 `Pet` 的子类型。
 
+![extends](../../images/typescript/extends.png)
+
 继承就是实现多态性的一种方式。两个类型是继承关系，那么其子类型的变量，则与其父类型的变量存在可替代性关系，就像上面的 `pet` 与 `dog` 一样。
 
 `pet` 变量可以接受 `dog` 变量。
@@ -183,6 +185,8 @@ type T4 = IsSubTyping<DogList, PetList> // true
 为此我们这样定义这一特性：
 
 **如果某个类型 `T` 可以保留其他类型之间的关系，那么它就是可协变的。即如果 `A <: B`，则 `T<A> <: T<B>`。**
+
+![](../../images/typescript/%E5%8D%8F%E5%8F%98.png)
 
 在 ts 中常见的一些可协变类型：
 
@@ -232,6 +236,8 @@ type T9 = IsSubTyping<PetFunc, DogFunc> // true
 `IsSubTyping<PetFunc, DogFunc>` 返回 `true`。意味着 `PetFunc` 是 `DogFunc` 的子类型。
 
 `Dog` 与 `Pet` 两个类型在经过 `Func` 处理后，继承关系发生了反转，我们就说 `Func<T>` 是可逆变的。
+
+![](../../images/typescript/%E9%80%86%E5%8F%98.png)
 
 **通常函数类型在处理参数的时候都会发生逆变。**函数类型的父子类型关系与参数类型的父子关系相反。
 
@@ -286,6 +292,8 @@ type T14 = IsSubTyping<PetFunc<Dog>, DogFunc<Pet>> // true
 ```
 
 通过上面的代码，我们可以知道上面泛型类型的函数返回值发生了协变。由此可以知道，函数类型的特殊之处在于其结合了逆变与协变：参数会发生逆变而返回值类型会返回协变。
+
+![](../../images/typescript/%E5%87%BD%E6%95%B0%E9%80%86%E5%8F%98%E4%B8%8E%E5%8D%8F%E5%8F%98.png)
 
 ## 双向协变
 
