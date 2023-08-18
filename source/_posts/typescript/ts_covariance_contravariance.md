@@ -2,8 +2,8 @@
 title: Typescript 协变、逆变、双向协变及不变性
 author: 剑大瑞
 date: 2023-07-05 07:42:27
-category:
-tag:
+category: typescript
+tag: typescript
 ---
 
 最近在搬砖的时候，遇到一个场景，需要根据已存在的联合类型，将其转为交叉类型：
